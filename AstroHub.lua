@@ -1,4 +1,4 @@
--- [[ Astro Hub V12 - Ultimate Stable Edition ]]
+-- [[ Astro Hub V13 - Single Instance & ESP Features ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -16,6 +16,14 @@ local TeleportService = game:GetService("TeleportService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
+-- 🛡️ حماية حصرية: حظر تكرار الواجهة (يتحقق ويمسح النسخ القديمة فوراً)
+if CoreGui:FindFirstChild("AstroHubGui") then
+    CoreGui.AstroHubGui:Destroy()
+end
+if CoreGui:FindFirstChild("AstroKeyGui") then
+    CoreGui.AstroKeyGui:Destroy()
+end
+
 getgenv().AutoReconnectState = false
 CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
@@ -23,10 +31,6 @@ CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
         TeleportService:Teleport(game.PlaceId, LocalPlayer)
     end
 end)
-
-if CoreGui:FindFirstChild("AstroHubGui") then
-    CoreGui.AstroHubGui:Destroy()
-end
 
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
@@ -221,7 +225,7 @@ local function LoadAstroHub()
         local scrolling = Instance.new("ScrollingFrame")
         scrolling.Size = UDim2.new(1, 0, 1, 0)
         scrolling.BackgroundTransparency = 1
-        scrolling.CanvasSize = UDim2.new(0, 0, 0, 520)
+        scrolling.CanvasSize = UDim2.new(0, 0, 0, 580)
         scrolling.ScrollBarThickness = 4
         scrolling.ScrollBarImageColor3 = Color3.fromRGB(100, 180, 255)
         scrolling.Visible = false
@@ -258,7 +262,8 @@ local function LoadAstroHub()
 
     local PageHome = CreatePage("🏠 Home / Stats")
     local PagePlayer = CreatePage("⚡ Player & Fly")
-    local PageVisual = CreatePage("🎮 Performance")
+    local PageVisual = CreatePage("👁️ ESP & Visuals")
+    local PagePerf = CreatePage("🎮 Performance")
 
     local StatsCard = Instance.new("Frame")
     StatsCard.Size = UDim2.new(0.95, 0, 0, 130)
@@ -519,7 +524,30 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    CreateToggle(PageVisual, "Potato Mode (Boost FPS)", function(state)
+    -- 👁️ إضافة ميزة ESP لرؤية اللاعبين والأسماء من خلف الجدران
+    local espActive = false
+    CreateToggle(PageVisual, "Player ESP (Highlight)", function(state)
+        espActive = state
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer and plr.Character then
+                if espActive then
+                    if not plr.Character:FindFirstChild("AstroHighlight") then
+                        local hl = Instance.new("Highlight")
+                        hl.Name = "AstroHighlight"
+                        hl.FillColor = Color3.fromRGB(100, 180, 255)
+                        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        hl.Parent = plr.Character
+                    end
+                else
+                    if plr.Character:FindFirstChild("AstroHighlight") then
+                        plr.Character.AstroHighlight:Destroy()
+                    end
+                end
+            end
+        end
+    end)
+
+    CreateToggle(PagePerf, "Potato Mode (Boost FPS)", function(state)
         for _, v in pairs(Workspace:GetDescendants()) do
             if state then
                 if v:IsA("BasePart") then
