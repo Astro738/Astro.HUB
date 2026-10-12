@@ -1,4 +1,4 @@
--- [[ Astro Hub V10 - Perfect Controlled Hover & Fly ]]
+-- [[ Astro Hub V11 - Final Stable Edition ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -385,9 +385,10 @@ local function LoadAstroHub()
         end
     end)
 
+    -- إصلاح مشكلة Noclip بالكامل (ترجع الجدران طبيعية فور إيقاف الميزة)
     CreateToggle(PagePlayer, "Noclip", function(state)
         if state then
-            _G.Noclip = RunService.Stepped:Connect(function()
+            _G.NoclipConn = RunService.Stepped:Connect(function()
                 if LocalPlayer.Character then
                     for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                         if part:IsA("BasePart") then part.CanCollide = false end
@@ -395,11 +396,16 @@ local function LoadAstroHub()
                 end
             end)
         else
-            if _G.Noclip then _G.Noclip:Disconnect() end
+            if _G.NoclipConn then _G.NoclipConn:Disconnect() end
+            if LocalPlayer.Character then
+                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = true end
+                end
+            end
         end
     end)
 
-    -- نظام الطيران الموجه بالكامل بالتحكم المباشر
+    -- نظام الطيران المتحرك والمضبوط تماماً
     local flying = false
     local flySpeed = 50
     local bv, bg
@@ -430,10 +436,7 @@ local function LoadAstroHub()
                     local camCF = Camera.CFrame
                     bg.CFrame = camCF
 
-                    -- إذا كان أجنبي/أيباد وحرك عصا التحكم فقط
                     if hum and hum.MoveDirection.Magnitude > 0 then
-                        -- يربط اتجاه حركة العصا باتجاه الكاميرا (للأعلى/للأسفل/للأمام/للخلف)
-                        local moveDir = camCF:VectorToWorldSpace(camCF:VectorToObjectSpace(hum.MoveDirection))
                         bv.Velocity = hum.MoveDirection * flySpeed + Vector3.new(0, camCF.LookVector.Y * hum.MoveDirection.Magnitude * flySpeed, 0)
                     elseif UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
                         bv.Velocity = camCF.LookVector * flySpeed
@@ -444,7 +447,6 @@ local function LoadAstroHub()
                     elseif UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
                         bv.Velocity = -camCF.RightVector * flySpeed
                     else
-                        -- الوقوف التام المريح في الهواء فور ترك التحكم
                         bv.Velocity = Vector3.new(0, 0, 0)
                     end
                 end
