@@ -1,4 +1,4 @@
--- [[ Astro Hub V11 - Final Stable Edition ]]
+-- [[ Astro Hub V12 - Final Masterpiece & Discord Integration ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -98,14 +98,15 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
+    -- زر الفتح والإغلاق الثلجي (أكبر حجماً وقابل للسحب Draggable)
     local OpenBtn = Instance.new("TextButton")
-    OpenBtn.Size = UDim2.new(0, 45, 0, 45)
-    OpenBtn.Position = UDim2.new(0, 20, 0.5, -22)
+    OpenBtn.Size = UDim2.new(0, 55, 0, 55)
+    OpenBtn.Position = UDim2.new(0, 20, 0.5, -28)
     OpenBtn.BackgroundColor3 = Color3.fromRGB(200, 225, 245)
     OpenBtn.BackgroundTransparency = 0.2
     OpenBtn.TextColor3 = Color3.fromRGB(20, 60, 100)
     OpenBtn.Text = "❄️"
-    OpenBtn.TextSize = 20
+    OpenBtn.TextSize = 24
     OpenBtn.Font = Enum.Font.GothamBold
     OpenBtn.Parent = ScreenGui
 
@@ -115,8 +116,30 @@ local function LoadAstroHub()
 
     local OpenStroke = Instance.new("UIStroke")
     OpenStroke.Color = Color3.fromRGB(120, 190, 255)
-    OpenStroke.Thickness = 2
+    OpenStroke.Thickness = 2.5
     OpenStroke.Parent = OpenBtn
+
+    -- كود جعل الزر قابل للسحب (Draggable) بالإصبع أو الماوس
+    local dragging, dragInput, dragStart, startPos
+    OpenBtn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = OpenBtn.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            OpenBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 540, 0, 380)
@@ -200,7 +223,7 @@ local function LoadAstroHub()
         local scrolling = Instance.new("ScrollingFrame")
         scrolling.Size = UDim2.new(1, 0, 1, 0)
         scrolling.BackgroundTransparency = 1
-        scrolling.CanvasSize = UDim2.new(0, 0, 0, 480)
+        scrolling.CanvasSize = UDim2.new(0, 0, 0, 520)
         scrolling.ScrollBarThickness = 4
         scrolling.ScrollBarImageColor3 = Color3.fromRGB(100, 180, 255)
         scrolling.Visible = false
@@ -272,6 +295,30 @@ local function LoadAstroHub()
             StatsText.Text = string.format("⚡ FPS: %d\n📡 Ping: %d ms\n💻 CPU Usage: %s ms\n🎮 GPU Usage: %s ms", fps, ping, cpu, gpu)
             frameCount = 0
             lastUpdate = tick()
+        end
+    end)
+
+    -- زر نسخ رابط سيرفر الديسكورد الفخم في صفحة Home
+    local DiscordBtn = Instance.new("TextButton")
+    DiscordBtn.Size = UDim2.new(0.95, 0, 0, 42)
+    DiscordBtn.BackgroundColor3 = Color3.fromRGB(114, 137, 218) -- لون ديسكورد المميز
+    DiscordBtn.BackgroundTransparency = 0.1
+    DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    DiscordBtn.Text = "💬 Join Discord Server"
+    DiscordBtn.TextSize = 14
+    DiscordBtn.Font = Enum.Font.GothamBold
+    DiscordBtn.Parent = PageHome
+
+    local dCorner = Instance.new("UICorner")
+    dCorner.CornerRadius = UDim.new(0, 8)
+    dCorner.Parent = DiscordBtn
+
+    DiscordBtn.MouseButton1Click:Connect(function()
+        if setclipboard then
+            setclipboard("https://discord.gg/vnTrCe2GSU")
+            DiscordBtn.Text = "✅ Discord Link Copied!"
+            task.wait(2)
+            DiscordBtn.Text = "💬 Join Discord Server"
         end
     end)
 
@@ -350,21 +397,21 @@ local function LoadAstroHub()
             callback(val)
         end
 
-        local dragging = false
+        local draggingSlider = false
         sliderBg.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
+                draggingSlider = true
                 update(input)
             end
         end)
         UserInputService.InputChanged:Connect(function(input)
-            if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
                 update(input)
             end
         end)
         UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = false
+                draggingSlider = false
             end
         end)
     end
@@ -385,7 +432,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- إصلاح مشكلة Noclip بالكامل (ترجع الجدران طبيعية فور إيقاف الميزة)
     CreateToggle(PagePlayer, "Noclip", function(state)
         if state then
             _G.NoclipConn = RunService.Stepped:Connect(function()
@@ -405,7 +451,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- نظام الطيران المتحرك والمضبوط تماماً
     local flying = false
     local flySpeed = 50
     local bv, bg
@@ -458,7 +503,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- تثبيت السرعة
     local targetSpeed = 16
     local speedLocked = false
 
