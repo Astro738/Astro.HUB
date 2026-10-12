@@ -1,4 +1,4 @@
--- [[ Astro Hub V7 - Ultimate Icy Glass & Fixed Fly Edition ]]
+-- [[ Astro Hub V8 - Perfect Fly & Fixed Speed Lock ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -16,9 +16,9 @@ local TeleportService = game:GetService("TeleportService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- إعدادات إعادة الاتصال التلقائي (Auto Reconnect)
+-- إعدادات إعادة الاتصال التلقائي
 getgenv().AutoReconnectState = false
-game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
         task.wait(1)
         TeleportService:Teleport(game.PlaceId, LocalPlayer)
@@ -100,7 +100,7 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- زر الفتح والإغلاق الثلجي العائم
+    -- زر الفتح والإغلاق
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 45, 0, 45)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -22)
@@ -121,7 +121,7 @@ local function LoadAstroHub()
     OpenStroke.Thickness = 2
     OpenStroke.Parent = OpenBtn
 
-    -- اللوحة الرئيسية الثلجية بتصميم Sidebar
+    -- اللوحة الرئيسية
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 540, 0, 380)
     MainFrame.Position = UDim2.new(0.5, -270, 0.5, -190)
@@ -140,7 +140,6 @@ local function LoadAstroHub()
     MainStroke.Thickness = 2
     MainStroke.Parent = MainFrame
 
-    -- شريط العنوان العلوي الثلجي
     local TopBar = Instance.new("Frame")
     TopBar.Size = UDim2.new(1, 0, 0, 40)
     TopBar.BackgroundColor3 = Color3.fromRGB(180, 210, 235)
@@ -179,9 +178,8 @@ local function LoadAstroHub()
         MainFrame.Visible = false
     end)
 
-    -- القائمة الجانبية (Sidebar)
     local Sidebar = Instance.new("ScrollingFrame")
-    Sidebar.Size = Instance.new("Frame") and UDim2.new(0, 150, 1, -40)
+    Sidebar.Size = UDim2.new(0, 150, 1, -40)
     Sidebar.Position = UDim2.new(0, 0, 0, 40)
     Sidebar.BackgroundColor3 = Color3.fromRGB(195, 218, 240)
     Sidebar.BackgroundTransparency = 0.4
@@ -195,7 +193,6 @@ local function LoadAstroHub()
     SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     SideLayout.Parent = Sidebar
 
-    -- حاوية المحتوى الرئيسي
     local ContentArea = Instance.new("Frame")
     ContentArea.Size = UDim2.new(1, -155, 1, -45)
     ContentArea.Position = UDim2.new(0, 155, 0, 42)
@@ -246,7 +243,7 @@ local function LoadAstroHub()
     local PagePlayer = CreatePage("⚡ Player & Fly")
     local PageVisual = CreatePage("🎮 Performance")
 
-    -- 1. صفحة الإحصائيات الثلجية (Home / Stats)
+    -- 1. صفحة الإحصائيات
     local StatsCard = Instance.new("Frame")
     StatsCard.Size = UDim2.new(0.95, 0, 0, 130)
     StatsCard.BackgroundColor3 = Color3.fromRGB(230, 242, 255)
@@ -283,7 +280,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- دوال الأزرار والسلايدرات الثلجية الفخمة
     local function CreateToggle(parentPage, name, callback)
         local btn = Instance.new("TextButton")
         btn.Size = UDim2.new(0.95, 0, 0, 40)
@@ -378,12 +374,11 @@ local function LoadAstroHub()
         end)
     end
 
-    -- زر تفعيل/إلغاء إعادة الاتصال التلقائي (Auto Reconnect)
     CreateToggle(PageHome, "Auto Reconnect Server", function(state)
         getgenv().AutoReconnectState = state
     end)
 
-    -- 2. صفحة اللاعب والطيران (Player & Fly - تم إصلاح الطيران تماماً)
+    -- 2. صفحة اللاعب والطيران المعدل بالكامل
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
         if state then
             _G.InfJump = UserInputService.JumpRequest:Connect(function()
@@ -410,51 +405,35 @@ local function LoadAstroHub()
         end
     end)
 
-    -- نظام الطيران الفعال والمتحرك بالكامل (Legendary Fly Fixed)
-    local flyEnabled = false
+    -- طيران أسطوري سلس يعتمد على اتجاه النظر/الكاميرا للأيباد
+    local flying = false
     local flySpeed = 50
     local bv, bg
 
     CreateToggle(PagePlayer, "Legendary Fly", function(state)
-        flyEnabled = state
+        flying = state
         local char = LocalPlayer.Character
         if not char or not char:FindFirstChild("HumanoidRootPart") then return end
         local hrp = char.HumanoidRootPart
         local hum = char:FindFirstChildOfClass("Humanoid")
 
-        if flyEnabled then
+        if flying then
             if hum then hum.PlatformStand = true end
+            
             bv = Instance.new("BodyVelocity")
-            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            bv.Velocity = Vector3.new(0, 0.1, 0)
+            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
             bv.Parent = hrp
 
             bg = Instance.new("BodyGyro")
-            bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-            bg.CFrame = hrp.CFrame
+            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
             bg.Parent = hrp
 
             task.spawn(function()
-                while flyEnabled and char and hrp.Parent do
+                while flying and char and hrp.Parent do
                     RunService.RenderStepped:Wait()
                     local camCF = Camera.CFrame
-                    local moveDir = Vector3.new(0, 0, 0)
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
-                        moveDir = moveDir + camCF.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
-                        moveDir = moveDir - camCF.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
-                        moveDir = moveDir + camCF.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
-                        moveDir = moveDir - camCF.RightVector
-                    end
-
-                    bv.Velocity = moveDir * flySpeed
                     bg.CFrame = camCF
+                    bv.Velocity = camCF.LookVector * flySpeed
                 end
             end)
         else
@@ -464,17 +443,27 @@ local function LoadAstroHub()
         end
     end)
 
+    -- تثبيت السرعة بدون أي هبوط مفاجئ (Speed Lock Loop)
+    local targetSpeed = 16
+    local speedLocked = false
+
     CreateSlider(PagePlayer, "WalkSpeed", 0, 1000, 16, function(val)
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
+        targetSpeed = val
+        if not speedLocked then
+            speedLocked = true
+            RunService.RenderStepped:Connect(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = targetSpeed
+                end
+            end)
         end
     end)
 
-    CreateSlider(PagePlayer, "Fly Speed", 20, 300, 50, function(val)
+    CreateSlider(PagePlayer, "Fly Speed", 20, 500, 50, function(val)
         flySpeed = val
     end)
 
-    -- 3. صفحة الأداء (Performance / Potato Mode)
+    -- 3. صفحة الأداء
     CreateToggle(PageVisual, "Potato Mode (Boost FPS)", function(state)
         for _, v in pairs(Workspace:GetDescendants()) do
             if state then
