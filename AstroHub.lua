@@ -1,4 +1,4 @@
--- [[ Astro Hub V9 - Ultimate Icy Glass & Real Joystick Fly ]]
+-- [[ Astro Hub V10 - Perfect Controlled Hover & Fly ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -399,7 +399,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- نظام طيران تفاعلي حقيقي (حسب عصا الحركة أو أزرار الكيبورد W A S D)
+    -- نظام الطيران الموجه بالكامل بالتحكم المباشر
     local flying = false
     local flySpeed = 50
     local bv, bg
@@ -413,7 +413,7 @@ local function LoadAstroHub()
 
         if flying then
             if hum then hum.PlatformStand = true end
-            
+
             bv = Instance.new("BodyVelocity")
             bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
             bv.Velocity = Vector3.new(0, 0, 0)
@@ -428,31 +428,25 @@ local function LoadAstroHub()
                 while flying and char and hrp.Parent do
                     RunService.RenderStepped:Wait()
                     local camCF = Camera.CFrame
-                    local moveDir = Vector3.new(0, 0, 0)
-
-                    if hum and hum.MoveDirection.Magnitude > 0 then
-                        moveDir = hum.MoveDirection
-                    end
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
-                        moveDir = moveDir + camCF.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
-                        moveDir = moveDir - camCF.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
-                        moveDir = moveDir + camCF.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
-                        moveDir = moveDir - camCF.RightVector
-                    end
-
-                    if moveDir.Magnitude > 0 then
-                        bv.Velocity = moveDir.Unit * flySpeed
-                    else
-                        bv.Velocity = Vector3.new(0, 0.1, 0)
-                    end
                     bg.CFrame = camCF
+
+                    -- إذا كان أجنبي/أيباد وحرك عصا التحكم فقط
+                    if hum and hum.MoveDirection.Magnitude > 0 then
+                        -- يربط اتجاه حركة العصا باتجاه الكاميرا (للأعلى/للأسفل/للأمام/للخلف)
+                        local moveDir = camCF:VectorToWorldSpace(camCF:VectorToObjectSpace(hum.MoveDirection))
+                        bv.Velocity = hum.MoveDirection * flySpeed + Vector3.new(0, camCF.LookVector.Y * hum.MoveDirection.Magnitude * flySpeed, 0)
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
+                        bv.Velocity = camCF.LookVector * flySpeed
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
+                        bv.Velocity = -camCF.LookVector * flySpeed
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
+                        bv.Velocity = camCF.RightVector * flySpeed
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
+                        bv.Velocity = -camCF.RightVector * flySpeed
+                    else
+                        -- الوقوف التام المريح في الهواء فور ترك التحكم
+                        bv.Velocity = Vector3.new(0, 0, 0)
+                    end
                 end
             end)
         else
@@ -462,7 +456,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- تثبيت السرعة القوي لمنع الهبوط المفاجئ
+    -- تثبيت السرعة
     local targetSpeed = 16
     local speedLocked = false
 
@@ -501,7 +495,7 @@ local function LoadAstroHub()
     end)
 end
 
-SubmitBtn.MouseButton1Click:Connect(function:Connect(function()
+SubmitBtn.MouseButton1Click:Connect(function()
     if KeyBox.Text == "ASTRO-2026-KEY" then
         LoadAstroHub()
     else
