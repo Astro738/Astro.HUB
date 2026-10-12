@@ -1,4 +1,4 @@
--- [[ Astro Hub V15 - Boss Finder & Egg ESP Edition ]]
+-- [[ Astro Hub V16 - Ultimate Pro Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -13,10 +13,22 @@ local Lighting = game:GetService("Lighting")
 local Stats = game:GetService("Stats")
 local Workspace = game:GetService("Workspace")
 local TeleportService = game:GetService("TeleportService")
+local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- حماية حصرية ضد تكرار الواجهة
+-- 🛡️ تنظيف كامل عند تشغيل السكربت لإلغاء أي سرعات أو طيران قديم
+if LocalPlayer.Character then
+    local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if hum then hum.WalkSpeed = 16 end
+    local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        for _, v in pairs(hrp:GetChildren()) do
+            if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+        end
+    end
+end
+
 if CoreGui:FindFirstChild("AstroHubGui") then
     CoreGui.AstroHubGui:Destroy()
 end
@@ -31,6 +43,17 @@ CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
         TeleportService:Teleport(game.PlaceId, LocalPlayer)
     end
 end)
+
+-- 🎵 دالة لصوت نقي عند الضغط
+local function PlayClickSound()
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://6042457221" -- صوت نقرة ناعم ونقي
+    sound.Volume = 0.5
+    sound.Parent = SoundService
+    sound:Play()
+    Debris = game:GetService("Debris")
+    Debris:AddItem(sound, 1)
+end
 
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
@@ -70,7 +93,7 @@ KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
 KeyBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 KeyBox.BackgroundTransparency = 0.3
 KeyBox.TextColor3 = Color3.fromRGB(20, 40, 70)
-KeyBox.PlaceholderText = "Enter Key Here..." -- 🔒 تم إخفاء المفتاح بنجاح!
+KeyBox.PlaceholderText = "Enter Key Here..."
 KeyBox.Text = ""
 KeyBox.TextSize = 14
 KeyBox.Font = Enum.Font.Gotham
@@ -95,6 +118,7 @@ BtnCorner.CornerRadius = UDim.new(0, 10)
 BtnCorner.Parent = SubmitBtn
 
 local function LoadAstroHub()
+    PlayClickSound()
     KeyGui:Destroy()
 
     local ScreenGui = Instance.new("ScreenGui")
@@ -192,12 +216,8 @@ local function LoadAstroHub()
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Parent = TopBar
 
-    OpenBtn.MouseButton1Click:Connect(function()
-        MainFrame.Visible = not MainFrame.Visible
-    end)
-    CloseBtn.MouseButton1Click:Connect(function()
-        MainFrame.Visible = false
-    end)
+    OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
+    CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = false end)
 
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 150, 1, -40)
@@ -205,7 +225,7 @@ local function LoadAstroHub()
     Sidebar.BackgroundColor3 = Color3.fromRGB(195, 218, 240)
     Sidebar.BackgroundTransparency = 0.4
     Sidebar.BorderSizePixel = 0
-    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 350)
+    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 400)
     Sidebar.ScrollBarThickness = 2
     Sidebar.Parent = MainFrame
 
@@ -251,6 +271,7 @@ local function LoadAstroHub()
         sCorner.Parent = sideBtn
 
         sideBtn.MouseButton1Click:Connect(function()
+            PlayClickSound()
             for _, p in pairs(pages) do p.Visible = false end
             scrolling.Visible = true
         end)
@@ -263,13 +284,13 @@ local function LoadAstroHub()
     local PageHome = CreatePage("🏠 Home / Stats")
     local PagePlayer = CreatePage("⚡ Player & Fly")
     local PageCombat = CreatePage("🎯 Aimbot")
-    local PageDetect = CreatePage("🥚 Eggs & Secrets")
+    local PageDetect = CreatePage("🥚 Eggs & Rarities")
     local PageBoss = CreatePage("👹 Boss Finder")
     local PageVisual = CreatePage("👁️ ESP & Visuals")
     local PagePerf = CreatePage("🎮 Performance")
 
     local StatsCard = Instance.new("Frame")
-    StatsCard.Size = UDim2.new(0.95, 0, 0, 130)
+    StatsCard.Size = UDim2.new(0.95, 0, 0, 160)
     StatsCard.BackgroundColor3 = Color3.fromRGB(230, 242, 255)
     StatsCard.BackgroundTransparency = 0.3
     StatsCard.Parent = PageHome
@@ -282,9 +303,9 @@ local function LoadAstroHub()
     StatsText.Size = UDim2.new(1, -20, 1, 0)
     StatsText.Position = UDim2.new(0, 10, 0, 0)
     StatsText.BackgroundTransparency = 1
-    StatsText.Text = "⚡ FPS: --\n📡 Ping: -- ms\n💻 CPU Usage: -- ms\n🎮 GPU Usage: -- ms"
+    StatsText.Text = "⚡ FPS: --\n📡 Ping: -- ms\n💻 CPU: -- ms | 🎮 GPU: -- ms\n📍 Coords: X: 0, Y: 0, Z: 0"
     StatsText.TextColor3 = Color3.fromRGB(20, 60, 100)
-    StatsText.TextSize = 14
+    StatsText.TextSize = 13
     StatsText.Font = Enum.Font.GothamBold
     StatsText.TextXAlignment = Enum.TextXAlignment.Left
     StatsText.Parent = StatsCard
@@ -298,7 +319,14 @@ local function LoadAstroHub()
             local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
             local cpu = string.format("%.1f", Stats.PerformanceStats.CPU:GetValue())
             local gpu = string.format("%.1f", Stats.PerformanceStats.GPU:GetValue())
-            StatsText.Text = string.format("⚡ FPS: %d\n📡 Ping: %d ms\n💻 CPU Usage: %s ms\n🎮 GPU Usage: %s ms", fps, ping, cpu, gpu)
+            
+            local coords = "X: 0, Y: 0, Z: 0"
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                local pos = LocalPlayer.Character.HumanoidRootPart.Position
+                coords = string.format("X: %d, Y: %d, Z: %d", math.floor(pos.X), math.floor(pos.Y), math.floor(pos.Z))
+            end
+
+            StatsText.Text = string.format("⚡ FPS: %d | 📡 Ping: %d ms\n💻 CPU: %s ms | 🎮 GPU: %s ms\n📍 Coords: %s", fps, ping, cpu, gpu, coords)
             frameCount = 0
             lastUpdate = tick()
         end
@@ -319,6 +347,7 @@ local function LoadAstroHub()
     dCorner.Parent = DiscordBtn
 
     DiscordBtn.MouseButton1Click:Connect(function()
+        PlayClickSound()
         if setclipboard then
             setclipboard("https://discord.gg/vnTrCe2GSU")
             DiscordBtn.Text = "✅ Discord Link Copied!"
@@ -344,6 +373,7 @@ local function LoadAstroHub()
 
         local active = false
         btn.MouseButton1Click:Connect(function()
+            PlayClickSound()
             active = not active
             if active then
                 btn.BackgroundColor3 = Color3.fromRGB(80, 170, 245)
@@ -406,6 +436,7 @@ local function LoadAstroHub()
         sliderBg.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 draggingSlider = true
+                PlayClickSound()
                 update(input)
             end
         end)
@@ -421,9 +452,7 @@ local function LoadAstroHub()
         end)
     end
 
-    CreateToggle(PageHome, "Auto Reconnect Server", function(state)
-        getgenv().AutoReconnectState = state
-    end)
+    CreateToggle(PageHome, "Auto Reconnect Server", function(state) getgenv().AutoReconnectState = state end)
 
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
         if state then
@@ -561,20 +590,20 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 🥚 1. كاشف البيض والـ Secrets / Divine
+    -- 🥚 كاشف البيض والنوادر (Divine / Secret / Mythic / Legendary)
     local eggEspActive = false
-    CreateToggle(PageDetect, "Highlight Eggs / Divine / Secret", function(state)
+    CreateToggle(PageDetect, "Highlight Eggs & Rarities", function(state)
         eggEspActive = state
         task.spawn(function()
             while eggEspActive do
                 for _, obj in pairs(Workspace:GetDescendants()) do
                     local name = string.lower(obj.Name)
-                    if string.find(name, "egg") or string.find(name, "divine") or string.find(name, "secret") then
+                    if string.find(name, "egg") or string.find(name, "divine") or string.find(name, "secret") or string.find(name, "mythic") or string.find(name, "legendary") then
                         if obj:IsA("Model") or obj:IsA("BasePart") then
                             if not obj:FindFirstChild("AstroEggHighlight") then
                                 local hl = Instance.new("Highlight")
                                 hl.Name = "AstroEggHighlight"
-                                hl.FillColor = Color3.fromRGB(255, 215, 0) -- لون ذهبي للبيض والنادر
+                                hl.FillColor = Color3.fromRGB(255, 215, 0)
                                 hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 hl.Parent = obj
                             end
@@ -585,15 +614,13 @@ local function LoadAstroHub()
             end
             if not eggEspActive then
                 for _, obj in pairs(Workspace:GetDescendants()) do
-                    if obj:FindFirstChild("AstroEggHighlight") then
-                        obj.AstroEggHighlight:Destroy()
-                    end
+                    if obj:FindFirstChild("AstroEggHighlight") then obj.AstroEggHighlight:Destroy() end
                 end
             end
         end)
     end)
 
-    -- 👹 2. كاشف البوسات (Boss Finder)
+    -- 👹 كاشف البوسات (Boss Finder)
     local bossEspActive = false
     CreateToggle(PageBoss, "Highlight All Bosses", function(state)
         bossEspActive = state
@@ -606,27 +633,25 @@ local function LoadAstroHub()
                             if not obj:FindFirstChild("AstroBossHighlight") then
                                 local hl = Instance.new("Highlight")
                                 hl.Name = "AstroBossHighlight"
-                                hl.FillColor = Color3.fromRGB(255, 50, 50) -- لون أحمر ناري للبوسات
+                                hl.FillColor = Color3.fromRGB(255, 50, 50)
                                 hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 hl.Parent = obj
 
-                                if not obj:FindFirstChild("AstroBossTag") then
-                                    local bgui = Instance.new("BillboardGui")
-                                    bgui.Name = "AstroBossTag"
-                                    bgui.Size = UDim2.new(0, 150, 0, 30)
-                                    bgui.AlwaysOnTop = true
-                                    bgui.ExtentsOffset = Vector3.new(0, 3, 0)
-                                    bgui.Parent = obj
+                                local bgui = Instance.new("BillboardGui")
+                                bgui.Name = "AstroBossTag"
+                                bgui.Size = UDim2.new(0, 150, 0, 30)
+                                bgui.AlwaysOnTop = true
+                                bgui.ExtentsOffset = Vector3.new(0, 3, 0)
+                                bgui.Parent = obj
 
-                                    local txt = Instance.new("TextLabel")
-                                    txt.Size = UDim2.new(1, 0, 1, 0)
-                                    txt.BackgroundTransparency = 1
-                                    txt.Text = "👹 BOSS: " .. obj.Name
-                                    txt.TextColor3 = Color3.fromRGB(255, 80, 80)
-                                    txt.TextSize = 14
-                                    txt.Font = Enum.Font.GothamBold
-                                    txt.Parent = bgui
-                                end
+                                local txt = Instance.new("TextLabel")
+                                txt.Size = UDim2.new(1, 0, 1, 0)
+                                txt.BackgroundTransparency = 1
+                                txt.Text = "👹 BOSS: " .. obj.Name
+                                txt.TextColor3 = Color3.fromRGB(255, 80, 80)
+                                txt.TextSize = 14
+                                txt.Font = Enum.Font.GothamBold
+                                txt.Parent = bgui
                             end
                         end
                     end
@@ -642,7 +667,7 @@ local function LoadAstroHub()
         end)
     end)
 
-    -- 👁️ ESP للاعبين
+    -- 👁️ Player ESP
     local espActive = false
     CreateToggle(PageVisual, "Player ESP (Highlight)", function(state)
         espActive = state
@@ -688,6 +713,7 @@ SubmitBtn.MouseButton1Click:Connect(function()
     if KeyBox.Text == "ASTRO-2026-KEY" then
         LoadAstroHub()
     else
+        PlayClickSound()
         KeyBox.Text = ""
         KeyBox.PlaceholderText = "Wrong Key! Try Again"
     end
