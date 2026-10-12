@@ -1,5 +1,11 @@
--- [[ Astro Hub V3 - Glassmorphism & System Stats ]]
+-- [[ Astro Hub V4 - Max FPS & Full Control ]]
+-- [[ Theme: Icy Glassmorphism ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
+
+-- فك حد الـ FPS إلى 240 فريم فوراً
+if setfpscap then
+    setfpscap(240)
+end
 
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
@@ -84,7 +90,7 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- شريط الإحصائيات الفخم الزجاجي (FPS | Ping | CPU | GPU)
+    -- شريط الإحصائيات (FPS | Ping | CPU | GPU)
     local StatsBar = Instance.new("Frame")
     StatsBar.Size = UDim2.new(0, 380, 0, 32)
     StatsBar.Position = UDim2.new(0.5, -190, 0, 12)
@@ -112,7 +118,6 @@ local function LoadAstroHub()
     StatsText.Font = Enum.Font.GothamBold
     StatsText.Parent = StatsBar
 
-    -- تحديث البيانات مباشرة
     local lastUpdate = tick()
     local frameCount = 0
     RunService.RenderStepped:Connect(function()
@@ -129,7 +134,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- زر الفتح والإغلاق الزجاجي
+    -- زر الفتح والإغلاق
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 50, 0, 50)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -25)
@@ -151,10 +156,10 @@ local function LoadAstroHub()
     OpenStroke.Transparency = 0.3
     OpenStroke.Parent = OpenBtn
 
-    -- اللوحة الرئيسية الزجاجية اللماعة
+    -- اللوحة الرئيسية
     local MainFrame = Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 420, 0, 340)
-    MainFrame.Position = UDim2.new(0.5, -210, 0.5, -170)
+    MainFrame.Size = UDim2.new(0, 420, 0, 360)
+    MainFrame.Position = UDim2.new(0.5, -210, 0.5, -180)
     MainFrame.BackgroundColor3 = Color3.fromRGB(10, 20, 35)
     MainFrame.BackgroundTransparency = 0.25
     MainFrame.BorderSizePixel = 0
@@ -201,7 +206,7 @@ local function LoadAstroHub()
     Container.Size = UDim2.new(1, -20, 1, -55)
     Container.Position = UDim2.new(0, 10, 0, 50)
     Container.BackgroundTransparency = 1
-    Container.CanvasSize = UDim2.new(0, 0, 0, 300)
+    Container.CanvasSize = UDim2.new(0, 0, 0, 420)
     Container.ScrollBarThickness = 5
     Container.ScrollBarImageColor3 = Color3.fromRGB(120, 220, 255)
     Container.Parent = MainFrame
@@ -213,7 +218,7 @@ local function LoadAstroHub()
 
     local function CreateToggle(name, callback)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.95, 0, 0, 42)
+        btn.Size = UDim2.new(0.95, 0, 0, 40)
         btn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
         btn.BackgroundTransparency = 0.4
         btn.TextColor3 = Color3.fromRGB(210, 235, 255)
@@ -248,7 +253,83 @@ local function LoadAstroHub()
         end)
     end
 
-    -- 1. Potato Mode (تسريع الـ FPS)
+    -- دالة إنشاء سلايدر التحكم باللمس
+    local function CreateSlider(name, minVal, maxVal, defaultVal, callback)
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0.95, 0, 0, 50)
+        frame.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
+        frame.BackgroundTransparency = 0.4
+        frame.Parent = Container
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 10)
+        corner.Parent = frame
+
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(100, 180, 255)
+        stroke.Thickness = 1
+        stroke.Transparency = 0.5
+        stroke.Parent = frame
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, -20, 0, 22)
+        label.Position = UDim2.new(0, 10, 0, 4)
+        label.BackgroundTransparency = 1
+        label.Text = name .. ": " .. tostring(defaultVal)
+        label.TextColor3 = Color3.fromRGB(210, 235, 255)
+        label.TextSize = 13
+        label.Font = Enum.Font.GothamBold
+        label.Parent = frame
+
+        local sliderBg = Instance.new("Frame")
+        sliderBg.Size = UDim2.new(0.9, 0, 0, 8)
+        sliderBg.Position = UDim2.new(0.05, 0, 0.7, 0)
+        sliderBg.BackgroundColor3 = Color3.fromRGB(10, 20, 35)
+        sliderBg.BorderSizePixel = 0
+        sliderBg.Parent = frame
+
+        local bgCorner = Instance.new("UICorner")
+        bgCorner.CornerRadius = UDim.new(1, 0)
+        bgCorner.Parent = sliderBg
+
+        local fill = Instance.new("Frame")
+        fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
+        fill.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+        fill.BorderSizePixel = 0
+        fill.Parent = sliderBg
+
+        local fillCorner = Instance.new("UICorner")
+        fillCorner.CornerRadius = UDim.new(1, 0)
+        fillCorner.Parent = fill
+
+        local function update(input)
+            local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+            local val = math.floor(minVal + (maxVal - minVal) * pos)
+            fill.Size = UDim2.new(pos, 0, 1, 0)
+            label.Text = name .. ": " .. tostring(val)
+            callback(val)
+        end
+
+        local dragging = false
+        sliderBg.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                update(input)
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                update(input)
+            end
+        end)
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = false
+            end
+        end)
+    end
+
+    -- 1. Potato Mode (Boost FPS)
     CreateToggle("Potato Mode (Boost FPS)", function(state)
         for _, v in pairs(workspace:GetDescendants()) do
             if state then
@@ -299,20 +380,17 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 4. Speed Boost
-    local speedConn
-    CreateToggle("Speed Boost (500)", function(state)
-        if state then
-            speedConn = RunService.RenderStepped:Connect(function()
-                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                    if hum and hum.MoveDirection.Magnitude > 0 then
-                        LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + (hum.MoveDirection * 2)
-                    end
-                end
-            end)
-        else
-            if speedConn then speedConn:Disconnect() end
+    -- 4. WalkSpeed Slider (تحكم السرعة)
+    CreateSlider("Walk Speed", 16, 500, 16, function(val)
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
+        end
+    end)
+
+    -- 5. JumpPower Slider (تحكم القفز)
+    CreateSlider("Jump Power", 50, 300, 50, function(val)
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = val
         end
     end)
 end
