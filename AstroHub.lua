@@ -1,4 +1,4 @@
--- [[ Astro Hub V8 - Perfect Fly & Fixed Speed Lock ]]
+-- [[ Astro Hub V9 - Ultimate Icy Glass & Real Joystick Fly ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -16,7 +16,6 @@ local TeleportService = game:GetService("TeleportService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- إعدادات إعادة الاتصال التلقائي
 getgenv().AutoReconnectState = false
 CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
@@ -29,7 +28,6 @@ if CoreGui:FindFirstChild("AstroHubGui") then
     CoreGui.AstroHubGui:Destroy()
 end
 
--- واجهة المفتاح الثلجية
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
 KeyGui.Parent = CoreGui
@@ -100,7 +98,6 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- زر الفتح والإغلاق
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 45, 0, 45)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -22)
@@ -121,7 +118,6 @@ local function LoadAstroHub()
     OpenStroke.Thickness = 2
     OpenStroke.Parent = OpenBtn
 
-    -- اللوحة الرئيسية
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 540, 0, 380)
     MainFrame.Position = UDim2.new(0.5, -270, 0.5, -190)
@@ -243,7 +239,6 @@ local function LoadAstroHub()
     local PagePlayer = CreatePage("⚡ Player & Fly")
     local PageVisual = CreatePage("🎮 Performance")
 
-    -- 1. صفحة الإحصائيات
     local StatsCard = Instance.new("Frame")
     StatsCard.Size = UDim2.new(0.95, 0, 0, 130)
     StatsCard.BackgroundColor3 = Color3.fromRGB(230, 242, 255)
@@ -378,7 +373,6 @@ local function LoadAstroHub()
         getgenv().AutoReconnectState = state
     end)
 
-    -- 2. صفحة اللاعب والطيران المعدل بالكامل
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
         if state then
             _G.InfJump = UserInputService.JumpRequest:Connect(function()
@@ -405,7 +399,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- طيران أسطوري سلس يعتمد على اتجاه النظر/الكاميرا للأيباد
+    -- نظام طيران تفاعلي حقيقي (حسب عصا الحركة أو أزرار الكيبورد W A S D)
     local flying = false
     local flySpeed = 50
     local bv, bg
@@ -422,18 +416,43 @@ local function LoadAstroHub()
             
             bv = Instance.new("BodyVelocity")
             bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            bv.Velocity = Vector3.new(0, 0, 0)
             bv.Parent = hrp
 
             bg = Instance.new("BodyGyro")
             bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.CFrame = hrp.CFrame
             bg.Parent = hrp
 
             task.spawn(function()
                 while flying and char and hrp.Parent do
                     RunService.RenderStepped:Wait()
                     local camCF = Camera.CFrame
+                    local moveDir = Vector3.new(0, 0, 0)
+
+                    if hum and hum.MoveDirection.Magnitude > 0 then
+                        moveDir = hum.MoveDirection
+                    end
+
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
+                        moveDir = moveDir + camCF.LookVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
+                        moveDir = moveDir - camCF.LookVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
+                        moveDir = moveDir + camCF.RightVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
+                        moveDir = moveDir - camCF.RightVector
+                    end
+
+                    if moveDir.Magnitude > 0 then
+                        bv.Velocity = moveDir.Unit * flySpeed
+                    else
+                        bv.Velocity = Vector3.new(0, 0.1, 0)
+                    end
                     bg.CFrame = camCF
-                    bv.Velocity = camCF.LookVector * flySpeed
                 end
             end)
         else
@@ -443,7 +462,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- تثبيت السرعة بدون أي هبوط مفاجئ (Speed Lock Loop)
+    -- تثبيت السرعة القوي لمنع الهبوط المفاجئ
     local targetSpeed = 16
     local speedLocked = false
 
@@ -463,7 +482,6 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 3. صفحة الأداء
     CreateToggle(PageVisual, "Potato Mode (Boost FPS)", function(state)
         for _, v in pairs(Workspace:GetDescendants()) do
             if state then
@@ -483,7 +501,7 @@ local function LoadAstroHub()
     end)
 end
 
-SubmitBtn.MouseButton1Click:Connect(function()
+SubmitBtn.MouseButton1Click:Connect(function:Connect(function()
     if KeyBox.Text == "ASTRO-2026-KEY" then
         LoadAstroHub()
     else
