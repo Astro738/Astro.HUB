@@ -1,4 +1,4 @@
--- [[ Astro Hub V13 - Single Instance & ESP Features ]]
+-- [[ Astro Hub V14 - Ultimate Aimbot & ESP Edition ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -16,7 +16,7 @@ local TeleportService = game:GetService("TeleportService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ حماية حصرية: حظر تكرار الواجهة (يتحقق ويمسح النسخ القديمة فوراً)
+-- حماية حصرية ضد تكرار الواجهة
 if CoreGui:FindFirstChild("AstroHubGui") then
     CoreGui.AstroHubGui:Destroy()
 end
@@ -262,6 +262,7 @@ local function LoadAstroHub()
 
     local PageHome = CreatePage("🏠 Home / Stats")
     local PagePlayer = CreatePage("⚡ Player & Fly")
+    local PageCombat = CreatePage("🎯 Aimbot")
     local PageVisual = CreatePage("👁️ ESP & Visuals")
     local PagePerf = CreatePage("🎮 Performance")
 
@@ -524,7 +525,41 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 👁️ إضافة ميزة ESP لرؤية اللاعبين والأسماء من خلف الجدران
+    -- 🎯 ميزة الأيم أسيست الخرافي (Aimbot)
+    local aimbotEnabled = false
+    local function GetClosestPlayer()
+        local closest = nil
+        local shortestDist = math.huge
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+                local pos, onScreen = Camera:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
+                if onScreen then
+                    local dist = (Vector2.new(pos.X, pos.Y) - Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)).Magnitude
+                    if dist < shortestDist then
+                        shortestDist = dist
+                        closest = plr
+                    end
+                end
+            end
+        end
+        return closest
+    end
+
+    CreateToggle(PageCombat, "Aimbot (Lock Camera)", function(state)
+        aimbotEnabled = state
+        if aimbotEnabled then
+            _G.AimLoop = RunService.RenderStepped:Connect(function()
+                local target = GetClosestPlayer()
+                if target and target.Character and target.Character:FindFirstChild("Head") then
+                    Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+                end
+            end)
+        else
+            if _G.AimLoop then _G.AimLoop:Disconnect() end
+        end
+    end)
+
+    -- 👁️ ESP لرؤية اللاعبين من خلف الجدران
     local espActive = false
     CreateToggle(PageVisual, "Player ESP (Highlight)", function(state)
         espActive = state
