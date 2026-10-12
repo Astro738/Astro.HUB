@@ -1,4 +1,4 @@
--- [[ Astro Hub V20 - Final Clean Reset & Aimbot Fix Edition ]]
+-- [[ Astro Hub V21 - Fresh Start & Clean Reset Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -17,11 +17,20 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ نظام إيقاف شامل وتصفير لكل الحلقات والعمليات بالخلفية
+-- 🛡️ تصفير وإيقاف كامل لجميع العمليات والحلقات
 getgenv().AstroRunning = false
+getgenv().AimbotConnection = nil
+getgenv().NoclipConnection = nil
+getgenv().InfJumpConnection = nil
+getgenv().SpeedConnection = nil
 
 local function KillAllConnections()
     getgenv().AstroRunning = false
+    
+    if getgenv().AimbotConnection then getgenv().AimbotConnection:Disconnect() getgenv().AimbotConnection = nil end
+    if getgenv().NoclipConnection then getgenv().NoclipConnection:Disconnect() getgenv().NoclipConnection = nil end
+    if getgenv().InfJumpConnection then getgenv().InfJumpConnection:Disconnect() getgenv().InfJumpConnection = nil end
+    if getgenv().SpeedConnection then getgenv().SpeedConnection:Disconnect() getgenv().SpeedConnection = nil end
     
     if LocalPlayer.Character then
         local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -34,7 +43,6 @@ local function KillAllConnections()
         end
     end
 
-    -- إزالة جميع تأثيرات البوسات والبيض والـ Highlights
     for _, obj in pairs(Workspace:GetDescendants()) do
         if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
             obj:Destroy()
@@ -139,6 +147,9 @@ BtnCorner.Parent = SubmitBtn
 local function LoadAstroHub()
     PlayClickSound()
     KeyGui:Destroy()
+    
+    -- تأكيد تصفير أي حالة سابقة وبدء جلسة جديدة نظيفة 100%
+    KillAllConnections()
     getgenv().AstroRunning = true
 
     local ScreenGui = Instance.new("ScreenGui")
@@ -482,20 +493,20 @@ local function LoadAstroHub()
 
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
         if state then
-            _G.InfJump = UserInputService.JumpRequest:Connect(function()
+            getgenv().InfJumpConnection = UserInputService.JumpRequest:Connect(function()
                 if not getgenv().AstroRunning then return end
                 if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
                     LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
                 end
             end)
         else
-            if _G.InfJump then _G.InfJump:Disconnect() end
+            if getgenv().InfJumpConnection then getgenv().InfJumpConnection:Disconnect() end
         end
     end)
 
     CreateToggle(PagePlayer, "Noclip", function(state)
         if state then
-            _G.NoclipConn = RunService.Stepped:Connect(function()
+            getgenv().NoclipConnection = RunService.Stepped:Connect(function()
                 if not getgenv().AstroRunning then return end
                 if LocalPlayer.Character then
                     for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
@@ -504,7 +515,7 @@ local function LoadAstroHub()
                 end
             end)
         else
-            if _G.NoclipConn then _G.NoclipConn:Disconnect() end
+            if getgenv().NoclipConnection then getgenv().NoclipConnection:Disconnect() end
             if LocalPlayer.Character then
                 for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                     if part:IsA("BasePart") then part.CanCollide = true end
@@ -565,10 +576,9 @@ local function LoadAstroHub()
         end
     end)
 
-    local speedConn
     CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
-        if speedConn then speedConn:Disconnect() end
-        speedConn = RunService.RenderStepped:Connect(function()
+        if getgenv().SpeedConnection then getgenv().SpeedConnection:Disconnect() end
+        getgenv().SpeedConnection = RunService.RenderStepped:Connect(function()
             if not getgenv().AstroRunning then return end
             if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
                 LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
@@ -580,12 +590,11 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 Aimbot آمن ومرتبط بنظام التصفير العام (Kill Switch)
-    local aimbotConn
+    -- 🎯 Aimbot نظيف يبدأ مغلقاً تماماً
     CreateToggle(PageCombat, "Aimbot (Lock Camera)", function(state)
-        if aimbotConn then aimbotConn:Disconnect() end
+        if getgenv().AimbotConnection then getgenv().AimbotConnection:Disconnect() getgenv().AimbotConnection = nil end
         if state then
-            aimbotConn = RunService.RenderStepped:Connect(function()
+            getgenv().AimbotConnection = RunService.RenderStepped:Connect(function()
                 if not getgenv().AstroRunning then return end
                 local closest = nil
                 local shortestDist = math.huge
