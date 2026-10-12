@@ -1,4 +1,4 @@
--- [[ Astro Hub V19 - Smart Lighting & Map Speed Edition ]]
+-- [[ Astro Hub V20 - Final Clean Reset & Aimbot Fix Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -17,9 +17,9 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
+-- 🛡️ نظام إيقاف شامل وتصفير لكل الحلقات والعمليات بالخلفية
 getgenv().AstroRunning = false
 
--- تنظيف شامل عند الإغلاق دون فرض سرعة 16 قسراً لتجنب تعارض المابات
 local function KillAllConnections()
     getgenv().AstroRunning = false
     
@@ -34,6 +34,7 @@ local function KillAllConnections()
         end
     end
 
+    -- إزالة جميع تأثيرات البوسات والبيض والـ Highlights
     for _, obj in pairs(Workspace:GetDescendants()) do
         if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
             obj:Destroy()
@@ -564,13 +565,11 @@ local function LoadAstroHub()
         end
     end)
 
-    local speedActive = false
     local speedConn
     CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
-        speedActive = true
         if speedConn then speedConn:Disconnect() end
         speedConn = RunService.RenderStepped:Connect(function()
-            if not getgenv().AstroRunning or not speedActive then return end
+            if not getgenv().AstroRunning then return end
             if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
                 LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
             end
@@ -581,38 +580,31 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 Aimbot
-    local aimbotEnabled = false
-    local function GetClosestPlayer()
-        local closest = nil
-        local shortestDist = math.huge
-        for _, plr in pairs(Players:GetPlayers()) do
-            if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
-                local pos, onScreen = Camera:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
-                if onScreen then
-                    local dist = (Vector2.new(pos.X, pos.Y) - Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)).Magnitude
-                    if dist < shortestDist then
-                        shortestDist = dist
-                        closest = plr
+    -- 🎯 Aimbot آمن ومرتبط بنظام التصفير العام (Kill Switch)
+    local aimbotConn
+    CreateToggle(PageCombat, "Aimbot (Lock Camera)", function(state)
+        if aimbotConn then aimbotConn:Disconnect() end
+        if state then
+            aimbotConn = RunService.RenderStepped:Connect(function()
+                if not getgenv().AstroRunning then return end
+                local closest = nil
+                local shortestDist = math.huge
+                for _, plr in pairs(Players:GetPlayers()) do
+                    if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+                        local pos, onScreen = Camera:WorldToViewportPoint(plr.Character.Head.Position)
+                        if onScreen then
+                            local dist = (Vector2.new(pos.X, pos.Y) - Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)).Magnitude
+                            if dist < shortestDist then
+                                shortestDist = dist
+                                closest = plr
+                            end
+                        end
                     end
                 end
-            end
-        end
-        return closest
-    end
-
-    CreateToggle(PageCombat, "Aimbot (Lock Camera)", function(state)
-        aimbotEnabled = state
-        if aimbotEnabled then
-            _G.AimLoop = RunService.RenderStepped:Connect(function()
-                if not getgenv().AstroRunning then return end
-                local target = GetClosestPlayer()
-                if target and target.Character and target.Character:FindFirstChild("Head") then
-                    Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+                if closest and closest.Character and closest.Character:FindFirstChild("Head") then
+                    Camera.CFrame = CFrame.new(Camera.CFrame.Position, closest.Character.Head.Position)
                 end
             end)
-        else
-            if _G.AimLoop then _G.AimLoop:Disconnect() end
         end
     end)
 
@@ -715,7 +707,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 🎮 Potato Mode الذكي مع زر إيقاف حقيقي يرجع الإضاءة وشكل الماب
+    -- 🎮 Potato Mode
     CreateToggle(PagePerf, "Potato Mode (Boost FPS)", function(state)
         if state then
             for _, v in pairs(Workspace:GetDescendants()) do
@@ -730,10 +722,8 @@ local function LoadAstroHub()
             Lighting.FogEnd = 9e9
             settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
         else
-            -- عند إطفائه، نعيد ضبط مستوى الجودة والظلال لوضعها الطبيعي دون مشاكل
             Lighting.GlobalShadows = true
             settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
-            -- إعادة تحميل العالم تتطلب إعادة دخول الماب أو ترك المادة الأصلية (لكن نلغي الظلال والفلتر الثقيل فوراً لتخفيف البكسلة)
         end
     end)
 end
