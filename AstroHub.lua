@@ -1,4 +1,4 @@
--- [[ Astro Hub V16 - Ultimate Pro Edition ]]
+-- [[ Astro Hub V17 - Complete Unload & Reset Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -17,17 +17,25 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ تنظيف كامل عند تشغيل السكربت لإلغاء أي سرعات أو طيران قديم
-if LocalPlayer.Character then
-    local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-    if hum then hum.WalkSpeed = 16 end
-    local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        for _, v in pairs(hrp:GetChildren()) do
-            if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+-- 🛡️ دالة لتنظيف وتصفير كل شيء (السرعة، الطيران، الجدران) بالكامل
+local function ResetEverything()
+    if LocalPlayer.Character then
+        local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.WalkSpeed = 16 end
+        local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            for _, v in pairs(hrp:GetChildren()) do
+                if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+            end
         end
     end
+    if _G.NoclipConn then _G.NoclipConn:Disconnect() end
+    if _G.InfJump then _G.InfJump:Disconnect() end
+    if _G.AimLoop then _G.AimLoop:Disconnect() end
 end
+
+-- تصفير فوري عند بدء التشغيل
+ResetEverything()
 
 if CoreGui:FindFirstChild("AstroHubGui") then
     CoreGui.AstroHubGui:Destroy()
@@ -44,15 +52,13 @@ CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     end
 end)
 
--- 🎵 دالة لصوت نقي عند الضغط
 local function PlayClickSound()
     local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://6042457221" -- صوت نقرة ناعم ونقي
+    sound.SoundId = "rbxassetid://6042457221"
     sound.Volume = 0.5
     sound.Parent = SoundService
     sound:Play()
-    Debris = game:GetService("Debris")
-    Debris:AddItem(sound, 1)
+    game:GetService("Debris"):AddItem(sound, 1)
 end
 
 local KeyGui = Instance.new("ScreenGui")
@@ -206,6 +212,7 @@ local function LoadAstroHub()
     Title.Font = Enum.Font.GothamBold
     Title.Parent = TopBar
 
+    -- ❌ زر إغلاق وتصفير كامل للسكربت (Unload Button)
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -217,7 +224,13 @@ local function LoadAstroHub()
     CloseBtn.Parent = TopBar
 
     OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
-    CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = false end)
+    
+    -- عند الضغظ على إغلاق يتم تصفير كل شيء وتدمير الواجهة بالكامل لتبدأ من جديد
+    CloseBtn.MouseButton1Click:Connect(function()
+        PlayClickSound()
+        ResetEverything()
+        ScreenGui:Destroy()
+    end)
 
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 150, 1, -40)
@@ -590,7 +603,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 🥚 كاشف البيض والنوادر (Divine / Secret / Mythic / Legendary)
+    -- 🥚 Eggs & Rarities
     local eggEspActive = false
     CreateToggle(PageDetect, "Highlight Eggs & Rarities", function(state)
         eggEspActive = state
@@ -620,7 +633,7 @@ local function LoadAstroHub()
         end)
     end)
 
-    -- 👹 كاشف البوسات (Boss Finder)
+    -- 👹 Boss Finder
     local bossEspActive = false
     CreateToggle(PageBoss, "Highlight All Bosses", function(state)
         bossEspActive = state
