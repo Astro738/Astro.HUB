@@ -1,5 +1,5 @@
--- [[ Astro Hub V14 - Ultimate Aimbot & ESP Edition ]]
--- [[ Key System Enabled: ASTRO-2026-KEY ]]
+-- [[ Astro Hub V15 - Boss Finder & Egg ESP Edition ]]
+-- [[ Key System Enabled ]]
 
 if setfpscap then
     setfpscap(240)
@@ -70,7 +70,7 @@ KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
 KeyBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 KeyBox.BackgroundTransparency = 0.3
 KeyBox.TextColor3 = Color3.fromRGB(20, 40, 70)
-KeyBox.PlaceholderText = "Enter Key (ASTRO-2026-KEY)"
+KeyBox.PlaceholderText = "Enter Key Here..." -- 🔒 تم إخفاء المفتاح بنجاح!
 KeyBox.Text = ""
 KeyBox.TextSize = 14
 KeyBox.Font = Enum.Font.Gotham
@@ -205,7 +205,7 @@ local function LoadAstroHub()
     Sidebar.BackgroundColor3 = Color3.fromRGB(195, 218, 240)
     Sidebar.BackgroundTransparency = 0.4
     Sidebar.BorderSizePixel = 0
-    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 300)
+    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 350)
     Sidebar.ScrollBarThickness = 2
     Sidebar.Parent = MainFrame
 
@@ -263,6 +263,8 @@ local function LoadAstroHub()
     local PageHome = CreatePage("🏠 Home / Stats")
     local PagePlayer = CreatePage("⚡ Player & Fly")
     local PageCombat = CreatePage("🎯 Aimbot")
+    local PageDetect = CreatePage("🥚 Eggs & Secrets")
+    local PageBoss = CreatePage("👹 Boss Finder")
     local PageVisual = CreatePage("👁️ ESP & Visuals")
     local PagePerf = CreatePage("🎮 Performance")
 
@@ -525,7 +527,7 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 ميزة الأيم أسيست الخرافي (Aimbot)
+    -- 🎯 Aimbot
     local aimbotEnabled = false
     local function GetClosestPlayer()
         local closest = nil
@@ -559,7 +561,88 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 👁️ ESP لرؤية اللاعبين من خلف الجدران
+    -- 🥚 1. كاشف البيض والـ Secrets / Divine
+    local eggEspActive = false
+    CreateToggle(PageDetect, "Highlight Eggs / Divine / Secret", function(state)
+        eggEspActive = state
+        task.spawn(function()
+            while eggEspActive do
+                for _, obj in pairs(Workspace:GetDescendants()) do
+                    local name = string.lower(obj.Name)
+                    if string.find(name, "egg") or string.find(name, "divine") or string.find(name, "secret") then
+                        if obj:IsA("Model") or obj:IsA("BasePart") then
+                            if not obj:FindFirstChild("AstroEggHighlight") then
+                                local hl = Instance.new("Highlight")
+                                hl.Name = "AstroEggHighlight"
+                                hl.FillColor = Color3.fromRGB(255, 215, 0) -- لون ذهبي للبيض والنادر
+                                hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                                hl.Parent = obj
+                            end
+                        end
+                    end
+                end
+                task.wait(3)
+            end
+            if not eggEspActive then
+                for _, obj in pairs(Workspace:GetDescendants()) do
+                    if obj:FindFirstChild("AstroEggHighlight") then
+                        obj.AstroEggHighlight:Destroy()
+                    end
+                end
+            end
+        end)
+    end)
+
+    -- 👹 2. كاشف البوسات (Boss Finder)
+    local bossEspActive = false
+    CreateToggle(PageBoss, "Highlight All Bosses", function(state)
+        bossEspActive = state
+        task.spawn(function()
+            while bossEspActive do
+                for _, obj in pairs(Workspace:GetDescendants()) do
+                    local name = string.lower(obj.Name)
+                    if string.find(name, "boss") or string.find(name, "monster") then
+                        if obj:IsA("Model") and obj:FindFirstChildOfClass("Humanoid") then
+                            if not obj:FindFirstChild("AstroBossHighlight") then
+                                local hl = Instance.new("Highlight")
+                                hl.Name = "AstroBossHighlight"
+                                hl.FillColor = Color3.fromRGB(255, 50, 50) -- لون أحمر ناري للبوسات
+                                hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                                hl.Parent = obj
+
+                                if not obj:FindFirstChild("AstroBossTag") then
+                                    local bgui = Instance.new("BillboardGui")
+                                    bgui.Name = "AstroBossTag"
+                                    bgui.Size = UDim2.new(0, 150, 0, 30)
+                                    bgui.AlwaysOnTop = true
+                                    bgui.ExtentsOffset = Vector3.new(0, 3, 0)
+                                    bgui.Parent = obj
+
+                                    local txt = Instance.new("TextLabel")
+                                    txt.Size = UDim2.new(1, 0, 1, 0)
+                                    txt.BackgroundTransparency = 1
+                                    txt.Text = "👹 BOSS: " .. obj.Name
+                                    txt.TextColor3 = Color3.fromRGB(255, 80, 80)
+                                    txt.TextSize = 14
+                                    txt.Font = Enum.Font.GothamBold
+                                    txt.Parent = bgui
+                                end
+                            end
+                        end
+                    end
+                end
+                task.wait(3)
+            end
+            if not bossEspActive then
+                for _, obj in pairs(Workspace:GetDescendants()) do
+                    if obj:FindFirstChild("AstroBossHighlight") then obj.AstroBossHighlight:Destroy() end
+                    if obj:FindFirstChild("AstroBossTag") then obj.AstroBossTag:Destroy() end
+                end
+            end
+        end)
+    end)
+
+    -- 👁️ ESP للاعبين
     local espActive = false
     CreateToggle(PageVisual, "Player ESP (Highlight)", function(state)
         espActive = state
