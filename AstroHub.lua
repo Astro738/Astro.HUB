@@ -1,8 +1,6 @@
--- [[ Astro Hub V4 - Max FPS & Full Control ]]
--- [[ Theme: Icy Glassmorphism ]]
+-- [[ Astro Hub V5 - Ultimate Glass & Legendary Fly ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
--- فك حد الـ FPS إلى 240 فريم فوراً
 if setfpscap then
     setfpscap(240)
 end
@@ -13,12 +11,15 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 local Stats = game:GetService("Stats")
+local Workspace = game:GetService("Workspace")
 local LocalPlayer = Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
 
 if CoreGui:FindFirstChild("AstroHubGui") then
     CoreGui.AstroHubGui:Destroy()
 end
 
+-- واجهة المفتاح
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
 KeyGui.Parent = CoreGui
@@ -28,7 +29,7 @@ local KeyMain = Instance.new("Frame")
 KeyMain.Size = UDim2.new(0, 320, 0, 200)
 KeyMain.Position = UDim2.new(0.5, -160, 0.5, -100)
 KeyMain.BackgroundColor3 = Color3.fromRGB(10, 20, 35)
-KeyMain.BackgroundTransparency = 0.25
+KeyMain.BackgroundTransparency = 0.2
 KeyMain.BorderSizePixel = 0
 KeyMain.Parent = KeyGui
 
@@ -90,51 +91,7 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- شريط الإحصائيات (FPS | Ping | CPU | GPU)
-    local StatsBar = Instance.new("Frame")
-    StatsBar.Size = UDim2.new(0, 380, 0, 32)
-    StatsBar.Position = UDim2.new(0.5, -190, 0, 12)
-    StatsBar.BackgroundColor3 = Color3.fromRGB(10, 20, 35)
-    StatsBar.BackgroundTransparency = 0.25
-    StatsBar.BorderSizePixel = 0
-    StatsBar.Parent = ScreenGui
-
-    local StatsCorner = Instance.new("UICorner")
-    StatsCorner.CornerRadius = UDim.new(0, 10)
-    StatsCorner.Parent = StatsBar
-
-    local StatsStroke = Instance.new("UIStroke")
-    StatsStroke.Color = Color3.fromRGB(120, 220, 255)
-    StatsStroke.Thickness = 1.5
-    StatsStroke.Transparency = 0.3
-    StatsStroke.Parent = StatsBar
-
-    local StatsText = Instance.new("TextLabel")
-    StatsText.Size = UDim2.new(1, 0, 1, 0)
-    StatsText.BackgroundTransparency = 1
-    StatsText.Text = "⚡ FPS: -- | 📡 Ping: --ms | 💻 CPU: --ms | 🎮 GPU: --ms"
-    StatsText.TextColor3 = Color3.fromRGB(180, 235, 255)
-    StatsText.TextSize = 12
-    StatsText.Font = Enum.Font.GothamBold
-    StatsText.Parent = StatsBar
-
-    local lastUpdate = tick()
-    local frameCount = 0
-    RunService.RenderStepped:Connect(function()
-        frameCount = frameCount + 1
-        if tick() - lastUpdate >= 1 then
-            local fps = frameCount
-            local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-            local cpu = string.format("%.1f", Stats.PerformanceStats.CPU:GetValue())
-            local gpu = string.format("%.1f", Stats.PerformanceStats.GPU:GetValue())
-            
-            StatsText.Text = string.format("⚡ FPS: %d  |  📡 Ping: %dms  |  💻 CPU: %sms  |  🎮 GPU: %sms", fps, ping, cpu, gpu)
-            frameCount = 0
-            lastUpdate = tick()
-        end
-    end)
-
-    -- زر الفتح والإغلاق
+    -- زر فتح وإغلاق القائمة العائم
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 50, 0, 50)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -25)
@@ -156,12 +113,12 @@ local function LoadAstroHub()
     OpenStroke.Transparency = 0.3
     OpenStroke.Parent = OpenBtn
 
-    -- اللوحة الرئيسية
+    -- اللوحة الرئيسية الأطول والأرتب
     local MainFrame = Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 420, 0, 360)
-    MainFrame.Position = UDim2.new(0.5, -210, 0.5, -180)
+    MainFrame.Size = UDim2.new(0, 440, 0, 420)
+    MainFrame.Position = UDim2.new(0.5, -220, 0.5, -210)
     MainFrame.BackgroundColor3 = Color3.fromRGB(10, 20, 35)
-    MainFrame.BackgroundTransparency = 0.25
+    MainFrame.BackgroundTransparency = 0.2
     MainFrame.BorderSizePixel = 0
     MainFrame.Visible = true
     MainFrame.Parent = ScreenGui
@@ -177,9 +134,9 @@ local function LoadAstroHub()
     MainStroke.Parent = MainFrame
 
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, 0, 0, 45)
+    Title.Size = UDim2.new(1, 0, 0, 40)
     Title.BackgroundTransparency = 1
-    Title.Text = "✨ Astro Hub | Glass Edition ✨"
+    Title.Text = "✨ Astro Hub | Ultimate Edition ✨"
     Title.TextColor3 = Color3.fromRGB(230, 245, 255)
     Title.TextSize = 16
     Title.Font = Enum.Font.GothamBold
@@ -187,7 +144,7 @@ local function LoadAstroHub()
 
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-    CloseBtn.Position = UDim2.new(1, -35, 0, 8)
+    CloseBtn.Position = UDim2.new(1, -35, 0, 5)
     CloseBtn.BackgroundTransparency = 1
     CloseBtn.Text = "✕"
     CloseBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
@@ -202,11 +159,12 @@ local function LoadAstroHub()
         MainFrame.Visible = false
     end)
 
+    -- حاوية العناصر والقوائم
     local Container = Instance.new("ScrollingFrame")
-    Container.Size = UDim2.new(1, -20, 1, -55)
-    Container.Position = UDim2.new(0, 10, 0, 50)
+    Container.Size = UDim2.new(1, -20, 1, -110)
+    Container.Position = UDim2.new(0, 10, 0, 100)
     Container.BackgroundTransparency = 1
-    Container.CanvasSize = UDim2.new(0, 0, 0, 420)
+    Container.CanvasSize = UDim2.new(0, 0, 0, 520)
     Container.ScrollBarThickness = 5
     Container.ScrollBarImageColor3 = Color3.fromRGB(120, 220, 255)
     Container.Parent = MainFrame
@@ -216,9 +174,53 @@ local function LoadAstroHub()
     UIList.HorizontalAlignment = Enum.HorizontalAlignment.Center
     UIList.Parent = Container
 
+    -- صندوق إحصائيات النظام داخل القائمة (أنيق ومرتب)
+    local StatsBox = Instance.new("Frame")
+    StatsBox.Size = UDim2.new(0, 420, 0, 45)
+    StatsBox.Position = UDim2.new(0.5, -210, 0, 45)
+    StatsBox.BackgroundColor3 = Color3.fromRGB(15, 30, 50)
+    StatsBox.BackgroundTransparency = 0.3
+    StatsBox.BorderSizePixel = 0
+    StatsBox.Parent = MainFrame
+
+    local StatsCorner = Instance.new("UICorner")
+    StatsCorner.CornerRadius = UDim.new(0, 10)
+    StatsCorner.Parent = StatsBox
+
+    local StatsStroke = Instance.new("UIStroke")
+    StatsStroke.Color = Color3.fromRGB(100, 200, 255)
+    StatsStroke.Thickness = 1
+    StatsStroke.Transparency = 0.4
+    StatsStroke.Parent = StatsBox
+
+    local StatsText = Instance.new("TextLabel")
+    StatsText.Size = UDim2.new(1, 0, 1, 0)
+    StatsText.BackgroundTransparency = 1
+    StatsText.Text = "⚡ FPS: -- | 📡 Ping: --ms | 💻 CPU: --ms | 🎮 GPU: --ms"
+    StatsText.TextColor3 = Color3.fromRGB(180, 235, 255)
+    StatsText.TextSize = 12
+    StatsText.Font = Enum.Font.GothamBold
+    StatsText.Parent = StatsBox
+
+    local lastUpdate = tick()
+    local frameCount = 0
+    RunService.RenderStepped:Connect(function()
+        frameCount = frameCount + 1
+        if tick() - lastUpdate >= 1 then
+            local fps = frameCount
+            local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+            local cpu = string.format("%.1f", Stats.PerformanceStats.CPU:GetValue())
+            local gpu = string.format("%.1f", Stats.PerformanceStats.GPU:GetValue())
+            StatsText.Text = string.format("⚡ FPS: %d  |  📡 Ping: %dms  |  💻 CPU: %sms  |  🎮 GPU: %sms", fps, ping, cpu, gpu)
+            frameCount = 0
+            lastUpdate = tick()
+        end
+    end)
+
+    -- دالة إنشاء أزرار التبديل
     local function CreateToggle(name, callback)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.95, 0, 0, 40)
+        btn.Size = UDim2.new(0.95, 0, 0, 42)
         btn.BackgroundColor3 = Color3.fromRGB(20, 35, 60)
         btn.BackgroundTransparency = 0.4
         btn.TextColor3 = Color3.fromRGB(210, 235, 255)
@@ -253,7 +255,7 @@ local function LoadAstroHub()
         end)
     end
 
-    -- دالة إنشاء سلايدر التحكم باللمس
+    -- دالة إنشاء سلايدر للتحكم
     local function CreateSlider(name, minVal, maxVal, defaultVal, callback)
         local frame = Instance.new("Frame")
         frame.Size = UDim2.new(0.95, 0, 0, 50)
@@ -329,9 +331,9 @@ local function LoadAstroHub()
         end)
     end
 
-    -- 1. Potato Mode (Boost FPS)
+    -- 1. Potato Mode (FPS Boost)
     CreateToggle("Potato Mode (Boost FPS)", function(state)
-        for _, v in pairs(workspace:GetDescendants()) do
+        for _, v in pairs(Workspace:GetDescendants()) do
             if state then
                 if v:IsA("BasePart") then
                     v.Material = Enum.Material.SmoothPlastic
@@ -380,18 +382,80 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 4. WalkSpeed Slider (تحكم السرعة)
-    CreateSlider("Walk Speed", 16, 500, 16, function(val)
+    -- 4. Legendary Fly System (نظام طيران أسطوري حقيقي)
+    local flyConn
+    local flySpeed = 50
+    CreateToggle("Legendary Fly", function(state)
+        if state then
+            local char = LocalPlayer.Character
+            if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+            local hrp = char.HumanoidRootPart
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            
+            local bv = Instance.new("BodyVelocity")
+            bv.Name = "AstroFlyVelocity"
+            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            bv.Velocity = Vector3.new(0, 0, 0)
+            bv.Parent = hrp
+
+            local bg = Instance.new("BodyGyro")
+            bg.Name = "AstroFlyGyro"
+            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.CFrame = hrp.CFrame
+            bg.Parent = hrp
+
+            if hum then hum.PlatformStand = true end
+
+            flyConn = RunService.RenderStepped:Connect(function()
+                if char and hrp and bv and bg then
+                    local camCFrame = Camera.CFrame
+                    local moveDir = Vector3.new(0, 0, 0)
+                    
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
+                        moveDir = moveDir + camCFrame.LookVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
+                        moveDir = moveDir - camCFrame.LookVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
+                        moveDir = moveDir + camCFrame.RightVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
+                        moveDir = moveDir - camCFrame.RightVector
+                    end
+
+                    bv.Velocity = moveDir * flySpeed
+                    bg.CFrame = camCFrame
+                end
+            end)
+        else
+            if flyConn then flyConn:Disconnect() end
+            local char = LocalPlayer.Character
+            if char then
+                if char:FindFirstChild("HumanoidRootPart") then
+                    if char.HumanoidRootPart:FindFirstChild("AstroFlyVelocity") then
+                        char.HumanoidRootPart.AstroFlyVelocity:Destroy()
+                    end
+                    if char.HumanoidRootPart:FindFirstChild("AstroFlyGyro") then
+                        char.HumanoidRootPart.AstroFlyGyro:Destroy()
+                    end
+                end
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                if hum then hum.PlatformStand = false end
+            end
+        end
+    end)
+
+    -- 5. WalkSpeed Slider
+    CreateSlider("Walk Speed", 16, 300, 16, function(val)
         if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
             LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
         end
     end)
 
-    -- 5. JumpPower Slider (تحكم القفز)
-    CreateSlider("Jump Power", 50, 300, 50, function(val)
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = val
-        end
+    -- 6. Fly Speed Slider (تحكم سرعة الطيران)
+    CreateSlider("Fly Speed", 20, 200, 50, function(val)
+        flySpeed = val
     end)
 end
 
