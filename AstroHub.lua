@@ -1,4 +1,4 @@
--- [[ Astro Hub V17 - Complete Unload & Reset Edition ]]
+-- [[ Astro Hub V18 - Full Purge & Kill Switch Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -17,11 +17,16 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ دالة لتنظيف وتصفير كل شيء (السرعة، الطيران، الجدران) بالكامل
-local function ResetEverything()
+-- 🛡️ مغير عام لإيقاف جميع العمليات والحلقات بالكامل عند الإغلاق
+getgenv().AstroRunning = false
+
+local function KillAllConnections()
+    getgenv().AstroRunning = false
+    
+    -- إعادة السرعة والشخصية لوضعها الطبيعي
     if LocalPlayer.Character then
         local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-        if hum then hum.WalkSpeed = 16 end
+        if hum then hum.WalkSpeed = 16 hum.PlatformStand = false end
         local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if hrp then
             for _, v in pairs(hrp:GetChildren()) do
@@ -29,13 +34,24 @@ local function ResetEverything()
             end
         end
     end
-    if _G.NoclipConn then _G.NoclipConn:Disconnect() end
-    if _G.InfJump then _G.InfJump:Disconnect() end
-    if _G.AimLoop then _G.AimLoop:Disconnect() end
+
+    -- إزالة جميع تأثيرات الـ Highlight الخاصة بالبيض والبوسات واللاعبين
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
+            obj:Destroy()
+        end
+    end
+
+    -- إرجاع الجدران طبيعية
+    if LocalPlayer.Character then
+        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") then part.CanCollide = true end
+        end
+    end
 end
 
--- تصفير فوري عند بدء التشغيل
-ResetEverything()
+-- تصفير فوري عند البداية
+KillAllConnections()
 
 if CoreGui:FindFirstChild("AstroHubGui") then
     CoreGui.AstroHubGui:Destroy()
@@ -126,6 +142,7 @@ BtnCorner.Parent = SubmitBtn
 local function LoadAstroHub()
     PlayClickSound()
     KeyGui:Destroy()
+    getgenv().AstroRunning = true
 
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "AstroHubGui"
@@ -212,7 +229,7 @@ local function LoadAstroHub()
     Title.Font = Enum.Font.GothamBold
     Title.Parent = TopBar
 
-    -- ❌ زر إغلاق وتصفير كامل للسكربت (Unload Button)
+    -- ❌ زر الإغلاق والإنهاء التام (Kill Switch)
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -225,10 +242,9 @@ local function LoadAstroHub()
 
     OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
     
-    -- عند الضغظ على إغلاق يتم تصفير كل شيء وتدمير الواجهة بالكامل لتبدأ من جديد
     CloseBtn.MouseButton1Click:Connect(function()
         PlayClickSound()
-        ResetEverything()
+        KillAllConnections()
         ScreenGui:Destroy()
     end)
 
@@ -326,6 +342,7 @@ local function LoadAstroHub()
     local lastUpdate = tick()
     local frameCount = 0
     RunService.RenderStepped:Connect(function()
+        if not getgenv().AstroRunning then return end
         frameCount = frameCount + 1
         if tick() - lastUpdate >= 1 then
             local fps = frameCount
@@ -470,6 +487,7 @@ local function LoadAstroHub()
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
         if state then
             _G.InfJump = UserInputService.JumpRequest:Connect(function()
+                if not getgenv().AstroRunning then return end
                 if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
                     LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
                 end
@@ -482,6 +500,7 @@ local function LoadAstroHub()
     CreateToggle(PagePlayer, "Noclip", function(state)
         if state then
             _G.NoclipConn = RunService.Stepped:Connect(function()
+                if not getgenv().AstroRunning then return end
                 if LocalPlayer.Character then
                     for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                         if part:IsA("BasePart") then part.CanCollide = false end
@@ -523,7 +542,7 @@ local function LoadAstroHub()
             bg.Parent = hrp
 
             task.spawn(function()
-                while flying and char and hrp.Parent do
+                while flying and getgenv().AstroRunning and char and hrp.Parent do
                     RunService.RenderStepped:Wait()
                     local camCF = Camera.CFrame
                     bg.CFrame = camCF
@@ -551,13 +570,13 @@ local function LoadAstroHub()
     end)
 
     local targetSpeed = 16
-    local speedLocked = false
+    local speedConn
 
     CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
         targetSpeed = val
-        if not speedLocked then
-            speedLocked = true
-            RunService.RenderStepped:Connect(function()
+        if not speedConn then
+            speedConn = RunService.RenderStepped:Connect(function()
+                if not getgenv().AstroRunning then return end
                 if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
                     LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = targetSpeed
                 end
@@ -593,6 +612,7 @@ local function LoadAstroHub()
         aimbotEnabled = state
         if aimbotEnabled then
             _G.AimLoop = RunService.RenderStepped:Connect(function()
+                if not getgenv().AstroRunning then return end
                 local target = GetClosestPlayer()
                 if target and target.Character and target.Character:FindFirstChild("Head") then
                     Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
@@ -608,7 +628,7 @@ local function LoadAstroHub()
     CreateToggle(PageDetect, "Highlight Eggs & Rarities", function(state)
         eggEspActive = state
         task.spawn(function()
-            while eggEspActive do
+            while eggEspActive and getgenv().AstroRunning do
                 for _, obj in pairs(Workspace:GetDescendants()) do
                     local name = string.lower(obj.Name)
                     if string.find(name, "egg") or string.find(name, "divine") or string.find(name, "secret") or string.find(name, "mythic") or string.find(name, "legendary") then
@@ -627,7 +647,7 @@ local function LoadAstroHub()
             end
             if not eggEspActive then
                 for _, obj in pairs(Workspace:GetDescendants()) do
-                    if obj:FindFirstChild("AstroEggHighlight") then obj.AstroEggHighlight:Destroy() end
+                    if obj.Name == "AstroEggHighlight" then obj:Destroy() end
                 end
             end
         end)
@@ -638,7 +658,7 @@ local function LoadAstroHub()
     CreateToggle(PageBoss, "Highlight All Bosses", function(state)
         bossEspActive = state
         task.spawn(function()
-            while bossEspActive do
+            while bossEspActive and getgenv().AstroRunning do
                 for _, obj in pairs(Workspace:GetDescendants()) do
                     local name = string.lower(obj.Name)
                     if string.find(name, "boss") or string.find(name, "monster") then
@@ -673,8 +693,7 @@ local function LoadAstroHub()
             end
             if not bossEspActive then
                 for _, obj in pairs(Workspace:GetDescendants()) do
-                    if obj:FindFirstChild("AstroBossHighlight") then obj.AstroBossHighlight:Destroy() end
-                    if obj:FindFirstChild("AstroBossTag") then obj.AstroBossTag:Destroy() end
+                    if obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then obj:Destroy() end
                 end
             end
         end)
