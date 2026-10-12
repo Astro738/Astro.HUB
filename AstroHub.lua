@@ -1,4 +1,4 @@
--- [[ Astro Hub V12 - Final Masterpiece & Discord Integration ]]
+-- [[ Astro Hub V12 - Ultimate Speed 2000 Max Edition ]]
 -- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
 if setfpscap then
@@ -98,7 +98,6 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- زر الفتح والإغلاق الثلجي (أكبر حجماً وقابل للسحب Draggable)
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 55, 0, 55)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -28)
@@ -119,7 +118,6 @@ local function LoadAstroHub()
     OpenStroke.Thickness = 2.5
     OpenStroke.Parent = OpenBtn
 
-    -- كود جعل الزر قابل للسحب (Draggable) بالإصبع أو الماوس
     local dragging, dragInput, dragStart, startPos
     OpenBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -298,10 +296,9 @@ local function LoadAstroHub()
         end
     end)
 
-    -- زر نسخ رابط سيرفر الديسكورد الفخم في صفحة Home
     local DiscordBtn = Instance.new("TextButton")
     DiscordBtn.Size = UDim2.new(0.95, 0, 0, 42)
-    DiscordBtn.BackgroundColor3 = Color3.fromRGB(114, 137, 218) -- لون ديسكورد المميز
+    DiscordBtn.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
     DiscordBtn.BackgroundTransparency = 0.1
     DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     DiscordBtn.Text = "💬 Join Discord Server"
@@ -506,7 +503,8 @@ local function LoadAstroHub()
     local targetSpeed = 16
     local speedLocked = false
 
-    CreateSlider(PagePlayer, "WalkSpeed", 0, 1000, 16, function(val)
+    -- سرعة المشي حتى 2000 Max
+    CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
         targetSpeed = val
         if not speedLocked then
             speedLocked = true
@@ -518,7 +516,8 @@ local function LoadAstroHub()
         end
     end)
 
-    CreateSlider(PagePlayer, "Fly Speed", 20, 500, 50, function(val)
+    -- سرعة الطيران حتى 2000 Max
+    CreateSlider(PagePlayer, "Fly Speed", 20, 2000, 50, function(val)
         flySpeed = val
     end)
 
