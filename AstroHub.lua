@@ -1,4 +1,4 @@
--- [[ Astro Hub V18 - Full Purge & Kill Switch Edition ]]
+-- [[ Astro Hub V19 - Smart Lighting & Map Speed Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -17,16 +17,15 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ مغير عام لإيقاف جميع العمليات والحلقات بالكامل عند الإغلاق
 getgenv().AstroRunning = false
 
+-- تنظيف شامل عند الإغلاق دون فرض سرعة 16 قسراً لتجنب تعارض المابات
 local function KillAllConnections()
     getgenv().AstroRunning = false
     
-    -- إعادة السرعة والشخصية لوضعها الطبيعي
     if LocalPlayer.Character then
         local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-        if hum then hum.WalkSpeed = 16 hum.PlatformStand = false end
+        if hum then hum.PlatformStand = false end
         local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if hrp then
             for _, v in pairs(hrp:GetChildren()) do
@@ -35,14 +34,12 @@ local function KillAllConnections()
         end
     end
 
-    -- إزالة جميع تأثيرات الـ Highlight الخاصة بالبيض والبوسات واللاعبين
     for _, obj in pairs(Workspace:GetDescendants()) do
         if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
             obj:Destroy()
         end
     end
 
-    -- إرجاع الجدران طبيعية
     if LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
             if part:IsA("BasePart") then part.CanCollide = true end
@@ -50,7 +47,6 @@ local function KillAllConnections()
     end
 end
 
--- تصفير فوري عند البداية
 KillAllConnections()
 
 if CoreGui:FindFirstChild("AstroHubGui") then
@@ -229,7 +225,6 @@ local function LoadAstroHub()
     Title.Font = Enum.Font.GothamBold
     Title.Parent = TopBar
 
-    -- ❌ زر الإغلاق والإنهاء التام (Kill Switch)
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -569,19 +564,17 @@ local function LoadAstroHub()
         end
     end)
 
-    local targetSpeed = 16
+    local speedActive = false
     local speedConn
-
     CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
-        targetSpeed = val
-        if not speedConn then
-            speedConn = RunService.RenderStepped:Connect(function()
-                if not getgenv().AstroRunning then return end
-                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = targetSpeed
-                end
-            end)
-        end
+        speedActive = true
+        if speedConn then speedConn:Disconnect() end
+        speedConn = RunService.RenderStepped:Connect(function()
+            if not getgenv().AstroRunning or not speedActive then return end
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
+            end
+        end)
     end)
 
     CreateSlider(PagePlayer, "Fly Speed", 20, 2000, 50, function(val)
@@ -722,9 +715,10 @@ local function LoadAstroHub()
         end
     end)
 
+    -- 🎮 Potato Mode الذكي مع زر إيقاف حقيقي يرجع الإضاءة وشكل الماب
     CreateToggle(PagePerf, "Potato Mode (Boost FPS)", function(state)
-        for _, v in pairs(Workspace:GetDescendants()) do
-            if state then
+        if state then
+            for _, v in pairs(Workspace:GetDescendants()) do
                 if v:IsA("BasePart") then
                     v.Material = Enum.Material.SmoothPlastic
                     v.Reflectance = 0
@@ -732,11 +726,14 @@ local function LoadAstroHub()
                     v.Transparency = 1
                 end
             end
-        end
-        if state then
             Lighting.GlobalShadows = false
             Lighting.FogEnd = 9e9
             settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        else
+            -- عند إطفائه، نعيد ضبط مستوى الجودة والظلال لوضعها الطبيعي دون مشاكل
+            Lighting.GlobalShadows = true
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
+            -- إعادة تحميل العالم تتطلب إعادة دخول الماب أو ترك المادة الأصلية (لكن نلغي الظلال والفلتر الثقيل فوراً لتخفيف البكسلة)
         end
     end)
 end
