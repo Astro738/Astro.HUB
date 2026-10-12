@@ -1,33 +1,36 @@
--- [[ Astro Hub V12 - Fixed Secure Edition ]]
--- [[ Protected by Astro Security ]]
+-- [[ Astro Hub V12 - Ultimate Stable Edition ]]
+-- [[ Key System Enabled: ASTRO-2026-KEY ]]
 
-local _S = setfpscap if _S then _S(240) end
-local _C = game:GetService("CoreGui")
-local _P = game:GetService("Players")
-local _R = game:GetService("RunService")
-local _U = game:GetService("UserInputService")
-local _L = game:GetService("Lighting")
-local _ST = game:GetService("Stats")
-local _W = game:GetService("Workspace")
-local _T = game:GetService("TeleportService")
-local _LP = _P.LocalPlayer
-local _Cam = _W.CurrentCamera
+if setfpscap then
+    setfpscap(240)
+end
+
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+local Stats = game:GetService("Stats")
+local Workspace = game:GetService("Workspace")
+local TeleportService = game:GetService("TeleportService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
 
 getgenv().AutoReconnectState = false
-_C.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
         task.wait(1)
-        _T:Teleport(game.PlaceId, _LP)
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
     end
 end)
 
-if _C:FindFirstChild("AstroHubGui") then
-    _C.AstroHubGui:Destroy()
+if CoreGui:FindFirstChild("AstroHubGui") then
+    CoreGui.AstroHubGui:Destroy()
 end
 
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
-KeyGui.Parent = _C
+KeyGui.Parent = CoreGui
 KeyGui.IgnoreGuiInset = true
 
 local KeyMain = Instance.new("Frame")
@@ -92,7 +95,7 @@ local function LoadAstroHub()
 
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "AstroHubGui"
-    ScreenGui.Parent = _C
+    ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
     local OpenBtn = Instance.new("TextButton")
@@ -129,7 +132,7 @@ local function LoadAstroHub()
         end
     end)
 
-    _U.InputChanged:Connect(function(input)
+    UserInputService.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
             OpenBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
@@ -280,13 +283,13 @@ local function LoadAstroHub()
 
     local lastUpdate = tick()
     local frameCount = 0
-    _R.RenderStepped:Connect(function()
+    RunService.RenderStepped:Connect(function()
         frameCount = frameCount + 1
         if tick() - lastUpdate >= 1 then
             local fps = frameCount
-            local ping = math.floor(_ST.Network.ServerStatsItem["Data Ping"]:GetValue())
-            local cpu = string.format("%.1f", _ST.PerformanceStats.CPU:GetValue())
-            local gpu = string.format("%.1f", _ST.PerformanceStats.GPU:GetValue())
+            local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+            local cpu = string.format("%.1f", Stats.PerformanceStats.CPU:GetValue())
+            local gpu = string.format("%.1f", Stats.PerformanceStats.GPU:GetValue())
             StatsText.Text = string.format("⚡ FPS: %d\n📡 Ping: %d ms\n💻 CPU Usage: %s ms\n🎮 GPU Usage: %s ms", fps, ping, cpu, gpu)
             frameCount = 0
             lastUpdate = tick()
@@ -398,12 +401,12 @@ local function LoadAstroHub()
                 update(input)
             end
         end)
-        _U.InputChanged:Connect(function(input)
+        UserInputService.InputChanged:Connect(function(input)
             if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
                 update(input)
             end
         end)
-        _U.InputEnded:Connect(function(input)
+        UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 draggingSlider = false
             end
@@ -416,9 +419,9 @@ local function LoadAstroHub()
 
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
         if state then
-            _G.InfJump = _U.JumpRequest:Connect(function()
-                if _LP.Character and _LP.Character:FindFirstChildOfClass("Humanoid") then
-                    _LP.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+            _G.InfJump = UserInputService.JumpRequest:Connect(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
                 end
             end)
         else
@@ -428,17 +431,17 @@ local function LoadAstroHub()
 
     CreateToggle(PagePlayer, "Noclip", function(state)
         if state then
-            _G.NoclipConn = _R.Stepped:Connect(function()
-                if _LP.Character then
-                    for _, part in pairs(_LP.Character:GetDescendants()) do
+            _G.NoclipConn = RunService.Stepped:Connect(function()
+                if LocalPlayer.Character then
+                    for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                         if part:IsA("BasePart") then part.CanCollide = false end
                     end
                 end
             end)
         else
             if _G.NoclipConn then _G.NoclipConn:Disconnect() end
-            if _LP.Character then
-                for _, part in pairs(_LP.Character:GetDescendants()) do
+            if LocalPlayer.Character then
+                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                     if part:IsA("BasePart") then part.CanCollide = true end
                 end
             end
@@ -451,7 +454,7 @@ local function LoadAstroHub()
 
     CreateToggle(PagePlayer, "Legendary Fly", function(state)
         flying = state
-        local char = _LP.Character
+        local char = LocalPlayer.Character
         if not char or not char:FindFirstChild("HumanoidRootPart") then return end
         local hrp = char.HumanoidRootPart
         local hum = char:FindFirstChildOfClass("Humanoid")
@@ -471,19 +474,19 @@ local function LoadAstroHub()
 
             task.spawn(function()
                 while flying and char and hrp.Parent do
-                    _R.RenderStepped:Wait()
-                    local camCF = _Cam.CFrame
+                    RunService.RenderStepped:Wait()
+                    local camCF = Camera.CFrame
                     bg.CFrame = camCF
 
                     if hum and hum.MoveDirection.Magnitude > 0 then
                         bv.Velocity = hum.MoveDirection * flySpeed + Vector3.new(0, camCF.LookVector.Y * hum.MoveDirection.Magnitude * flySpeed, 0)
-                    elseif _U:IsKeyDown(Enum.KeyCode.W) or _U:IsKeyDown(Enum.KeyCode.Up) then
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
                         bv.Velocity = camCF.LookVector * flySpeed
-                    elseif _U:IsKeyDown(Enum.KeyCode.S) or _U:IsKeyDown(Enum.KeyCode.Down) then
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
                         bv.Velocity = -camCF.LookVector * flySpeed
-                    elseif _U:IsKeyDown(Enum.KeyCode.D) or _U:IsKeyDown(Enum.KeyCode.Right) then
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
                         bv.Velocity = camCF.RightVector * flySpeed
-                    elseif _U:IsKeyDown(Enum.KeyCode.A) or _U:IsKeyDown(Enum.KeyCode.Left) then
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
                         bv.Velocity = -camCF.RightVector * flySpeed
                     else
                         bv.Velocity = Vector3.new(0, 0, 0)
@@ -504,9 +507,9 @@ local function LoadAstroHub()
         targetSpeed = val
         if not speedLocked then
             speedLocked = true
-            _R.RenderStepped:Connect(function()
-                if _LP.Character and _LP.Character:FindFirstChildOfClass("Humanoid") then
-                    _LP.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = targetSpeed
+            RunService.RenderStepped:Connect(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = targetSpeed
                 end
             end)
         end
@@ -517,7 +520,7 @@ local function LoadAstroHub()
     end)
 
     CreateToggle(PageVisual, "Potato Mode (Boost FPS)", function(state)
-        for _, v in pairs(_W:GetDescendants()) do
+        for _, v in pairs(Workspace:GetDescendants()) do
             if state then
                 if v:IsA("BasePart") then
                     v.Material = Enum.Material.SmoothPlastic
@@ -528,8 +531,8 @@ local function LoadAstroHub()
             end
         end
         if state then
-            _L.GlobalShadows = false
-            _L.FogEnd = 9e9
+            Lighting.GlobalShadows = false
+            Lighting.FogEnd = 9e9
             settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
         end
     end)
