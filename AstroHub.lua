@@ -1,5 +1,5 @@
--- [[ Astro Hub V21 - Fresh Start & Clean Reset Edition ]]
--- [[ Key System Enabled ]]
+-- [[ Astro Hub V21 - Private & Clean Edition ]] --
+-- [[ Key System Enabled ]] --
 
 if setfpscap then
     setfpscap(240)
@@ -17,7 +17,7 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ تصفير وإيقاف كامل لجميع العمليات والحلقات
+-- 🛡️ تصفير وإيقاف كامل لجميع العمليات والحلقات السابقة
 getgenv().AstroRunning = false
 getgenv().AimbotConnection = nil
 getgenv().NoclipConnection = nil
@@ -148,7 +148,6 @@ local function LoadAstroHub()
     PlayClickSound()
     KeyGui:Destroy()
     
-    -- تأكيد تصفير أي حالة سابقة وبدء جلسة جديدة نظيفة 100%
     KillAllConnections()
     getgenv().AstroRunning = true
 
@@ -346,6 +345,7 @@ local function LoadAstroHub()
     StatsText.TextXAlignment = Enum.TextXAlignment.Left
     StatsText.Parent = StatsCard
 
+    -- 🛡️ تحديث Stats آمن تماماً لا يتسبب بتجمد الكونسول أو توقف السكربت
     local lastUpdate = tick()
     local frameCount = 0
     RunService.RenderStepped:Connect(function()
@@ -353,9 +353,10 @@ local function LoadAstroHub()
         frameCount = frameCount + 1
         if tick() - lastUpdate >= 1 then
             local fps = frameCount
-            local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-            local cpu = string.format("%.1f", Stats.PerformanceStats.CPU:GetValue())
-            local gpu = string.format("%.1f", Stats.PerformanceStats.GPU:GetValue())
+            local ping = 0
+            pcall(function()
+                ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+            end)
             
             local coords = "X: 0, Y: 0, Z: 0"
             if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -363,7 +364,7 @@ local function LoadAstroHub()
                 coords = string.format("X: %d, Y: %d, Z: %d", math.floor(pos.X), math.floor(pos.Y), math.floor(pos.Z))
             end
 
-            StatsText.Text = string.format("⚡ FPS: %d | 📡 Ping: %d ms\n💻 CPU: %s ms | 🎮 GPU: %s ms\n📍 Coords: %s", fps, ping, cpu, gpu, coords)
+            StatsText.Text = string.format("⚡ FPS: %d | 📡 Ping: %d ms\n💻 CPU: Active | 🎮 GPU: Stable\n📍 Coords: %s", fps, ping, coords)
             frameCount = 0
             lastUpdate = tick()
         end
@@ -392,102 +393,6 @@ local function LoadAstroHub()
             DiscordBtn.Text = "💬 Join Discord Server"
         end
     end)
-
-    local function CreateToggle(parentPage, name, callback)
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.95, 0, 0, 40)
-        btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
-        btn.BackgroundTransparency = 0.4
-        btn.TextColor3 = Color3.fromRGB(20, 50, 90)
-        btn.Text = name .. ": OFF"
-        btn.TextSize = 13
-        btn.Font = Enum.Font.GothamBold
-        btn.Parent = parentPage
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = btn
-
-        local active = false
-        btn.MouseButton1Click:Connect(function()
-            PlayClickSound()
-            active = not active
-            if active then
-                btn.BackgroundColor3 = Color3.fromRGB(80, 170, 245)
-                btn.BackgroundTransparency = 0.1
-                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                btn.Text = name .. ": ON"
-            else
-                btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
-                btn.BackgroundTransparency = 0.4
-                btn.TextColor3 = Color3.fromRGB(20, 50, 90)
-                btn.Text = name .. ": OFF"
-            end
-            callback(active)
-        end)
-    end
-
-    local function CreateSlider(parentPage, name, minVal, maxVal, defaultVal, callback)
-        local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(0.95, 0, 0, 50)
-        frame.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
-        frame.BackgroundTransparency = 0.4
-        frame.Parent = parentPage
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = frame
-
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(1, -20, 0, 22)
-        label.Position = UDim2.new(0, 10, 0, 4)
-        label.BackgroundTransparency = 1
-        label.Text = name .. ": " .. tostring(defaultVal)
-        label.TextColor3 = Color3.fromRGB(20, 50, 90)
-        label.TextSize = 13
-        label.Font = Enum.Font.GothamBold
-        label.Parent = frame
-
-        local sliderBg = Instance.new("Frame")
-        sliderBg.Size = UDim2.new(0.9, 0, 0, 8)
-        sliderBg.Position = UDim2.new(0.05, 0, 0.7, 0)
-        sliderBg.BackgroundColor3 = Color3.fromRGB(180, 205, 230)
-        sliderBg.BorderSizePixel = 0
-        sliderBg.Parent = frame
-
-        local fill = Instance.new("Frame")
-        fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
-        fill.BackgroundColor3 = Color3.fromRGB(70, 160, 230)
-        fill.BorderSizePixel = 0
-        fill.Parent = sliderBg
-
-        local function update(input)
-            local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-            local val = math.floor(minVal + (maxVal - minVal) * pos)
-            fill.Size = UDim2.new(pos, 0, 1, 0)
-            label.Text = name .. ": " .. tostring(val)
-            callback(val)
-        end
-
-        local draggingSlider = false
-        sliderBg.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                draggingSlider = true
-                PlayClickSound()
-                update(input)
-            end
-        end)
-        UserInputService.InputChanged:Connect(function(input)
-            if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-                update(input)
-            end
-        end)
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                draggingSlider = false
-            end
-        end)
-    end
 
     CreateToggle(PageHome, "Auto Reconnect Server", function(state) getgenv().AutoReconnectState = state end)
 
@@ -576,6 +481,68 @@ local function LoadAstroHub()
         end
     end)
 
+    local function CreateSlider(parentPage, name, minVal, maxVal, defaultVal, callback)
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0.95, 0, 0, 50)
+        frame.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
+        frame.BackgroundTransparency = 0.4
+        frame.Parent = parentPage
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = frame
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, -20, 0, 22)
+        label.Position = UDim2.new(0, 10, 0, 4)
+        label.BackgroundTransparency = 1
+        label.Text = name .. ": " .. tostring(defaultVal)
+        label.TextColor3 = Color3.fromRGB(20, 50, 90)
+        label.TextSize = 13
+        label.Font = Enum.Font.GothamBold
+        label.Parent = frame
+
+        local sliderBg = Instance.new("Frame")
+        sliderBg.Size = UDim2.new(0.9, 0, 0, 8)
+        sliderBg.Position = UDim2.new(0.05, 0, 0.7, 0)
+        sliderBg.BackgroundColor3 = Color3.fromRGB(180, 205, 230)
+        sliderBg.BorderSizePixel = 0
+        sliderBg.Parent = frame
+
+        local fill = Instance.new("Frame")
+        fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
+        fill.BackgroundColor3 = Color3.fromRGB(70, 160, 230)
+        fill.BorderSizePixel = 0
+        fill.Parent = sliderBg
+
+        local function update(input)
+            local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+            local val = math.floor(minVal + (maxVal - minVal) * pos)
+            fill.Size = UDim2.new(pos, 0, 1, 0)
+            label.Text = name .. ": " .. tostring(val)
+            callback(val)
+        end
+
+        local draggingSlider = false
+        sliderBg.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                draggingSlider = true
+                PlayClickSound()
+                update(input)
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                update(input)
+            end
+        end)
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                draggingSlider = false
+            end
+        end)
+    end
+
     CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
         if getgenv().SpeedConnection then getgenv().SpeedConnection:Disconnect() end
         getgenv().SpeedConnection = RunService.RenderStepped:Connect(function()
@@ -590,7 +557,6 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 Aimbot نظيف يبدأ مغلقاً تماماً
     CreateToggle(PageCombat, "Aimbot (Lock Camera)", function(state)
         if getgenv().AimbotConnection then getgenv().AimbotConnection:Disconnect() getgenv().AimbotConnection = nil end
         if state then
@@ -617,7 +583,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 🥚 Eggs & Rarities
     local eggEspActive = false
     CreateToggle(PageDetect, "Highlight Eggs & Rarities", function(state)
         eggEspActive = state
@@ -647,7 +612,6 @@ local function LoadAstroHub()
         end)
     end)
 
-    -- 👹 Boss Finder
     local bossEspActive = false
     CreateToggle(PageBoss, "Highlight All Bosses", function(state)
         bossEspActive = state
@@ -693,7 +657,6 @@ local function LoadAstroHub()
         end)
     end)
 
-    -- 👁️ Player ESP
     local espActive = false
     CreateToggle(PageVisual, "Player ESP (Highlight)", function(state)
         espActive = state
@@ -716,7 +679,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 🎮 Potato Mode
     CreateToggle(PagePerf, "Potato Mode (Boost FPS)", function(state)
         if state then
             for _, v in pairs(Workspace:GetDescendants()) do
@@ -734,6 +696,41 @@ local function LoadAstroHub()
             Lighting.GlobalShadows = true
             settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
         end
+    end)
+end
+
+-- دالة مساعدة لإنشاء الأزرار
+local function CreateToggle(parentPage, name, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.95, 0, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
+    btn.BackgroundTransparency = 0.4
+    btn.TextColor3 = Color3.fromRGB(20, 50, 90)
+    btn.Text = name .. ": OFF"
+    btn.TextSize = 13
+    btn.Font = Enum.Font.GothamBold
+    btn.Parent = parentPage
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = btn
+
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        PlayClickSound()
+        active = not active
+        if active then
+            btn.BackgroundColor3 = Color3.fromRGB(80, 170, 245)
+            btn.BackgroundTransparency = 0.1
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.Text = name .. ": ON"
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
+            btn.BackgroundTransparency = 0.4
+            btn.TextColor3 = Color3.fromRGB(20, 50, 90)
+            btn.Text = name .. ": OFF"
+        end
+        callback(active)
     end)
 end
 
