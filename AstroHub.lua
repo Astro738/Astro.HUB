@@ -1,4 +1,4 @@
--- [[ Astro Hub V21 - Private & Clean Edition ]] --
+-- [[ Astro Hub V21 - Fixed UI & Features Edition ]] --
 -- [[ Key System Enabled ]] --
 
 if setfpscap then
@@ -316,6 +316,104 @@ local function LoadAstroHub()
         return scrolling
     end
 
+    -- ⚙️ تعريف دوال إنشاء الأزرار في البداية لتظهر بكافة القوائم
+    local function CreateToggle(parentPage, name, callback)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0.95, 0, 0, 40)
+        btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
+        btn.BackgroundTransparency = 0.4
+        btn.TextColor3 = Color3.fromRGB(20, 50, 90)
+        btn.Text = name .. ": OFF"
+        btn.TextSize = 13
+        btn.Font = Enum.Font.GothamBold
+        btn.Parent = parentPage
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = btn
+
+        local active = false
+        btn.MouseButton1Click:Connect(function()
+            PlayClickSound()
+            active = not active
+            if active then
+                btn.BackgroundColor3 = Color3.fromRGB(80, 170, 245)
+                btn.BackgroundTransparency = 0.1
+                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                btn.Text = name .. ": ON"
+            else
+                btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
+                btn.BackgroundTransparency = 0.4
+                btn.TextColor3 = Color3.fromRGB(20, 50, 90)
+                btn.Text = name .. ": OFF"
+            end
+            callback(active)
+        end)
+    end
+
+    local function CreateSlider(parentPage, name, minVal, maxVal, defaultVal, callback)
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0.95, 0, 0, 50)
+        frame.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
+        frame.BackgroundTransparency = 0.4
+        frame.Parent = parentPage
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = frame
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, -20, 0, 22)
+        label.Position = UDim2.new(0, 10, 0, 4)
+        label.BackgroundTransparency = 1
+        label.Text = name .. ": " .. tostring(defaultVal)
+        label.TextColor3 = Color3.fromRGB(20, 50, 90)
+        label.TextSize = 13
+        label.Font = Enum.Font.GothamBold
+        label.Parent = frame
+
+        local sliderBg = Instance.new("Frame")
+        sliderBg.Size = UDim2.new(0.9, 0, 0, 8)
+        sliderBg.Position = UDim2.new(0.05, 0, 0.7, 0)
+        sliderBg.BackgroundColor3 = Color3.fromRGB(180, 205, 230)
+        sliderBg.BorderSizePixel = 0
+        sliderBg.Parent = frame
+
+        local fill = Instance.new("Frame")
+        fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
+        fill.BackgroundColor3 = Color3.fromRGB(70, 160, 230)
+        fill.BorderSizePixel = 0
+        fill.Parent = sliderBg
+
+        local function update(input)
+            local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+            local val = math.floor(minVal + (maxVal - minVal) * pos)
+            fill.Size = UDim2.new(pos, 0, 1, 0)
+            label.Text = name .. ": " .. tostring(val)
+            callback(val)
+        end
+
+        local draggingSlider = false
+        sliderBg.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                draggingSlider = true
+                PlayClickSound()
+                update(input)
+            end
+        end)
+        UserInputService.InputChanged:Connect(function(input)
+            if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                update(input)
+            end
+        end)
+        UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                draggingSlider = false
+            end
+        end)
+    end
+
+    -- إنشاء الصفحات
     local PageHome = CreatePage("🏠 Home / Stats")
     local PagePlayer = CreatePage("⚡ Player & Fly")
     local PageCombat = CreatePage("🎯 Aimbot")
@@ -345,7 +443,6 @@ local function LoadAstroHub()
     StatsText.TextXAlignment = Enum.TextXAlignment.Left
     StatsText.Parent = StatsCard
 
-    -- 🛡️ تحديث Stats آمن تماماً لا يتسبب بتجمد الكونسول أو توقف السكربت
     local lastUpdate = tick()
     local frameCount = 0
     RunService.RenderStepped:Connect(function()
@@ -394,6 +491,7 @@ local function LoadAstroHub()
         end
     end)
 
+    -- إدراج المميزات في قوائمها الخاصة
     CreateToggle(PageHome, "Auto Reconnect Server", function(state) getgenv().AutoReconnectState = state end)
 
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
@@ -480,68 +578,6 @@ local function LoadAstroHub()
             if hum then hum.PlatformStand = false end
         end
     end)
-
-    local function CreateSlider(parentPage, name, minVal, maxVal, defaultVal, callback)
-        local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(0.95, 0, 0, 50)
-        frame.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
-        frame.BackgroundTransparency = 0.4
-        frame.Parent = parentPage
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = frame
-
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(1, -20, 0, 22)
-        label.Position = UDim2.new(0, 10, 0, 4)
-        label.BackgroundTransparency = 1
-        label.Text = name .. ": " .. tostring(defaultVal)
-        label.TextColor3 = Color3.fromRGB(20, 50, 90)
-        label.TextSize = 13
-        label.Font = Enum.Font.GothamBold
-        label.Parent = frame
-
-        local sliderBg = Instance.new("Frame")
-        sliderBg.Size = UDim2.new(0.9, 0, 0, 8)
-        sliderBg.Position = UDim2.new(0.05, 0, 0.7, 0)
-        sliderBg.BackgroundColor3 = Color3.fromRGB(180, 205, 230)
-        sliderBg.BorderSizePixel = 0
-        sliderBg.Parent = frame
-
-        local fill = Instance.new("Frame")
-        fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
-        fill.BackgroundColor3 = Color3.fromRGB(70, 160, 230)
-        fill.BorderSizePixel = 0
-        fill.Parent = sliderBg
-
-        local function update(input)
-            local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-            local val = math.floor(minVal + (maxVal - minVal) * pos)
-            fill.Size = UDim2.new(pos, 0, 1, 0)
-            label.Text = name .. ": " .. tostring(val)
-            callback(val)
-        end
-
-        local draggingSlider = false
-        sliderBg.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                draggingSlider = true
-                PlayClickSound()
-                update(input)
-            end
-        end)
-        UserInputService.InputChanged:Connect(function(input)
-            if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-                update(input)
-            end
-        end)
-        UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                draggingSlider = false
-            end
-        end)
-    end
 
     CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
         if getgenv().SpeedConnection then getgenv().SpeedConnection:Disconnect() end
@@ -696,41 +732,6 @@ local function LoadAstroHub()
             Lighting.GlobalShadows = true
             settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
         end
-    end)
-end
-
--- دالة مساعدة لإنشاء الأزرار
-local function CreateToggle(parentPage, name, callback)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.95, 0, 0, 40)
-    btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
-    btn.BackgroundTransparency = 0.4
-    btn.TextColor3 = Color3.fromRGB(20, 50, 90)
-    btn.Text = name .. ": OFF"
-    btn.TextSize = 13
-    btn.Font = Enum.Font.GothamBold
-    btn.Parent = parentPage
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = btn
-
-    local active = false
-    btn.MouseButton1Click:Connect(function()
-        PlayClickSound()
-        active = not active
-        if active then
-            btn.BackgroundColor3 = Color3.fromRGB(80, 170, 245)
-            btn.BackgroundTransparency = 0.1
-            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            btn.Text = name .. ": ON"
-        else
-            btn.BackgroundColor3 = Color3.fromRGB(225, 238, 252)
-            btn.BackgroundTransparency = 0.4
-            btn.TextColor3 = Color3.fromRGB(20, 50, 90)
-            btn.Text = name .. ": OFF"
-        end
-        callback(active)
     end)
 end
 
