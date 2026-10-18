@@ -1,5 +1,5 @@
--- [[ Astro Hub V24 - Halloween Enhanced & Smooth UI Edition ]] --
--- [[ Astro Realm & Improved Buttons/Close Logic ]] --
+-- [[ Astro Hub V25 - Ultimate Halloween Edition ]] --
+-- [[ Auto Game Info & Live Friends Detection Included ]] --
 
 if setfpscap then
     pcall(function() setfpscap(240) end)
@@ -14,6 +14,7 @@ local Stats = game:GetService("Stats")
 local Workspace = game:GetService("Workspace")
 local TeleportService = game:GetService("TeleportService")
 local SoundService = game:GetService("SoundService")
+local MarketplaceService = game:GetService("MarketplaceService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
@@ -47,7 +48,7 @@ local function IsSavedKeyValid()
     return false
 end
 
--- 🛡️ نظام تصفير العمليات عند إعادة التشغيل
+-- 🛡️ تصفير العمليات في الخلفية
 getgenv().AstroRunning = false
 
 local function KillAllConnections()
@@ -203,7 +204,6 @@ local function LoadAstroHub()
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
-    -- زر الـ X المطور (يخفي الواجهة فقط بدون مسح أي شيء!) ✕
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0, 6)
@@ -243,7 +243,7 @@ local function LoadAstroHub()
         local scrolling = Instance.new("ScrollingFrame")
         scrolling.Size = UDim2.new(1, 0, 1, 0)
         scrolling.BackgroundTransparency = 1
-        scrolling.CanvasSize = UDim2.new(0, 0, 0, 580)
+        scrolling.CanvasSize = UDim2.new(0, 0, 0, 650)
         scrolling.ScrollBarThickness = 4
         scrolling.ScrollBarImageColor3 = Color3.fromRGB(255, 120, 0)
         scrolling.Visible = false
@@ -375,7 +375,7 @@ local function LoadAstroHub()
 
         local draggingSlider = false
         sliderBg.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch Catholic then
                 draggingSlider = true
                 PlayClickSound()
                 update(input)
@@ -399,10 +399,11 @@ local function LoadAstroHub()
     local PageDetect = CreatePage("🥚 Eggs & Rarities")
     local PageBoss = CreatePage("👹 Boss Finder")
     local PageVisual = CreatePage("👁️ ESP & Visuals")
-    PagePerf = CreatePage("🎮 Performance")
+    local PagePerf = CreatePage("🎮 Performance")
 
+    -- 1️⃣ بطاقة الإحصائيات (FPS, Ping, Coordinates)
     local StatsCard = Instance.new("Frame")
-    StatsCard.Size = UDim2.new(0.95, 0, 0, 160)
+    StatsCard.Size = UDim2.new(0.95, 0, 0, 130)
     StatsCard.BackgroundColor3 = Color3.fromRGB(35, 18, 30)
     StatsCard.BackgroundTransparency = 0.2
     StatsCard.Parent = PageHome
@@ -426,6 +427,60 @@ local function LoadAstroHub()
     StatsText.Font = Enum.Font.GothamBold
     StatsText.TextXAlignment = Enum.TextXAlignment.Left
     StatsText.Parent = StatsCard
+
+    -- 2️⃣ بطاقة تفاصيل الماب والأصدقاء الحية (Game Info & Friends Realm) 🎃👥
+    local GameCard = Instance.new("Frame")
+    GameCard.Size = UDim2.new(0.95, 0, 0, 140)
+    GameCard.BackgroundColor3 = Color3.fromRGB(35, 18, 30)
+    GameCard.BackgroundTransparency = 0.2
+    GameCard.Parent = PageHome
+
+    local gcCorner = Instance.new("UICorner")
+    gcCorner.CornerRadius = UDim.new(0, 10)
+    gcCorner.Parent = GameCard
+
+    local gcStroke = Instance.new("UIStroke")
+    gcStroke.Color = Color3.fromRGB(220, 90, 0)
+    gcStroke.Thickness = 1.5
+    gcStroke.Parent = GameCard
+
+    local GameText = Instance.new("TextLabel")
+    GameText.Size = UDim2.new(1, -20, 1, 0)
+    GameText.Position = UDim2.new(0, 10, 0, 0)
+    GameText.BackgroundTransparency = 1
+    GameText.Text = "🎮 Game: Loading...\n👤 Player: " .. LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")\n👥 Friends Here: Checking..."
+    GameText.TextColor3 = Color3.fromRGB(255, 180, 80)
+    GameText.TextSize = 12
+    GameText.Font = Enum.Font.GothamBold
+    GameText.TextXAlignment = Enum.TextXAlignment.Left
+    GameText.Parent = GameCard
+
+    -- جلب اسم الماب تلقائياً
+    task.spawn(function()
+        local placeName = "Roblox Game"
+        pcall(function()
+            local info = MarketplaceService:GetProductInfo(game.PlaceId)
+            if info and info.Name then placeName = info.Name end
+        end)
+        
+        -- حلقة تحديث قائمة الأصدقاء والماب
+        while getgenv().AstroRunning do
+            local friendsList = {}
+            for _, plr in pairs(Players:GetPlayers()) do
+                if plr ~= LocalPlayer then
+                    pcall(function()
+                        if LocalPlayer:IsFriendsWith(plr.UserId) then
+                            table.insert(friendsList, plr.DisplayName)
+                        end
+                    end)
+                end
+            end
+
+            local friendsStr = #friendsList > 0 and table.concat(friendsList, ", ") or "No Friends In Server"
+            GameText.Text = string.format("🎮 Game: %s\n👤 Player: %s (@%s)\n👥 Friends Here: %s", placeName, LocalPlayer.DisplayName, LocalPlayer.Name, friendsStr)
+            task.wait(5)
+        end
+    end)
 
     local lastUpdate = tick()
     local frameCount = 0
@@ -451,7 +506,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- زر الديسكورد بتصميم الترحيب والهالوين الجديد 🎃💬
+    -- زر الديسكورد 🎃💬
     local DiscordBtn = Instance.new("TextButton")
     DiscordBtn.Size = UDim2.new(0.95, 0, 0, 45)
     DiscordBtn.BackgroundColor3 = Color3.fromRGB(200, 75, 0)
