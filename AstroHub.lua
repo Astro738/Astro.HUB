@@ -1,4 +1,4 @@
--- [[ Astro Hub V25 - Ultimate Halloween Edition ]] --
+-- [[ Astro Hub V25.1 - Fixed & Ultimate Halloween Edition ]] --
 -- [[ Auto Game Info & Live Friends Detection Included ]] --
 
 if setfpscap then
@@ -375,7 +375,7 @@ local function LoadAstroHub()
 
         local draggingSlider = false
         sliderBg.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch Catholic then
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 draggingSlider = true
                 PlayClickSound()
                 update(input)
@@ -455,7 +455,7 @@ local function LoadAstroHub()
     GameText.TextXAlignment = Enum.TextXAlignment.Left
     GameText.Parent = GameCard
 
-    -- جلب اسم الماب تلقائياً
+    -- جلب اسم الماب والأصدقاء تلقائياً
     task.spawn(function()
         local placeName = "Roblox Game"
         pcall(function()
@@ -463,7 +463,6 @@ local function LoadAstroHub()
             if info and info.Name then placeName = info.Name end
         end)
         
-        -- حلقة تحديث قائمة الأصدقاء والماب
         while getgenv().AstroRunning do
             local friendsList = {}
             for _, plr in pairs(Players:GetPlayers()) do
