@@ -1,5 +1,5 @@
--- [[ Astro Hub V20 - Final Clean Reset & Aimbot Distance Edition ]]
--- [[ Key System Enabled ]]
+-- [[ Astro Hub V21 - Ultimate Anti-Ban & Safe Noclip Edition ]] --
+-- [[ Key System & Advanced Protection Enabled ]] --
 
 if setfpscap then
     setfpscap(240)
@@ -17,7 +17,23 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ نظام إيقاف شامل وتصفير لكل الحلقات والعمليات بالخلفية
+-- 🛡️ درع حماية قوي لمنع أي أمر Kick أو باند وهمي من السيرفر
+pcall(function()
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local oldNamecall = mt.__namecall
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        if method == "Kick" or method == "kick" or method == "KICK" then
+            return nil -- تجاهل أمر الكيك تماماً وحمايتك من الطرد
+        end
+        return oldNamecall(self, ...)
+    end)
+    setreadonly(mt, true)
+end)
+
+-- 🛡️ تصفير العمليات والحلقات بالخلفية
 getgenv().AstroRunning = false
 
 local function KillAllConnections()
@@ -34,7 +50,6 @@ local function KillAllConnections()
         end
     end
 
-    -- إزالة جميع تأثيرات البوسات والبيض والـ Highlights
     for _, obj in pairs(Workspace:GetDescendants()) do
         if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
             obj:Destroy()
@@ -66,12 +81,14 @@ CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
 end)
 
 local function PlayClickSound()
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://6042457221"
-    sound.Volume = 0.5
-    sound.Parent = SoundService
-    sound:Play()
-    game:GetService("Debris"):AddItem(sound, 1)
+    pcall(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://6042457221"
+        sound.Volume = 0.5
+        sound.Parent = SoundService
+        sound:Play()
+        game:GetService("Debris"):AddItem(sound, 1)
+    end)
 end
 
 local KeyGui = Instance.new("ScreenGui")
@@ -410,7 +427,6 @@ local function LoadAstroHub()
     local PageVisual = CreatePage("👁️ ESP & Visuals")
     local PagePerf = CreatePage("🎮 Performance")
 
-    -- كارد الإحصائيات (Stats)
     local StatsCard = Instance.new("Frame")
     StatsCard.Size = UDim2.new(0.95, 0, 0, 160)
     StatsCard.BackgroundColor3 = Color3.fromRGB(230, 242, 255)
@@ -480,7 +496,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- تفعيل الأزرار والمميزات في القوائم
     CreateToggle(PageHome, "Auto Reconnect Server", function(state) getgenv().AutoReconnectState = state end)
 
     CreateToggle(PagePlayer, "Infinite Jump", function(state)
@@ -496,7 +511,8 @@ local function LoadAstroHub()
         end
     end)
 
-    CreateToggle(PagePlayer, "Noclip", function(state)
+    -- 🛡️ ميزة Noclip المحسنة الآمنة ضد الكشف
+    CreateToggle(PagePlayer, "Noclip (Safe)", function(state)
         if state then
             _G.NoclipConn = RunService.Stepped:Connect(function()
                 if not getgenv().AstroRunning then return end
@@ -582,9 +598,8 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 Aimbot ذكي مع تحديد مسافة الاستهداف وسلاسة عالية جداً في التنقل
     local aimbotConn
-    local maxAimbotDistance = 300 -- المسافة المباشرة الافتراضية بالمتر
+    local maxAimbotDistance = 300
 
     CreateToggle(PageCombat, "Aimbot (Smart Lock)", function(state)
         if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
@@ -603,8 +618,6 @@ local function LoadAstroHub()
                 for _, plr in pairs(Players:GetPlayers()) do
                     if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
                         local targetHead = plr.Character.Head
-                        
-                        -- التحقق من المسافة الحقيقية بينك وبين اللاعب (المسافة القريبة فقط)
                         local worldDist = (myHrp.Position - targetHead.Position).Magnitude
                         if worldDist <= maxAimbotDistance then
                             local headPos, onScreen = Camera:WorldToViewportPoint(targetHead.Position)
@@ -627,7 +640,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- سلايدر التحكم بمسافة الأيمبوت لتتجنب الناس البعيدين بـ 2000 و 3000 متر
     CreateSlider(PageCombat, "Aimbot Max Distance", 50, 1000, 300, function(val)
         maxAimbotDistance = val
     end)
@@ -706,54 +718,30 @@ local function LoadAstroHub()
         end)
     end)
 
+    -- 👁️ Player ESP ذكي ومختفي فوراً عند الموت
     local espActive = false
-    CreateToggle(PageVisual, "Player ESP (Highlight)", function(state)
+    CreateToggle(PageVisual, "Player ESP (Smart Clean)", function(state)
         espActive = state
-        for _, plr in pairs(Players:GetPlayers()) do
-            if plr ~= LocalPlayer and plr.Character then
-                if espActive then
-                    if not plr.Character:FindFirstChild("AstroHighlight") then
-                        local hl = Instance.new("Highlight")
-                        hl.Name = "AstroHighlight"
-                        hl.FillColor = Color3.fromRGB(100, 180, 255)
-                        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        hl.Parent = plr.Character
-                    end
-                else
-                    if plr.Character:FindFirstChild("AstroHighlight") then
-                        plr.Character.AstroHighlight:Destroy()
+        task.spawn(function()
+            while espActive and getgenv().AstroRunning do
+                for _, plr in pairs(Players:GetPlayers()) do
+                    if plr ~= LocalPlayer then
+                        local char = plr.Character
+                        local hum = char and char:FindFirstChildOfClass("Humanoid")
+                        
+                        if char and hum and hum.Health > 0 then
+                            if not char:FindFirstChild("AstroHighlight") then
+                                local hl = Instance.new("Highlight")
+                                hl.Name = "AstroHighlight"
+                                hl.FillColor = Color3.fromRGB(100, 180, 255)
+                                hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                                hl.Parent = char
+                            end
+                        else
+                            if char and char:FindFirstChild("AstroHighlight") then
+                                char.AstroHighlight:Destroy()
+                            end
+                        end
                     end
                 end
-            end
-        end
-    end)
-
-    CreateToggle(PagePerf, "Potato Mode (Boost FPS)", function(state)
-        if state then
-            for _, v in pairs(Workspace:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.Material = Enum.Material.SmoothPlastic
-                    v.Reflectance = 0
-                elseif v:IsA("Decal") or v:IsA("Texture") then
-                    v.Transparency = 1
-                end
-            end
-            Lighting.GlobalShadows = false
-            Lighting.FogEnd = 9e9
-            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-        else
-            Lighting.GlobalShadows = true
-            settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
-        end
-    end)
-end
-
-SubmitBtn.MouseButton1Click:Connect(function()
-    if KeyBox.Text == "ASTRO-2026-KEY" then
-        LoadAstroHub()
-    else
-        PlayClickSound()
-        KeyBox.Text = ""
-        KeyBox.PlaceholderText = "Wrong Key! Try Again"
-    end
-end)
+                task.
