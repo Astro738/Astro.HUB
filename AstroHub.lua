@@ -1,5 +1,5 @@
--- [[ Astro Hub V21 - Ultimate Fixed Edition ]] --
--- [[ Clean, Stable & 100% Working on Delta ]] --
+-- [[ Astro Hub V20 - Final Clean Reset & Aimbot Fix Edition ]]
+-- [[ Key System Enabled ]]
 
 if setfpscap then
     setfpscap(240)
@@ -17,11 +17,12 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ نظام تصفير العمليات والحلقات بالخلفية
+-- 🛡️ نظام إيقاف شامل وتصفير لكل الحلقات والعمليات بالخلفية
 getgenv().AstroRunning = false
 
 local function KillAllConnections()
     getgenv().AstroRunning = false
+    
     if LocalPlayer.Character then
         local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
         if hum then hum.PlatformStand = false end
@@ -33,6 +34,7 @@ local function KillAllConnections()
         end
     end
 
+    -- إزالة جميع تأثيرات البوسات والبيض والـ Highlights
     for _, obj in pairs(Workspace:GetDescendants()) do
         if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
             obj:Destroy()
@@ -55,18 +57,23 @@ if CoreGui:FindFirstChild("AstroKeyGui") then
     CoreGui.AstroKeyGui:Destroy()
 end
 
+getgenv().AutoReconnectState = false
+CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+    if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
+        task.wait(1)
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    end
+end)
+
 local function PlayClickSound()
-    pcall(function()
-        local sound = Instance.new("Sound")
-        sound.SoundId = "rbxassetid://6042457221"
-        sound.Volume = 0.5
-        sound.Parent = SoundService
-        sound:Play()
-        game:GetService("Debris"):AddItem(sound, 1)
-    end)
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://6042457221"
+    sound.Volume = 0.5
+    sound.Parent = SoundService
+    sound:Play()
+    game:GetService("Debris"):AddItem(sound, 1)
 end
 
--- نافذة إدخال المفتاح (Key System GUI)
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
 KeyGui.Parent = CoreGui
@@ -129,7 +136,6 @@ local BtnCorner = Instance.new("UICorner")
 BtnCorner.CornerRadius = UDim.new(0, 10)
 BtnCorner.Parent = SubmitBtn
 
--- دالة بناء الواجهة الرئيسية كاملة ومضمونة 100%
 local function LoadAstroHub()
     PlayClickSound()
     KeyGui:Destroy()
@@ -160,13 +166,17 @@ local function LoadAstroHub()
     OpenStroke.Thickness = 2.5
     OpenStroke.Parent = OpenBtn
 
-    -- تحريك الزر العائم
     local dragging, dragStart, startPos
     OpenBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = OpenBtn.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
         end
     end)
 
@@ -174,12 +184,6 @@ local function LoadAstroHub()
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
             OpenBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = false
         end
     end)
 
@@ -233,7 +237,12 @@ local function LoadAstroHub()
     CloseBtn.Parent = TopBar
 
     OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
-    CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() KillAllConnections() ScreenGui:Destroy() end)
+    
+    CloseBtn.MouseButton1Click:Connect(function()
+        PlayClickSound()
+        KillAllConnections()
+        ScreenGui:Destroy()
+    end)
 
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 150, 1, -40)
@@ -573,28 +582,34 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
+    -- 🎯 Aimbot المعدل: ناعم، يوجه نحو الرأس، ويسمح لك بتحريك الشاشة والتنقل بين الخصوم بحرية
     local aimbotConn
-    CreateToggle(PageCombat, "Aimbot (Lock Camera)", function(state)
-        if aimbotConn then aimbotConn:Disconnect() end
+    CreateToggle(PageCombat, "Aimbot (Smart Lock)", function(state)
+        if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
         if state then
             aimbotConn = RunService.RenderStepped:Connect(function()
                 if not getgenv().AstroRunning then return end
-                local closest = nil
+                
+                local closestHead = nil
                 local shortestDist = math.huge
+                local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+
                 for _, plr in pairs(Players:GetPlayers()) do
                     if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
-                        local pos, onScreen = Camera:WorldToViewportPoint(plr.Character.Head.Position)
+                        local headPos, onScreen = Camera:WorldToViewportPoint(plr.Character.Head.Position)
                         if onScreen then
-                            local dist = (Vector2.new(pos.X, pos.Y) - Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)).Magnitude
+                            local dist = (Vector2.new(headPos.X, headPos.Y) - screenCenter).Magnitude
                             if dist < shortestDist then
                                 shortestDist = dist
-                                closest = plr
+                                closestHead = plr.Character.Head
                             end
                         end
                     end
                 end
-                if closest and closest.Character and closest.Character:FindFirstChild("Head") then
-                    Camera.CFrame = CFrame.new(Camera.CFrame.Position, closest.Character.Head.Position)
+
+                if closestHead then
+                    local targetCFrame = CFrame.new(Camera.CFrame.Position, closestHead.Position)
+                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.25)
                 end
             end)
         end
