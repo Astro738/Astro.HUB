@@ -1,5 +1,5 @@
--- [[ Astro Hub V21 - Team Check & Ultimate Edition ]] --
--- [[ Key System & Smart Enemy Targeting Enabled ]] --
+-- [[ Astro Hub V22 - 24H Auto-Key & Custom Smooth Aim Edition ]] --
+-- [[ Delta Compatible & Ultra Fast Startup ]] --
 
 if setfpscap then
     pcall(function() setfpscap(240) end)
@@ -16,6 +16,36 @@ local TeleportService = game:GetService("TeleportService")
 local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
+
+-- 🔑 نظام حفظ المفتاح لمدة 24 ساعة برمجياً
+local KeyFileName = "AstroHub_KeySave.txt"
+local ValidKey = "ASTRO-2026-KEY"
+local KeyDuration = 86400 -- 24 ساعة بالثواني
+
+local function SaveKeyData(key)
+    if writefile then
+        pcall(function()
+            local data = key .. "|" .. tostring(os.time())
+            writefile(KeyFileName, data)
+        end)
+    end
+end
+
+local function IsSavedKeyValid()
+    if readfile and isfile and isfile(KeyFileName) then
+        local success, content = pcall(function() return readfile(KeyFileName) end)
+        if success and content then
+            local key, savedTime = string.match(content, "([^|]+)|(%d+)")
+            if key == ValidKey and savedTime then
+                local currentTime = os.time()
+                if (currentTime - tonumber(savedTime)) < KeyDuration then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
 
 -- 🛡️ نظام تصفير العمليات والحلقات بالخلفية بأمان تام
 getgenv().AstroRunning = false
@@ -78,72 +108,11 @@ local function PlayClickSound()
     end)
 end
 
--- نافذة إدخال المفتاح (Key System GUI)
-local KeyGui = Instance.new("ScreenGui")
-KeyGui.Name = "AstroKeyGui"
-KeyGui.Parent = CoreGui
-KeyGui.IgnoreGuiInset = true
-
-local KeyMain = Instance.new("Frame")
-KeyMain.Size = UDim2.new(0, 320, 0, 200)
-KeyMain.Position = UDim2.new(0.5, -160, 0.5, -100)
-KeyMain.BackgroundColor3 = Color3.fromRGB(220, 235, 250)
-KeyMain.BackgroundTransparency = 0.15
-KeyMain.BorderSizePixel = 0
-KeyMain.Parent = KeyGui
-
-local KeyCorner = Instance.new("UICorner")
-KeyCorner.CornerRadius = UDim.new(0, 16)
-KeyCorner.Parent = KeyMain
-
-local KeyStroke = Instance.new("UIStroke")
-KeyStroke.Color = Color3.fromRGB(150, 210, 255)
-KeyStroke.Thickness = 2.5
-KeyStroke.Transparency = 0.2
-KeyStroke.Parent = KeyMain
-
-local KeyTitle = Instance.new("TextLabel")
-KeyTitle.Size = UDim2.new(1, 0, 0, 40)
-KeyTitle.BackgroundTransparency = 1
-KeyTitle.Text = "❄️ Astro Hub - Key System ❄️"
-KeyTitle.TextColor3 = Color3.fromRGB(20, 50, 90)
-KeyTitle.TextSize = 16
-KeyTitle.Font = Enum.Font.GothamBold
-KeyTitle.Parent = KeyMain
-
-local KeyBox = Instance.new("TextBox")
-KeyBox.Size = UDim2.new(0.8, 0, 0, 40)
-KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
-KeyBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-KeyBox.BackgroundTransparency = 0.3
-KeyBox.TextColor3 = Color3.fromRGB(20, 40, 70)
-KeyBox.PlaceholderText = "Enter Key Here..."
-KeyBox.Text = ""
-KeyBox.TextSize = 14
-KeyBox.Font = Enum.Font.Gotham
-KeyBox.Parent = KeyMain
-
-local BoxCorner = Instance.new("UICorner")
-BoxCorner.CornerRadius = UDim.new(0, 10)
-BoxCorner.Parent = KeyBox
-
-local SubmitBtn = Instance.new("TextButton")
-SubmitBtn.Size = UDim2.new(0.8, 0, 0, 40)
-SubmitBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
-SubmitBtn.BackgroundColor3 = Color3.fromRGB(70, 160, 230)
-SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-SubmitBtn.Text = "Login"
-SubmitBtn.TextSize = 15
-SubmitBtn.Font = Enum.Font.GothamBold
-SubmitBtn.Parent = KeyMain
-
-local BtnCorner = Instance.new("UICorner")
-BtnCorner.CornerRadius = UDim.new(0, 10)
-BtnCorner.Parent = SubmitBtn
-
 local function LoadAstroHub()
     PlayClickSound()
-    KeyGui:Destroy()
+    if CoreGui:FindFirstChild("AstroKeyGui") then
+        CoreGui.AstroKeyGui:Destroy()
+    end
     getgenv().AstroRunning = true
 
     local ScreenGui = Instance.new("ScreenGui")
@@ -580,9 +549,10 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 Aimbot ذكي ومزود بـ Team Check (يتجاهل أصدقاء الفريق ويوجه على الأعداء فقط)
+    -- 🎯 Aimbot ذكي قابل للتحكم في سلاسته وقوته (Target Enemies Only)
     local aimbotConn
     local maxAimbotDistance = 300
+    local aimbotSmoothness = 0.35 -- قوة وسلاسة القفل على الرأس
 
     CreateToggle(PageCombat, "Aimbot (Smart Team Check)", function(state)
         if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
@@ -601,7 +571,6 @@ local function LoadAstroHub()
                 for _, plr in pairs(Players:GetPlayers()) do
                     if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
                         
-                        -- فحص الفريق (Team Check): استبعاد الأصدقاء/الزملاء في نفس الفريق
                         local isTeamMate = false
                         if LocalPlayer.Team and plr.Team and LocalPlayer.Team == plr.Team then
                             isTeamMate = true
@@ -626,7 +595,7 @@ local function LoadAstroHub()
 
                 if closestHead then
                     local targetCFrame = CFrame.new(Camera.CFrame.Position, closestHead.Position)
-                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.35)
+                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, aimbotSmoothness)
                 end
             end)
         end
@@ -634,6 +603,11 @@ local function LoadAstroHub()
 
     CreateSlider(PageCombat, "Aimbot Max Distance", 50, 1000, 300, function(val)
         maxAimbotDistance = val
+    end)
+
+    -- سلايدر التحكم بقوة وسلاسة توجيه الأيمبوت على الخصم
+    CreateSlider(PageCombat, "Aim Smoothness %", 10, 100, 35, function(val)
+        aimbotSmoothness = val / 100
     end)
 
     local eggEspActive = false
@@ -710,7 +684,6 @@ local function LoadAstroHub()
         end)
     end)
 
-    -- 👁️ Player ESP ذكي ومختفي فوراً عند الموت وبدون أخطاء
     local espActive = false
     CreateToggle(PageVisual, "Player ESP (Smart Clean)", function(state)
         espActive = state
@@ -769,12 +742,80 @@ local function LoadAstroHub()
     end)
 end
 
-SubmitBtn.MouseButton1Click:Connect(function()
-    if KeyBox.Text == "ASTRO-2026-KEY" then
-        LoadAstroHub()
-    else
-        PlayClickSound()
-        KeyBox.Text = ""
-        KeyBox.PlaceholderText = "Wrong Key! Try Again"
-    end
-end)
+-- فحص هل المفتاح المحفوظ ما زال صالحاً (أقل من 24 ساعة)
+if IsSavedKeyValid() then
+    LoadAstroHub()
+else
+    local KeyGui = Instance.new("ScreenGui")
+    KeyGui.Name = "AstroKeyGui"
+    KeyGui.Parent = CoreGui
+    KeyGui.IgnoreGuiInset = true
+
+    local KeyMain = Instance.new("Frame")
+    KeyMain.Size = UDim2.new(0, 320, 0, 200)
+    KeyMain.Position = UDim2.new(0.5, -160, 0.5, -100)
+    KeyMain.BackgroundColor3 = Color3.fromRGB(220, 235, 250)
+    KeyMain.BackgroundTransparency = 0.15
+    KeyMain.BorderSizePixel = 0
+    KeyMain.Parent = KeyGui
+
+    local KeyCorner = Instance.new("UICorner")
+    KeyCorner.CornerRadius = UDim.new(0, 16)
+    KeyCorner.Parent = KeyMain
+
+    local KeyStroke = Instance.new("UIStroke")
+    KeyStroke.Color = Color3.fromRGB(150, 210, 255)
+    KeyStroke.Thickness = 2.5
+    KeyStroke.Transparency = 0.2
+    KeyStroke.Parent = KeyMain
+
+    local KeyTitle = Instance.new("TextLabel")
+    KeyTitle.Size = UDim2.new(1, 0, 0, 40)
+    KeyTitle.BackgroundTransparency = 1
+    KeyTitle.Text = "❄️ Astro Hub - Key System ❄️"
+    KeyTitle.TextColor3 = Color3.fromRGB(20, 50, 90)
+    KeyTitle.TextSize = 16
+    KeyTitle.Font = Enum.Font.GothamBold
+    KeyTitle.Parent = KeyMain
+
+    local KeyBox = Instance.new("TextBox")
+    KeyBox.Size = UDim2.new(0.8, 0, 0, 40)
+    KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+    KeyBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    KeyBox.BackgroundTransparency = 0.3
+    KeyBox.TextColor3 = Color3.fromRGB(20, 40, 70)
+    KeyBox.PlaceholderText = "Enter Key Here..."
+    KeyBox.Text = ""
+    KeyBox.TextSize = 14
+    KeyBox.Font = Enum.Font.Gotham
+    KeyBox.Parent = KeyMain
+
+    local BoxCorner = Instance.new("UICorner")
+    BoxCorner.CornerRadius = UDim.new(0, 10)
+    BoxCorner.Parent = KeyBox
+
+    local SubmitBtn = Instance.new("TextButton")
+    SubmitBtn.Size = UDim2.new(0.8, 0, 0, 40)
+    SubmitBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
+    SubmitBtn.BackgroundColor3 = Color3.fromRGB(70, 160, 230)
+    SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SubmitBtn.Text = "Login"
+    SubmitBtn.TextSize = 15
+    SubmitBtn.Font = Enum.Font.GothamBold
+    SubmitBtn.Parent = KeyMain
+
+    local BtnCorner = Instance.new("UICorner")
+    BtnCorner.CornerRadius = UDim.new(0, 10)
+    BtnCorner.Parent = SubmitBtn
+
+    SubmitBtn.MouseButton1Click:Connect(function()
+        if KeyBox.Text == ValidKey then
+            SaveKeyData(ValidKey)
+            LoadAstroHub()
+        else
+            PlayClickSound()
+            KeyBox.Text = ""
+            KeyBox.PlaceholderText = "Wrong Key! Try Again"
+        end
+    end)
+end
