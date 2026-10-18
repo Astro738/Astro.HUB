@@ -1,4 +1,4 @@
--- [[ Astro Hub V20 - Final Clean Reset & Aimbot Fix Edition ]]
+-- [[ Astro Hub V20 - Final Clean Reset & Aimbot Distance Edition ]]
 -- [[ Key System Enabled ]]
 
 if setfpscap then
@@ -582,8 +582,10 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
-    -- 🎯 Aimbot المعدل: ناعم، يوجه نحو الرأس، ويسمح لك بتحريك الشاشة والتنقل بين الخصوم بحرية
+    -- 🎯 Aimbot ذكي مع تحديد مسافة الاستهداف وسلاسة عالية جداً في التنقل
     local aimbotConn
+    local maxAimbotDistance = 300 -- المسافة المباشرة الافتراضية بالمتر
+
     CreateToggle(PageCombat, "Aimbot (Smart Lock)", function(state)
         if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
         if state then
@@ -593,15 +595,25 @@ local function LoadAstroHub()
                 local closestHead = nil
                 local shortestDist = math.huge
                 local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+                local myChar = LocalPlayer.Character
+                local myHrp = myChar and myChar:FindFirstChild("HumanoidRootPart")
+
+                if not myHrp then return end
 
                 for _, plr in pairs(Players:GetPlayers()) do
                     if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
-                        local headPos, onScreen = Camera:WorldToViewportPoint(plr.Character.Head.Position)
-                        if onScreen then
-                            local dist = (Vector2.new(headPos.X, headPos.Y) - screenCenter).Magnitude
-                            if dist < shortestDist then
-                                shortestDist = dist
-                                closestHead = plr.Character.Head
+                        local targetHead = plr.Character.Head
+                        
+                        -- التحقق من المسافة الحقيقية بينك وبين اللاعب (المسافة القريبة فقط)
+                        local worldDist = (myHrp.Position - targetHead.Position).Magnitude
+                        if worldDist <= maxAimbotDistance then
+                            local headPos, onScreen = Camera:WorldToViewportPoint(targetHead.Position)
+                            if onScreen then
+                                local screenDist = (Vector2.new(headPos.X, headPos.Y) - screenCenter).Magnitude
+                                if screenDist < shortestDist then
+                                    shortestDist = screenDist
+                                    closestHead = targetHead
+                                end
                             end
                         end
                     end
@@ -609,10 +621,15 @@ local function LoadAstroHub()
 
                 if closestHead then
                     local targetCFrame = CFrame.new(Camera.CFrame.Position, closestHead.Position)
-                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.25)
+                    Camera.CFrame = Camera.CFrame:Lerp(targetCFrame, 0.35)
                 end
             end)
         end
+    end)
+
+    -- سلايدر التحكم بمسافة الأيمبوت لتتجنب الناس البعيدين بـ 2000 و 3000 متر
+    CreateSlider(PageCombat, "Aimbot Max Distance", 50, 1000, 300, function(val)
+        maxAimbotDistance = val
     end)
 
     local eggEspActive = false
