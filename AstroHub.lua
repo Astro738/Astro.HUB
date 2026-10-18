@@ -636,6 +636,7 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
+    -- Aimbot الأساسي (الأيم أسِست حقك المزبوط)
     local aimbotConn
     local maxAimbotDistance = 300
     local aimbotSmoothness = 0.35
@@ -685,6 +686,40 @@ local function LoadAstroHub()
                 end
             end)
         end
+    end)
+
+    -- ميزة تكبير الهيتبوكس العملاق جداً (مربع كبير جداً حول العدو لتضمن الدمج من أي مكان وبدون لمس الزملاء)
+    local massiveHitboxActive = false
+    CreateToggle(PageCombat, "Massive Giant Hitbox (Very Big)", function(state)
+        massiveHitboxActive = state
+        task.spawn(function()
+            while massiveHitboxActive and getgenv().AstroRunning do
+                for _, plr in pairs(Players:GetPlayers()) do
+                    if plr ~= LocalPlayer then
+                        local isTeamMate = (LocalPlayer.Team and plr.Team and LocalPlayer.Team == plr.Team)
+                        if not isTeamMate and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                            pcall(function()
+                                -- مربع هيتبوكس ضخم جداً يغطي مساحة هائلة حول العدو
+                                plr.Character.HumanoidRootPart.Size = Vector3.new(40, 40, 40)
+                                plr.Character.HumanoidRootPart.Transparency = 0.85
+                                plr.Character.HumanoidRootPart.CanCollide = false
+                            end)
+                        end
+                    end
+                end
+                task.wait(1)
+            end
+            if not massiveHitboxActive then
+                for _, plr in pairs(Players:GetPlayers()) do
+                    if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            plr.Character.HumanoidRootPart.Size = Vector3.new(2, 2, 1)
+                            plr.Character.HumanoidRootPart.Transparency = 1
+                        end)
+                    end
+                end
+            end
+        end)
     end)
 
     CreateSlider(PageCombat, "Aimbot Max Distance", 50, 1000, 300, function(val)
