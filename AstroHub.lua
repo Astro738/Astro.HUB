@@ -1,8 +1,8 @@
--- [[ Astro Hub V21 - Ultimate Anti-Ban & Safe Noclip Edition ]] --
--- [[ Key System & Advanced Protection Enabled ]] --
+-- [[ Astro Hub V21 - Ultimate Stable & Clean Edition ]] --
+-- [[ Key System & Smooth Delta Support ]] --
 
 if setfpscap then
-    setfpscap(240)
+    pcall(function() setfpscap(240) end)
 end
 
 local CoreGui = game:GetService("CoreGui")
@@ -17,50 +17,35 @@ local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = Workspace.CurrentCamera
 
--- 🛡️ درع حماية قوي لمنع أي أمر Kick أو باند وهمي من السيرفر
-pcall(function()
-    local mt = getrawmetatable(game)
-    setreadonly(mt, false)
-    local oldNamecall = mt.__namecall
-    mt.__namecall = newcclosure(function(self, ...)
-        local method = getnamecallmethod()
-        local args = {...}
-        if method == "Kick" or method == "kick" or method == "KICK" then
-            return nil -- تجاهل أمر الكيك تماماً وحمايتك من الطرد
-        end
-        return oldNamecall(self, ...)
-    end)
-    setreadonly(mt, true)
-end)
-
--- 🛡️ تصفير العمليات والحلقات بالخلفية
+-- 🛡️ نظام تصفير العمليات والحلقات بالخلفية بأمان تام
 getgenv().AstroRunning = false
 
 local function KillAllConnections()
     getgenv().AstroRunning = false
-    
-    if LocalPlayer.Character then
-        local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-        if hum then hum.PlatformStand = false end
-        local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            for _, v in pairs(hrp:GetChildren()) do
-                if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+    pcall(function()
+        if LocalPlayer.Character then
+            local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if hum then hum.PlatformStand = false end
+            local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                for _, v in pairs(hrp:GetChildren()) do
+                    if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
+                end
             end
         end
-    end
 
-    for _, obj in pairs(Workspace:GetDescendants()) do
-        if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
-            obj:Destroy()
+        for _, obj in pairs(Workspace:GetDescendants()) do
+            if obj.Name == "AstroHighlight" or obj.Name == "AstroEggHighlight" or obj.Name == "AstroBossHighlight" or obj.Name == "AstroBossTag" then
+                obj:Destroy()
+            end
         end
-    end
 
-    if LocalPlayer.Character then
-        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-            if part:IsA("BasePart") then part.CanCollide = true end
+        if LocalPlayer.Character then
+            for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then part.CanCollide = true end
+            end
         end
-    end
+    end)
 end
 
 KillAllConnections()
@@ -73,11 +58,13 @@ if CoreGui:FindFirstChild("AstroKeyGui") then
 end
 
 getgenv().AutoReconnectState = false
-CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
-    if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
-        task.wait(1)
-        TeleportService:Teleport(game.PlaceId, LocalPlayer)
-    end
+pcall(function()
+    CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+        if child.Name == 'ErrorPrompt' and getgenv().AutoReconnectState then
+            task.wait(1)
+            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        end
+    end)
 end)
 
 local function PlayClickSound()
@@ -91,6 +78,7 @@ local function PlayClickSound()
     end)
 end
 
+-- نافذة إدخال المفتاح (Key System GUI)
 local KeyGui = Instance.new("ScreenGui")
 KeyGui.Name = "AstroKeyGui"
 KeyGui.Parent = CoreGui
@@ -254,12 +242,7 @@ local function LoadAstroHub()
     CloseBtn.Parent = TopBar
 
     OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
-    
-    CloseBtn.MouseButton1Click:Connect(function()
-        PlayClickSound()
-        KillAllConnections()
-        ScreenGui:Destroy()
-    end)
+    CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() KillAllConnections() ScreenGui:Destroy() end)
 
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 150, 1, -40)
@@ -511,8 +494,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- 🛡️ ميزة Noclip المحسنة الآمنة ضد الكشف
-    CreateToggle(PagePlayer, "Noclip (Safe)", function(state)
+    CreateToggle(PagePlayer, "Safe Noclip", function(state)
         if state then
             _G.NoclipConn = RunService.Stepped:Connect(function()
                 if not getgenv().AstroRunning then return end
@@ -718,7 +700,7 @@ local function LoadAstroHub()
         end)
     end)
 
-    -- 👁️ Player ESP ذكي ومختفي فوراً عند الموت
+    -- 👁️ Player ESP ذكي ومختفي فوراً عند الموت وبدون أخطاء
     local espActive = false
     CreateToggle(PageVisual, "Player ESP (Smart Clean)", function(state)
         espActive = state
@@ -744,4 +726,45 @@ local function LoadAstroHub()
                         end
                     end
                 end
-                task.
+                task.wait(0.2)
+            end
+            
+            if not espActive then
+                for _, plr in pairs(Players:GetPlayers()) do
+                    if plr.Character and plr.Character:FindFirstChild("AstroHighlight") then
+                        plr.Character.AstroHighlight:Destroy()
+                    end
+                end
+            end
+        end)
+    end)
+
+    CreateToggle(PagePerf, "Potato Mode (Boost FPS)", function(state)
+        if state then
+            for _, v in pairs(Workspace:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Material = Enum.Material.SmoothPlastic
+                    v.Reflectance = 0
+                elseif v:IsA("Decal") or v:IsA("Texture") then
+                    v.Transparency = 1
+                end
+            end
+            Lighting.GlobalShadows = false
+            Lighting.FogEnd = 9e9
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        else
+            Lighting.GlobalShadows = true
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
+        end
+    end)
+end
+
+SubmitBtn.MouseButton1Click:Connect(function()
+    if KeyBox.Text == "ASTRO-2026-KEY" then
+        LoadAstroHub()
+    else
+        PlayClickSound()
+        KeyBox.Text = ""
+        KeyBox.PlaceholderText = "Wrong Key! Try Again"
+    end
+end)
