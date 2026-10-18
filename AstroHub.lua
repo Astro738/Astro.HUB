@@ -1,5 +1,5 @@
--- [[ Astro Hub V23 - Astro Halloween Edition ]] --
--- [[ Spooky Dark Theme & Full Features Enabled ]] --
+-- [[ Astro Hub V24 - Halloween Enhanced & Smooth UI Edition ]] --
+-- [[ Astro Realm & Improved Buttons/Close Logic ]] --
 
 if setfpscap then
     pcall(function() setfpscap(240) end)
@@ -47,7 +47,7 @@ local function IsSavedKeyValid()
     return false
 end
 
--- 🛡️ نظام تصفير العمليات والحلقات بالخلفية
+-- 🛡️ نظام تصفير العمليات عند إعادة التشغيل
 getgenv().AstroRunning = false
 
 local function KillAllConnections()
@@ -120,11 +120,11 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- زر فتح الواجهة العائم بشعار اليقطين والمرعب 🎃
+    -- زر اليقطين العائم 🎃
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 55, 0, 55)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -28)
-    OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 10, 10)
+    OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 10, 15)
     OpenBtn.BackgroundTransparency = 0.1
     OpenBtn.TextColor3 = Color3.fromRGB(255, 120, 0)
     OpenBtn.Text = "🎃"
@@ -162,7 +162,7 @@ local function LoadAstroHub()
         end
     end)
 
-    -- الإطار الرئيسي بتصميم هالوين المظلم والدموي 🎃👻
+    -- الواجهة الرئيسية 🎃💀
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 540, 0, 380)
     MainFrame.Position = UDim2.new(0.5, -270, 0.5, -190)
@@ -203,18 +203,19 @@ local function LoadAstroHub()
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
+    -- زر الـ X المطور (يخفي الواجهة فقط بدون مسح أي شيء!) ✕
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0, 6)
     CloseBtn.BackgroundTransparency = 1
     CloseBtn.Text = "✕"
-    CloseBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
-    CloseBtn.TextSize = 16
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 60, 60)
+    CloseBtn.TextSize = 18
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Parent = TopBar
 
     OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
-    CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() KillAllConnections() ScreenGui:Destroy() end)
+    CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = false end)
 
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 150, 1, -42)
@@ -249,7 +250,7 @@ local function LoadAstroHub()
         scrolling.Parent = ContentArea
 
         local layout = Instance.new("UIListLayout")
-        layout.Padding = UDim.new(0, 8)
+        layout.Padding = UDim.new(0, 10)
         layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         layout.Parent = scrolling
 
@@ -280,9 +281,9 @@ local function LoadAstroHub()
 
     local function CreateToggle(parentPage, name, callback)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.95, 0, 0, 40)
+        btn.Size = UDim2.new(0.95, 0, 0, 42)
         btn.BackgroundColor3 = Color3.fromRGB(32, 18, 28)
-        btn.BackgroundTransparency = 0.3
+        btn.BackgroundTransparency = 0.2
         btn.TextColor3 = Color3.fromRGB(255, 160, 60)
         btn.Text = name .. ": OFF"
         btn.TextSize = 13
@@ -295,7 +296,7 @@ local function LoadAstroHub()
 
         local stroke = Instance.new("UIStroke")
         stroke.Color = Color3.fromRGB(180, 70, 0)
-        stroke.Thickness = 1
+        stroke.Thickness = 1.2
         stroke.Parent = btn
 
         local active = false
@@ -309,7 +310,7 @@ local function LoadAstroHub()
                 btn.Text = name .. ": ON 🎃"
             else
                 btn.BackgroundColor3 = Color3.fromRGB(32, 18, 28)
-                btn.BackgroundTransparency = 0.3
+                btn.BackgroundTransparency = 0.2
                 btn.TextColor3 = Color3.fromRGB(255, 160, 60)
                 btn.Text = name .. ": OFF"
             end
@@ -319,9 +320,9 @@ local function LoadAstroHub()
 
     local function CreateSlider(parentPage, name, minVal, maxVal, defaultVal, callback)
         local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(0.95, 0, 0, 50)
+        frame.Size = UDim2.new(0.95, 0, 0, 52)
         frame.BackgroundColor3 = Color3.fromRGB(32, 18, 28)
-        frame.BackgroundTransparency = 0.3
+        frame.BackgroundTransparency = 0.2
         frame.Parent = parentPage
 
         local corner = Instance.new("UICorner")
@@ -330,7 +331,7 @@ local function LoadAstroHub()
 
         local stroke = Instance.new("UIStroke")
         stroke.Color = Color3.fromRGB(180, 70, 0)
-        stroke.Thickness = 1
+        stroke.Thickness = 1.2
         stroke.Parent = frame
 
         local label = Instance.new("TextLabel")
@@ -350,11 +351,19 @@ local function LoadAstroHub()
         sliderBg.BorderSizePixel = 0
         sliderBg.Parent = frame
 
+        local sliderCorner = Instance.new("UICorner")
+        sliderCorner.CornerRadius = UDim.new(1, 0)
+        sliderCorner.Parent = sliderBg
+
         local fill = Instance.new("Frame")
         fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
         fill.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
         fill.BorderSizePixel = 0
         fill.Parent = sliderBg
+
+        local fillCorner = Instance.new("UICorner")
+        fillCorner.CornerRadius = UDim.new(1, 0)
+        fillCorner.Parent = fill
 
         local function update(input)
             local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
@@ -390,7 +399,7 @@ local function LoadAstroHub()
     local PageDetect = CreatePage("🥚 Eggs & Rarities")
     local PageBoss = CreatePage("👹 Boss Finder")
     local PageVisual = CreatePage("👁️ ESP & Visuals")
-    local PagePerf = CreatePage("🎮 Performance")
+    PagePerf = CreatePage("🎮 Performance")
 
     local StatsCard = Instance.new("Frame")
     StatsCard.Size = UDim2.new(0.95, 0, 0, 160)
@@ -442,13 +451,14 @@ local function LoadAstroHub()
         end
     end)
 
+    -- زر الديسكورد بتصميم الترحيب والهالوين الجديد 🎃💬
     local DiscordBtn = Instance.new("TextButton")
-    DiscordBtn.Size = UDim2.new(0.95, 0, 0, 42)
-    DiscordBtn.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
+    DiscordBtn.Size = UDim2.new(0.95, 0, 0, 45)
+    DiscordBtn.BackgroundColor3 = Color3.fromRGB(200, 75, 0)
     DiscordBtn.BackgroundTransparency = 0.1
     DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    DiscordBtn.Text = "💬 Join Discord Server"
-    DiscordBtn.TextSize = 14
+    DiscordBtn.Text = "🎃 Welcome to Astro Realm | Join Discord ☠️"
+    DiscordBtn.TextSize = 13
     DiscordBtn.Font = Enum.Font.GothamBold
     DiscordBtn.Parent = PageHome
 
@@ -456,13 +466,18 @@ local function LoadAstroHub()
     dCorner.CornerRadius = UDim.new(0, 8)
     dCorner.Parent = DiscordBtn
 
+    local dStroke = Instance.new("UIStroke")
+    dStroke.Color = Color3.fromRGB(255, 140, 0)
+    dStroke.Thickness = 1.5
+    dStroke.Parent = DiscordBtn
+
     DiscordBtn.MouseButton1Click:Connect(function()
         PlayClickSound()
         if setclipboard then
             setclipboard("https://discord.gg/vnTrCe2GSU")
-            DiscordBtn.Text = "✅ Discord Link Copied!"
-            task.wait(2)
-            DiscordBtn.Text = "💬 Join Discord Server"
+            DiscordBtn.Text = "✅ Link Copied! Welcome to Astro Realm 🎃"
+            task.wait(2.5)
+            DiscordBtn.Text = "🎃 Welcome to Astro Realm | Join Discord ☠️"
         end
     end)
 
@@ -758,7 +773,7 @@ local function LoadAstroHub()
     end)
 end
 
--- فحص الكي المحفوظ
+-- فحص المفتاح المحفوظ
 if IsSavedKeyValid() then
     LoadAstroHub()
 else
