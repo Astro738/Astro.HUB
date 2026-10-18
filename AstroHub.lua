@@ -1,5 +1,5 @@
--- [[ Astro Hub V21 - Ultimate Stable & Clean Edition ]] --
--- [[ Key System & Smooth Delta Support ]] --
+-- [[ Astro Hub V21 - Team Check & Ultimate Edition ]] --
+-- [[ Key System & Smart Enemy Targeting Enabled ]] --
 
 if setfpscap then
     pcall(function() setfpscap(240) end)
@@ -580,10 +580,11 @@ local function LoadAstroHub()
         flySpeed = val
     end)
 
+    -- 🎯 Aimbot ذكي ومزود بـ Team Check (يتجاهل أصدقاء الفريق ويوجه على الأعداء فقط)
     local aimbotConn
     local maxAimbotDistance = 300
 
-    CreateToggle(PageCombat, "Aimbot (Smart Lock)", function(state)
+    CreateToggle(PageCombat, "Aimbot (Smart Team Check)", function(state)
         if aimbotConn then aimbotConn:Disconnect() aimbotConn = nil end
         if state then
             aimbotConn = RunService.RenderStepped:Connect(function()
@@ -599,15 +600,24 @@ local function LoadAstroHub()
 
                 for _, plr in pairs(Players:GetPlayers()) do
                     if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
-                        local targetHead = plr.Character.Head
-                        local worldDist = (myHrp.Position - targetHead.Position).Magnitude
-                        if worldDist <= maxAimbotDistance then
-                            local headPos, onScreen = Camera:WorldToViewportPoint(targetHead.Position)
-                            if onScreen then
-                                local screenDist = (Vector2.new(headPos.X, headPos.Y) - screenCenter).Magnitude
-                                if screenDist < shortestDist then
-                                    shortestDist = screenDist
-                                    closestHead = targetHead
+                        
+                        -- فحص الفريق (Team Check): استبعاد الأصدقاء/الزملاء في نفس الفريق
+                        local isTeamMate = false
+                        if LocalPlayer.Team and plr.Team and LocalPlayer.Team == plr.Team then
+                            isTeamMate = true
+                        end
+
+                        if not isTeamMate then
+                            local targetHead = plr.Character.Head
+                            local worldDist = (myHrp.Position - targetHead.Position).Magnitude
+                            if worldDist <= maxAimbotDistance then
+                                local headPos, onScreen = Camera:WorldToViewportPoint(targetHead.Position)
+                                if onScreen then
+                                    local screenDist = (Vector2.new(headPos.X, headPos.Y) - screenCenter).Magnitude
+                                    if screenDist < shortestDist then
+                                        shortestDist = screenDist
+                                        closestHead = targetHead
+                                    end
                                 end
                             end
                         end
