@@ -1,4 +1,4 @@
--- [[ Astro Hub V25.1 - Fixed & Ultimate Halloween Edition ]] --
+-- [[ Astro Hub V25.1 - Ultimate Cosmic Edition (Fly Speed Fixed) ]] --
 -- [[ Auto Game Info & Live Friends Detection Included ]] --
 
 if setfpscap then
@@ -121,14 +121,14 @@ local function LoadAstroHub()
     ScreenGui.Parent = CoreGui
     ScreenGui.IgnoreGuiInset = true
 
-    -- زر اليقطين العائم 🎃
+    -- زر الكوكب الفضائي العائم 🪐
     local OpenBtn = Instance.new("TextButton")
     OpenBtn.Size = UDim2.new(0, 55, 0, 55)
     OpenBtn.Position = UDim2.new(0, 20, 0.5, -28)
-    OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 10, 15)
+    OpenBtn.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
     OpenBtn.BackgroundTransparency = 0.1
-    OpenBtn.TextColor3 = Color3.fromRGB(255, 120, 0)
-    OpenBtn.Text = "🎃"
+    OpenBtn.TextColor3 = Color3.fromRGB(0, 180, 255)
+    OpenBtn.Text = "🪐"
     OpenBtn.TextSize = 28
     OpenBtn.Font = Enum.Font.GothamBold
     OpenBtn.Parent = ScreenGui
@@ -138,36 +138,37 @@ local function LoadAstroHub()
     OpenCorner.Parent = OpenBtn
 
     local OpenStroke = Instance.new("UIStroke")
-    OpenStroke.Color = Color3.fromRGB(255, 90, 0)
+    OpenStroke.Color = Color3.fromRGB(0, 150, 255)
     OpenStroke.Thickness = 2.5
     OpenStroke.Parent = OpenBtn
 
-    local dragging, dragStart, startPos
+    -- تحريك زر الكوكب العائم
+    local dragOpen, dragStartOpen, startPosOpen
     OpenBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = OpenBtn.Position
+            dragOpen = true
+            dragStartOpen = input.Position
+            startPosOpen = OpenBtn.Position
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
+                    dragOpen = false
                 end
             end)
         end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            OpenBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        if dragOpen and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStartOpen
+            OpenBtn.Position = UDim2.new(startPosOpen.X.Scale, startPosOpen.X.Offset + delta.X, startPosOpen.Y.Scale, startPosOpen.Y.Offset + delta.Y)
         end
     end)
 
-    -- الواجهة الرئيسية 🎃💀
+    -- الواجهة الرئيسية الفضائية 🌌
     local MainFrame = Instance.new("Frame")
     MainFrame.Size = UDim2.new(0, 540, 0, 380)
     MainFrame.Position = UDim2.new(0.5, -270, 0.5, -190)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 10, 15)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(10, 14, 25)
     MainFrame.BackgroundTransparency = 0.08
     MainFrame.BorderSizePixel = 0
     MainFrame.Visible = true
@@ -178,13 +179,13 @@ local function LoadAstroHub()
     MainCorner.Parent = MainFrame
 
     local MainStroke = Instance.new("UIStroke")
-    MainStroke.Color = Color3.fromRGB(255, 100, 0)
+    MainStroke.Color = Color3.fromRGB(0, 130, 255)
     MainStroke.Thickness = 2.5
     MainStroke.Parent = MainFrame
 
     local TopBar = Instance.new("Frame")
     TopBar.Size = UDim2.new(1, 0, 0, 42)
-    TopBar.BackgroundColor3 = Color3.fromRGB(30, 15, 20)
+    TopBar.BackgroundColor3 = Color3.fromRGB(15, 22, 40)
     TopBar.BackgroundTransparency = 0.2
     TopBar.BorderSizePixel = 0
     TopBar.Parent = MainFrame
@@ -194,25 +195,73 @@ local function LoadAstroHub()
     TopCorner.Parent = TopBar
 
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(0, 280, 1, 0)
+    Title.Size = UDim2.new(0, 300, 1, 0)
     Title.Position = UDim2.new(0, 15, 0, 0)
     Title.BackgroundTransparency = 1
-    Title.Text = "🎃 Astro Hub | Halloween Edition ☠️"
-    Title.TextColor3 = Color3.fromRGB(255, 140, 0)
-    Title.TextSize = 15
+    Title.Text = "🌌 Astro Hub | Cosmic Edition 🚀"
+    Title.TextColor3 = Color3.fromRGB(0, 190, 255)
+    Title.TextSize = 14
     Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
+    -- 🖱️ سحب وتحريك اللوحة عبر الشريط العلوي
+    local dragging, dragInput, dragStart, startPos
+    TopBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    TopBar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    -- زر الإغلاق حرف X
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0, 6)
-    CloseBtn.BackgroundTransparency = 1
-    CloseBtn.Text = "✕"
-    CloseBtn.TextColor3 = Color3.fromRGB(255, 60, 60)
-    CloseBtn.TextSize = 18
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+    CloseBtn.Text = "X"
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseBtn.TextSize = 15
     CloseBtn.Font = Enum.Font.GothamBold
     CloseBtn.Parent = TopBar
+
+    local CloseCorner = Instance.new("UICorner")
+    CloseCorner.CornerRadius = UDim.new(0, 6)
+    CloseCorner.Parent = CloseBtn
+
+    -- زر التصغير/التكبير حرف —
+    local MinimizeBtn = Instance.new("TextButton")
+    MinimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeBtn.Position = UDim2.new(1, -70, 0, 6)
+    MinimizeBtn.BackgroundColor3 = Color3.fromRGB(35, 65, 110)
+    MinimizeBtn.Text = "—"
+    MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizeBtn.TextSize = 15
+    MinimizeBtn.Font = Enum.Font.GothamBold
+    MinimizeBtn.Parent = TopBar
+
+    local MinCorner = Instance.new("UICorner")
+    MinCorner.CornerRadius = UDim.new(0, 6)
+    MinCorner.Parent = MinimizeBtn
 
     OpenBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = not MainFrame.Visible end)
     CloseBtn.MouseButton1Click:Connect(function() PlayClickSound() MainFrame.Visible = false end)
@@ -220,10 +269,10 @@ local function LoadAstroHub()
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 150, 1, -42)
     Sidebar.Position = UDim2.new(0, 0, 0, 42)
-    Sidebar.BackgroundColor3 = Color3.fromRGB(22, 12, 22)
+    Sidebar.BackgroundColor3 = Color3.fromRGB(12, 18, 30)
     Sidebar.BackgroundTransparency = 0.3
     Sidebar.BorderSizePixel = 0
-    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 400)
+    Sidebar.CanvasSize = UDim2.new(0, 0, 0, 450)
     Sidebar.ScrollBarThickness = 2
     Sidebar.Parent = MainFrame
 
@@ -238,6 +287,21 @@ local function LoadAstroHub()
     ContentArea.BackgroundTransparency = 1
     ContentArea.Parent = MainFrame
 
+    local minimized = false
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        PlayClickSound()
+        minimized = not minimized
+        ContentArea.Visible = not minimized
+        Sidebar.Visible = not minimized
+        if minimized then
+            MainFrame.Size = UDim2.new(0, 540, 0, 42)
+            MinimizeBtn.Text = "+"
+        else
+            MainFrame.Size = UDim2.new(0, 540, 0, 380)
+            MinimizeBtn.Text = "—"
+        end
+    end)
+
     local pages = {}
     local function CreatePage(name)
         local scrolling = Instance.new("ScrollingFrame")
@@ -245,20 +309,20 @@ local function LoadAstroHub()
         scrolling.BackgroundTransparency = 1
         scrolling.CanvasSize = UDim2.new(0, 0, 0, 650)
         scrolling.ScrollBarThickness = 4
-        scrolling.ScrollBarImageColor3 = Color3.fromRGB(255, 120, 0)
+        scrolling.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
         scrolling.Visible = false
         scrolling.Parent = ContentArea
 
         local layout = Instance.new("UIListLayout")
-        layout.Padding = UDim.new(0, 10)
+        layout.Padding = UDim.new(0, 8)
         layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         layout.Parent = scrolling
 
         local sideBtn = Instance.new("TextButton")
         sideBtn.Size = UDim2.new(0.9, 0, 0, 38)
-        sideBtn.BackgroundColor3 = Color3.fromRGB(35, 20, 30)
+        sideBtn.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
         sideBtn.BackgroundTransparency = 0.3
-        sideBtn.TextColor3 = Color3.fromRGB(255, 160, 60)
+        sideBtn.TextColor3 = Color3.fromRGB(100, 200, 255)
         sideBtn.Text = name
         sideBtn.TextSize = 13
         sideBtn.Font = Enum.Font.GothamBold
@@ -279,49 +343,77 @@ local function LoadAstroHub()
         return scrolling
     end
 
+    -- 🔘 دالة إنشاء الأزرار بتصميم "دقمة" (Switch Toggle)
     local function CreateToggle(parentPage, name, callback)
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.95, 0, 0, 42)
-        btn.BackgroundColor3 = Color3.fromRGB(32, 18, 28)
-        btn.BackgroundTransparency = 0.2
-        btn.TextColor3 = Color3.fromRGB(255, 160, 60)
-        btn.Text = name .. ": OFF"
-        btn.TextSize = 13
-        btn.Font = Enum.Font.GothamBold
-        btn.Parent = parentPage
+        local container = Instance.new("Frame")
+        container.Size = UDim2.new(0.95, 0, 0, 38)
+        container.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+        container.BackgroundTransparency = 0.2
+        container.Parent = parentPage
 
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = btn
+        corner.Parent = container
 
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(180, 70, 0)
+        stroke.Color = Color3.fromRGB(0, 120, 220)
         stroke.Thickness = 1.2
-        stroke.Parent = btn
+        stroke.Parent = container
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, -60, 1, 0)
+        label.Position = UDim2.new(0, 12, 0, 0)
+        label.BackgroundTransparency = 1
+        label.Text = name
+        label.TextColor3 = Color3.fromRGB(180, 230, 255)
+        label.TextSize = 12
+        label.Font = Enum.Font.GothamBold
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Parent = container
+
+        local toggleBtn = Instance.new("TextButton")
+        toggleBtn.Size = UDim2.new(0, 42, 0, 22)
+        toggleBtn.Position = UDim2.new(1, -50, 0.5, -11)
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 55, 80)
+        toggleBtn.Text = ""
+        toggleBtn.Parent = container
+
+        local tCorner = Instance.new("UICorner")
+        tCorner.CornerRadius = UDim.new(1, 0)
+        tCorner.Parent = toggleBtn
+
+        local indicator = Instance.new("Frame")
+        indicator.Size = UDim2.new(0, 18, 0, 18)
+        indicator.Position = UDim2.new(0, 2, 0.5, -9)
+        indicator.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+        indicator.Parent = toggleBtn
+
+        local iCorner = Instance.new("UICorner")
+        iCorner.CornerRadius = UDim.new(1, 0)
+        iCorner.Parent = indicator
 
         local active = false
-        btn.MouseButton1Click:Connect(function()
+        toggleBtn.MouseButton1Click:Connect(function()
             PlayClickSound()
             active = not active
             if active then
-                btn.BackgroundColor3 = Color3.fromRGB(220, 80, 0)
-                btn.BackgroundTransparency = 0.1
-                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                btn.Text = name .. ": ON 🎃"
+                toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+                indicator:TweenPosition(UDim2.new(1, -20, 0.5, -9), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+                indicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             else
-                btn.BackgroundColor3 = Color3.fromRGB(32, 18, 28)
-                btn.BackgroundTransparency = 0.2
-                btn.TextColor3 = Color3.fromRGB(255, 160, 60)
-                btn.Text = name .. ": OFF"
+                toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 55, 80)
+                indicator:TweenPosition(UDim2.new(0, 2, 0.5, -9), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+                indicator.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             end
             callback(active)
         end)
     end
 
+    -- 🎚️ دالة إنشاء السلايدر المصغر والأنيق (Compact Slider)
     local function CreateSlider(parentPage, name, minVal, maxVal, defaultVal, callback)
         local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(0.95, 0, 0, 52)
-        frame.BackgroundColor3 = Color3.fromRGB(32, 18, 28)
+        frame.Size = UDim2.new(0.95, 0, 0, 42)
+        frame.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
         frame.BackgroundTransparency = 0.2
         frame.Parent = parentPage
 
@@ -330,24 +422,25 @@ local function LoadAstroHub()
         corner.Parent = frame
 
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(180, 70, 0)
+        stroke.Color = Color3.fromRGB(0, 120, 220)
         stroke.Thickness = 1.2
         stroke.Parent = frame
 
         local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(1, -20, 0, 22)
-        label.Position = UDim2.new(0, 10, 0, 4)
+        label.Size = UDim2.new(1, -20, 0, 18)
+        label.Position = UDim2.new(0, 10, 0, 3)
         label.BackgroundTransparency = 1
         label.Text = name .. ": " .. tostring(defaultVal)
-        label.TextColor3 = Color3.fromRGB(255, 160, 60)
-        label.TextSize = 13
+        label.TextColor3 = Color3.fromRGB(130, 210, 255)
+        label.TextSize = 11
         label.Font = Enum.Font.GothamBold
+        label.TextXAlignment = Enum.TextXAlignment.Left
         label.Parent = frame
 
         local sliderBg = Instance.new("Frame")
-        sliderBg.Size = UDim2.new(0.9, 0, 0, 8)
-        sliderBg.Position = UDim2.new(0.05, 0, 0.7, 0)
-        sliderBg.BackgroundColor3 = Color3.fromRGB(60, 25, 30)
+        sliderBg.Size = UDim2.new(0.92, 0, 0, 6)
+        sliderBg.Position = UDim2.new(0.04, 0, 0.72, 0)
+        sliderBg.BackgroundColor3 = Color3.fromRGB(30, 45, 70)
         sliderBg.BorderSizePixel = 0
         sliderBg.Parent = frame
 
@@ -357,7 +450,7 @@ local function LoadAstroHub()
 
         local fill = Instance.new("Frame")
         fill.Size = UDim2.new((defaultVal - minVal)/(maxVal - minVal), 0, 1, 0)
-        fill.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
+        fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
         fill.BorderSizePixel = 0
         fill.Parent = sliderBg
 
@@ -393,18 +486,134 @@ local function LoadAstroHub()
         end)
     end
 
-    local PageHome = CreatePage("🏠 Home / Stats")
-    local PagePlayer = CreatePage("⚡ Player & Fly")
-    local PageCombat = CreatePage("🎯 Aimbot")
-    local PageDetect = CreatePage("🥚 Eggs & Rarities")
-    local PageBoss = CreatePage("👹 Boss Finder")
+    local PageHome = CreatePage("🛰️ Home & Stats")
+    local PagePlayer = CreatePage("👨‍🚀 Player & Speed")
+    local PageCombat = CreatePage("🎯 Aimbot & Combat")
+    local PageTeleport = CreatePage("🌌 Player TP")
+    local PageDetect = CreatePage("💎 Eggs & Rarities")
+    local PageBoss = CreatePage("👾 Boss Finder")
     local PageVisual = CreatePage("👁️ ESP & Visuals")
-    local PagePerf = CreatePage("🎮 Performance")
+    local PagePerf = CreatePage("⚡ Performance")
 
-    -- 1️⃣ بطاقة الإحصائيات (FPS, Ping, Coordinates)
+    -- ⚡ متغيرات التحكم بالسرعة والطيران (معرفة بالأعلى)
+    local speedActive = false
+    local speedVal = 16
+    local speedConn
+    local flying = false
+    local flySpeed = 50
+    local bv, bg
+
+    -- ⚡ قسم السرعة المصغر في بداية القائمة
+    CreateToggle(PagePlayer, "⚡ Enable Custom Speed", function(state)
+        speedActive = state
+        if speedActive then
+            speedConn = RunService.RenderStepped:Connect(function()
+                if not getgenv().AstroRunning then return end
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = speedVal
+                end
+            end)
+        else
+            if speedConn then speedConn:Disconnect() end
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 16
+            end
+        end
+    end)
+
+    CreateSlider(PagePlayer, "👟 WalkSpeed Boost", 16, 2000, 16, function(val)
+        speedVal = val
+    end)
+
+    -- 🛸 زر وسلايدر سرعة الطيران (مضبوط ومربوط 100%)
+    CreateToggle(PagePlayer, "🛸 Legendary Fly", function(state)
+        flying = state
+        local char = LocalPlayer.Character
+        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+        local hrp = char.HumanoidRootPart
+        local hum = char:FindFirstChildOfClass("Humanoid")
+
+        if flying then
+            if hum then hum.PlatformStand = true end
+            bv = Instance.new("BodyVelocity")
+            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            bv.Velocity = Vector3.new(0, 0, 0)
+            bv.Parent = hrp
+
+            bg = Instance.new("BodyGyro")
+            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.CFrame = hrp.CFrame
+            bg.Parent = hrp
+
+            task.spawn(function()
+                while flying and getgenv().AstroRunning and char and hrp.Parent do
+                    RunService.RenderStepped:Wait()
+                    local camCF = Camera.CFrame
+                    bg.CFrame = camCF
+
+                    if hum and hum.MoveDirection.Magnitude > 0 then
+                        bv.Velocity = hum.MoveDirection * flySpeed + Vector3.new(0, camCF.LookVector.Y * hum.MoveDirection.Magnitude * flySpeed, 0)
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
+                        bv.Velocity = camCF.LookVector * flySpeed
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
+                        bv.Velocity = -camCF.LookVector * flySpeed
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
+                        bv.Velocity = camCF.RightVector * flySpeed
+                    elseif UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
+                        bv.Velocity = -camCF.RightVector * flySpeed
+                    else
+                        bv.Velocity = Vector3.new(0, 0, 0)
+                    end
+                end
+            end)
+        else
+            if bv then bv:Destroy() end
+            if bg then bg:Destroy() end
+            if hum then hum.PlatformStand = false end
+        end
+    end)
+
+    CreateSlider(PagePlayer, "🚀 Fly Speed Boost", 20, 2000, 50, function(val)
+        flySpeed = val
+    end)
+
+    CreateToggle(PagePlayer, "🥾 Infinite Jump", function(state)
+        if state then
+            _G.InfJump = UserInputService.JumpRequest:Connect(function()
+                if not getgenv().AstroRunning then return end
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end)
+        else
+            if _G.InfJump then _G.InfJump:Disconnect() end
+        end
+    end)
+
+    CreateToggle(PagePlayer, "👻 Safe Noclip", function(state)
+        if state then
+            _G.NoclipConn = RunService.Stepped:Connect(function()
+                if not getgenv().AstroRunning then return end
+                if LocalPlayer.Character then
+                    for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then part.CanCollide = false end
+                    end
+                end
+            end)
+        else
+            if _G.NoclipConn then _G.NoclipConn:Disconnect() end
+            if LocalPlayer.Character then
+                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = true end
+                end
+            end
+        end
+    end)
+
+    -- 1️⃣ بطاقة الإحصائيات الفضائية
     local StatsCard = Instance.new("Frame")
     StatsCard.Size = UDim2.new(0.95, 0, 0, 130)
-    StatsCard.BackgroundColor3 = Color3.fromRGB(35, 18, 30)
+    StatsCard.BackgroundColor3 = Color3.fromRGB(20, 28, 48)
     StatsCard.BackgroundTransparency = 0.2
     StatsCard.Parent = PageHome
 
@@ -413,7 +622,7 @@ local function LoadAstroHub()
     scCorner.Parent = StatsCard
 
     local scStroke = Instance.new("UIStroke")
-    scStroke.Color = Color3.fromRGB(220, 90, 0)
+    scStroke.Color = Color3.fromRGB(0, 140, 255)
     scStroke.Thickness = 1.5
     scStroke.Parent = StatsCard
 
@@ -422,16 +631,16 @@ local function LoadAstroHub()
     StatsText.Position = UDim2.new(0, 10, 0, 0)
     StatsText.BackgroundTransparency = 1
     StatsText.Text = "⚡ FPS: --\n📡 Ping: -- ms\n💻 CPU: -- ms | 🎮 GPU: -- ms\n📍 Coords: X: 0, Y: 0, Z: 0"
-    StatsText.TextColor3 = Color3.fromRGB(255, 180, 80)
+    StatsText.TextColor3 = Color3.fromRGB(150, 220, 255)
     StatsText.TextSize = 13
     StatsText.Font = Enum.Font.GothamBold
     StatsText.TextXAlignment = Enum.TextXAlignment.Left
     StatsText.Parent = StatsCard
 
-    -- 2️⃣ بطاقة تفاصيل الماب والأصدقاء الحية (Game Info & Friends Realm) 🎃👥
+    -- 2️⃣ بطاقة تفاصيل الماب والأصدقاء الفضائية
     local GameCard = Instance.new("Frame")
     GameCard.Size = UDim2.new(0.95, 0, 0, 140)
-    GameCard.BackgroundColor3 = Color3.fromRGB(35, 18, 30)
+    GameCard.BackgroundColor3 = Color3.fromRGB(20, 28, 48)
     GameCard.BackgroundTransparency = 0.2
     GameCard.Parent = PageHome
 
@@ -440,7 +649,7 @@ local function LoadAstroHub()
     gcCorner.Parent = GameCard
 
     local gcStroke = Instance.new("UIStroke")
-    gcStroke.Color = Color3.fromRGB(220, 90, 0)
+    gcStroke.Color = Color3.fromRGB(0, 140, 255)
     gcStroke.Thickness = 1.5
     gcStroke.Parent = GameCard
 
@@ -449,13 +658,12 @@ local function LoadAstroHub()
     GameText.Position = UDim2.new(0, 10, 0, 0)
     GameText.BackgroundTransparency = 1
     GameText.Text = "🎮 Game: Loading...\n👤 Player: " .. LocalPlayer.DisplayName .. " (@" .. LocalPlayer.Name .. ")\n👥 Friends Here: Checking..."
-    GameText.TextColor3 = Color3.fromRGB(255, 180, 80)
+    GameText.TextColor3 = Color3.fromRGB(150, 220, 255)
     GameText.TextSize = 12
     GameText.Font = Enum.Font.GothamBold
     GameText.TextXAlignment = Enum.TextXAlignment.Left
     GameText.Parent = GameCard
 
-    -- جلب اسم الماب والأصدقاء تلقائياً
     task.spawn(function()
         local placeName = "Roblox Game"
         pcall(function()
@@ -505,13 +713,13 @@ local function LoadAstroHub()
         end
     end)
 
-    -- زر الديسكورد 🎃💬
+    -- زر ديسكورد فضائي فخم 🌌💬
     local DiscordBtn = Instance.new("TextButton")
     DiscordBtn.Size = UDim2.new(0.95, 0, 0, 45)
-    DiscordBtn.BackgroundColor3 = Color3.fromRGB(200, 75, 0)
+    DiscordBtn.BackgroundColor3 = Color3.fromRGB(0, 110, 220)
     DiscordBtn.BackgroundTransparency = 0.1
     DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    DiscordBtn.Text = "🎃 Welcome to Astro Realm | Join Discord ☠️"
+    DiscordBtn.Text = "🚀 Join Astro Cosmic Discord 🌌"
     DiscordBtn.TextSize = 13
     DiscordBtn.Font = Enum.Font.GothamBold
     DiscordBtn.Parent = PageHome
@@ -521,7 +729,7 @@ local function LoadAstroHub()
     dCorner.Parent = DiscordBtn
 
     local dStroke = Instance.new("UIStroke")
-    dStroke.Color = Color3.fromRGB(255, 140, 0)
+    dStroke.Color = Color3.fromRGB(100, 200, 255)
     dStroke.Thickness = 1.5
     dStroke.Parent = DiscordBtn
 
@@ -529,114 +737,71 @@ local function LoadAstroHub()
         PlayClickSound()
         if setclipboard then
             setclipboard("https://discord.gg/vnTrCe2GSU")
-            DiscordBtn.Text = "✅ Link Copied! Welcome to Astro Realm 🎃"
+            DiscordBtn.Text = "✅ Link Copied! Welcome Aboard 🚀"
             task.wait(2.5)
-            DiscordBtn.Text = "🎃 Welcome to Astro Realm | Join Discord ☠️"
+            DiscordBtn.Text = "🚀 Join Astro Cosmic Discord 🌌"
         end
     end)
 
     CreateToggle(PageHome, "Auto Reconnect Server", function(state) getgenv().AutoReconnectState = state end)
 
-    CreateToggle(PagePlayer, "Infinite Jump", function(state)
-        if state then
-            _G.InfJump = UserInputService.JumpRequest:Connect(function()
-                if not getgenv().AstroRunning then return end
-                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-                    LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
-                end
-            end)
-        else
-            if _G.InfJump then _G.InfJump:Disconnect() end
-        end
-    end)
+    -- 🌌 ميزة الانتقال السلس للاعبين (Player Teleport List)
+    local tpContainer = Instance.new("ScrollingFrame")
+    tpContainer.Size = UDim2.new(0.95, 0, 1, -20)
+    tpContainer.BackgroundTransparency = 1
+    tpContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+    tpContainer.ScrollBarThickness = 4
+    tpContainer.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+    tpContainer.Parent = PageTeleport
 
-    CreateToggle(PagePlayer, "Safe Noclip", function(state)
-        if state then
-            _G.NoclipConn = RunService.Stepped:Connect(function()
-                if not getgenv().AstroRunning then return end
-                if LocalPlayer.Character then
-                    for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-                        if part:IsA("BasePart") then part.CanCollide = false end
-                    end
-                end
-            end)
-        else
-            if _G.NoclipConn then _G.NoclipConn:Disconnect() end
-            if LocalPlayer.Character then
-                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-                    if part:IsA("BasePart") then part.CanCollide = true end
+    local tpLayout = Instance.new("UIListLayout")
+    tpLayout.Padding = UDim.new(0, 8)
+    tpLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    tpLayout.Parent = tpContainer
+
+    task.spawn(function()
+        while getgenv().AstroRunning do
+            for _, child in pairs(tpContainer:GetChildren()) do
+                if child:IsA("TextButton") then child:Destroy() end
+            end
+
+            for _, plr in pairs(Players:GetPlayers()) do
+                if plr ~= LocalPlayer then
+                    local pBtn = Instance.new("TextButton")
+                    pBtn.Size = UDim2.new(1, 0, 0, 38)
+                    pBtn.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+                    pBtn.BackgroundTransparency = 0.2
+                    pBtn.TextColor3 = Color3.fromRGB(150, 220, 255)
+                    pBtn.Text = "🚀 TP to: " .. plr.DisplayName .. " (@" .. plr.Name .. ")"
+                    pBtn.TextSize = 12
+                    pBtn.Font = Enum.Font.GothamBold
+                    pBtn.Parent = tpContainer
+
+                    local pCorner = Instance.new("UICorner")
+                    pCorner.CornerRadius = UDim.new(0, 8)
+                    pCorner.Parent = pBtn
+
+                    pBtn.MouseButton1Click:Connect(function()
+                        PlayClickSound()
+                        pcall(function()
+                            if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                                local targetHRP = plr.Character.HumanoidRootPart
+                                local myHRP = LocalPlayer.Character.HumanoidRootPart
+                                
+                                for i = 0, 1, 0.1 do
+                                    myHRP.CFrame = myHRP.CFrame:Lerp(targetHRP.CFrame + Vector3.new(0, 3, 0), i)
+                                    task.wait(0.02)
+                                end
+                            end
+                        end)
+                    end)
                 end
             end
+            tpContainer.CanvasSize = UDim2.new(0, 0, 0, #Players:GetPlayers() * 45)
+            task.wait(4)
         end
     end)
 
-    local flying = false
-    local flySpeed = 50
-    local bv, bg
-
-    CreateToggle(PagePlayer, "Legendary Fly", function(state)
-        flying = state
-        local char = LocalPlayer.Character
-        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-        local hrp = char.HumanoidRootPart
-        local hum = char:FindFirstChildOfClass("Humanoid")
-
-        if flying then
-            if hum then hum.PlatformStand = true end
-            bv = Instance.new("BodyVelocity")
-            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-            bv.Velocity = Vector3.new(0, 0, 0)
-            bv.Parent = hrp
-
-            bg = Instance.new("BodyGyro")
-            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-            bg.CFrame = hrp.CFrame
-            bg.Parent = hrp
-
-            task.spawn(function()
-                while flying and getgenv().AstroRunning and char and hrp.Parent do
-                    RunService.RenderStepped:Wait()
-                    local camCF = Camera.CFrame
-                    bg.CFrame = camCF
-
-                    if hum and hum.MoveDirection.Magnitude > 0 then
-                        bv.Velocity = hum.MoveDirection * flySpeed + Vector3.new(0, camCF.LookVector.Y * hum.MoveDirection.Magnitude * flySpeed, 0)
-                    elseif UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
-                        bv.Velocity = camCF.LookVector * flySpeed
-                    elseif UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
-                        bv.Velocity = -camCF.LookVector * flySpeed
-                    elseif UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
-                        bv.Velocity = camCF.RightVector * flySpeed
-                    elseif UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
-                        bv.Velocity = -camCF.RightVector * flySpeed
-                    else
-                        bv.Velocity = Vector3.new(0, 0, 0)
-                    end
-                end
-            end)
-        else
-            if bv then bv:Destroy() end
-            if bg then bg:Destroy() end
-            if hum then hum.PlatformStand = false end
-        end
-    end)
-
-    local speedConn
-    CreateSlider(PagePlayer, "WalkSpeed", 0, 2000, 16, function(val)
-        if speedConn then speedConn:Disconnect() end
-        speedConn = RunService.RenderStepped:Connect(function()
-            if not getgenv().AstroRunning then return end
-            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-                LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = val
-            end
-        end)
-    end)
-
-    CreateSlider(PagePlayer, "Fly Speed", 20, 2000, 50, function(val)
-        flySpeed = val
-    end)
-
-    -- Aimbot الأساسي (الأيم أسِست حقك المزبوط)
     local aimbotConn
     local maxAimbotDistance = 300
     local aimbotSmoothness = 0.35
@@ -688,7 +853,6 @@ local function LoadAstroHub()
         end
     end)
 
-    -- ميزة تكبير الهيتبوكس العملاق جداً (مربع كبير جداً حول العدو لتضمن الدمج من أي مكان وبدون لمس الزملاء)
     local massiveHitboxActive = false
     CreateToggle(PageCombat, "Massive Giant Hitbox (Very Big)", function(state)
         massiveHitboxActive = state
@@ -699,7 +863,6 @@ local function LoadAstroHub()
                         local isTeamMate = (LocalPlayer.Team and plr.Team and LocalPlayer.Team == plr.Team)
                         if not isTeamMate and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
                             pcall(function()
-                                -- مربع هيتبوكس ضخم جداً يغطي مساحة هائلة حول العدو
                                 plr.Character.HumanoidRootPart.Size = Vector3.new(40, 40, 40)
                                 plr.Character.HumanoidRootPart.Transparency = 0.85
                                 plr.Character.HumanoidRootPart.CanCollide = false
@@ -742,7 +905,7 @@ local function LoadAstroHub()
                             if not obj:FindFirstChild("AstroEggHighlight") then
                                 local hl = Instance.new("Highlight")
                                 hl.Name = "AstroEggHighlight"
-                                hl.FillColor = Color3.fromRGB(255, 140, 0)
+                                hl.FillColor = Color3.fromRGB(0, 150, 255)
                                 hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 hl.Parent = obj
                             end
@@ -771,7 +934,7 @@ local function LoadAstroHub()
                             if not obj:FindFirstChild("AstroBossHighlight") then
                                 local hl = Instance.new("Highlight")
                                 hl.Name = "AstroBossHighlight"
-                                hl.FillColor = Color3.fromRGB(255, 30, 30)
+                                hl.FillColor = Color3.fromRGB(0, 170, 255)
                                 hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 hl.Parent = obj
 
@@ -786,7 +949,7 @@ local function LoadAstroHub()
                                 txt.Size = UDim2.new(1, 0, 1, 0)
                                 txt.BackgroundTransparency = 1
                                 txt.Text = "👹 BOSS: " .. obj.Name
-                                txt.TextColor3 = Color3.fromRGB(255, 60, 60)
+                                txt.TextColor3 = Color3.fromRGB(0, 200, 255)
                                 txt.TextSize = 14
                                 txt.Font = Enum.Font.GothamBold
                                 txt.Parent = bgui
@@ -818,7 +981,7 @@ local function LoadAstroHub()
                             if not char:FindFirstChild("AstroHighlight") then
                                 local hl = Instance.new("Highlight")
                                 hl.Name = "AstroHighlight"
-                                hl.FillColor = Color3.fromRGB(255, 120, 0)
+                                hl.FillColor = Color3.fromRGB(0, 130, 255)
                                 hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                                 hl.Parent = char
                             end
@@ -862,7 +1025,6 @@ local function LoadAstroHub()
     end)
 end
 
--- فحص المفتاح المحفوظ
 if IsSavedKeyValid() then
     LoadAstroHub()
 else
@@ -874,7 +1036,7 @@ else
     local KeyMain = Instance.new("Frame")
     KeyMain.Size = UDim2.new(0, 320, 0, 200)
     KeyMain.Position = UDim2.new(0.5, -160, 0.5, -100)
-    KeyMain.BackgroundColor3 = Color3.fromRGB(20, 10, 15)
+    KeyMain.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
     KeyMain.BackgroundTransparency = 0.1
     KeyMain.BorderSizePixel = 0
     KeyMain.Parent = KeyGui
@@ -884,15 +1046,15 @@ else
     KeyCorner.Parent = KeyMain
 
     local KeyStroke = Instance.new("UIStroke")
-    KeyStroke.Color = Color3.fromRGB(255, 100, 0)
+    KeyStroke.Color = Color3.fromRGB(0, 140, 255)
     KeyStroke.Thickness = 2.5
     KeyStroke.Parent = KeyMain
 
     local KeyTitle = Instance.new("TextLabel")
     KeyTitle.Size = UDim2.new(1, 0, 0, 40)
     KeyTitle.BackgroundTransparency = 1
-    KeyTitle.Text = "🎃 Astro Halloween System 🎃"
-    KeyTitle.TextColor3 = Color3.fromRGB(255, 140, 0)
+    KeyTitle.Text = "🚀 Astro Cosmic System 🪐"
+    KeyTitle.TextColor3 = Color3.fromRGB(0, 190, 255)
     KeyTitle.TextSize = 16
     KeyTitle.Font = Enum.Font.GothamBold
     KeyTitle.Parent = KeyMain
@@ -900,9 +1062,9 @@ else
     local KeyBox = Instance.new("TextBox")
     KeyBox.Size = UDim2.new(0.8, 0, 0, 40)
     KeyBox.Position = UDim2.new(0.1, 0, 0.35, 0)
-    KeyBox.BackgroundColor3 = Color3.fromRGB(35, 20, 30)
+    KeyBox.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
     KeyBox.BackgroundTransparency = 0.2
-    KeyBox.TextColor3 = Color3.fromRGB(255, 200, 100)
+    KeyBox.TextColor3 = Color3.fromRGB(150, 220, 255)
     KeyBox.PlaceholderText = "Enter Key Here..."
     KeyBox.Text = ""
     KeyBox.TextSize = 14
@@ -916,9 +1078,9 @@ else
     local SubmitBtn = Instance.new("TextButton")
     SubmitBtn.Size = UDim2.new(0.8, 0, 0, 40)
     SubmitBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
-    SubmitBtn.BackgroundColor3 = Color3.fromRGB(220, 80, 0)
+    SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
     SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SubmitBtn.Text = "Login ☠️"
+    SubmitBtn.Text = "Launch 🚀"
     SubmitBtn.TextSize = 15
     SubmitBtn.Font = Enum.Font.GothamBold
     SubmitBtn.Parent = KeyMain
