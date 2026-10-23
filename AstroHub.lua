@@ -1,4 +1,4 @@
--- [[ Astro Hub V25.1 - Ultimate Cosmic Edition (Fly Speed Fixed) ]] --
+-- [[ Astro Hub V25.1 - Ultimate Cosmic Edition (Ultimate Anti-Cheat Fly) ]] --
 -- [[ Auto Game Info & Live Friends Detection Included ]] --
 
 if setfpscap then
@@ -59,9 +59,7 @@ local function KillAllConnections()
             if hum then hum.PlatformStand = false end
             local hrp = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
             if hrp then
-                for _, v in pairs(hrp:GetChildren()) do
-                    if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then v:Destroy() end
-                end
+                hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
             end
         end
 
@@ -495,13 +493,12 @@ local function LoadAstroHub()
     local PageVisual = CreatePage("👁️ ESP & Visuals")
     local PagePerf = CreatePage("⚡ Performance")
 
-    -- ⚡ متغيرات التحكم بالسرعة والطيران (معرفة بالأعلى)
+    -- ⚡ متغيرات التحكم بالسرعة والطيران (النسخة الخارقة ضد الكيك)
     local speedActive = false
     local speedVal = 16
     local speedConn
     local flying = false
     local flySpeed = 50
-    local bv, bg
 
     -- ⚡ قسم السرعة المصغر في بداية القائمة
     CreateToggle(PagePlayer, "⚡ Enable Custom Speed", function(state)
@@ -525,8 +522,8 @@ local function LoadAstroHub()
         speedVal = val
     end)
 
-    -- 🛸 زر وسلايدر سرعة الطيران (مضبوط ومربوط 100%)
-    CreateToggle(PagePlayer, "🛸 Legendary Fly", function(state)
+    -- 🛸 نظام الطيران الخارق الجديد (Swimming & AssemblyVelocity Bypass) لمنع الكيك نهائياً
+    CreateToggle(PagePlayer, "🛸 Pro Anti-Kick Fly", function(state)
         flying = state
         local char = LocalPlayer.Character
         if not char or not char:FindFirstChild("HumanoidRootPart") then return end
@@ -534,42 +531,49 @@ local function LoadAstroHub()
         local hum = char:FindFirstChildOfClass("Humanoid")
 
         if flying then
-            if hum then hum.PlatformStand = true end
-            bv = Instance.new("BodyVelocity")
-            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-            bv.Velocity = Vector3.new(0, 0, 0)
-            bv.Parent = hrp
-
-            bg = Instance.new("BodyGyro")
-            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-            bg.CFrame = hrp.CFrame
-            bg.Parent = hrp
-
+            if hum then 
+                hum.PlatformStand = true 
+                pcall(function() hum:ChangeState(Enum.HumanoidStateType.Swimming) end)
+            end
+            
             task.spawn(function()
                 while flying and getgenv().AstroRunning and char and hrp.Parent do
                     RunService.RenderStepped:Wait()
                     local camCF = Camera.CFrame
-                    bg.CFrame = camCF
+                    local moveDir = Vector3.new(0, 0, 0)
 
                     if hum and hum.MoveDirection.Magnitude > 0 then
-                        bv.Velocity = hum.MoveDirection * flySpeed + Vector3.new(0, camCF.LookVector.Y * hum.MoveDirection.Magnitude * flySpeed, 0)
-                    elseif UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
-                        bv.Velocity = camCF.LookVector * flySpeed
+                        moveDir = hum.MoveDirection
+                    end
+
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W) or UserInputService:IsKeyDown(Enum.KeyCode.Up) then
+                        moveDir = camCF.LookVector
                     elseif UserInputService:IsKeyDown(Enum.KeyCode.S) or UserInputService:IsKeyDown(Enum.KeyCode.Down) then
-                        bv.Velocity = -camCF.LookVector * flySpeed
+                        moveDir = -camCF.LookVector
                     elseif UserInputService:IsKeyDown(Enum.KeyCode.D) or UserInputService:IsKeyDown(Enum.KeyCode.Right) then
-                        bv.Velocity = camCF.RightVector * flySpeed
+                        moveDir = camCF.RightVector
                     elseif UserInputService:IsKeyDown(Enum.KeyCode.A) or UserInputService:IsKeyDown(Enum.KeyCode.Left) then
-                        bv.Velocity = -camCF.RightVector * flySpeed
+                        moveDir = -camCF.RightVector
+                    end
+
+                    if moveDir.Magnitude > 0 then
+                        hrp.AssemblyLinearVelocity = moveDir * flySpeed
                     else
-                        bv.Velocity = Vector3.new(0, 0, 0)
+                        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    end
+
+                    if hum then
+                        pcall(function() hum:ChangeState(Enum.HumanoidStateType.Swimming) end)
                     end
                 end
+                if hrp then hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0) end
             end)
         else
-            if bv then bv:Destroy() end
-            if bg then bg:Destroy() end
-            if hum then hum.PlatformStand = false end
+            if hum then 
+                hum.PlatformStand = false 
+                pcall(function() hum:ChangeState(Enum.HumanoidStateType.GettingUp) end)
+            end
+            if hrp then hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0) end
         end
     end)
 
@@ -1075,21 +1079,21 @@ else
     BoxCorner.CornerRadius = UDim.new(0, 10)
     BoxCorner.Parent = KeyBox
 
-    local SubmitBtn = Instance.new("TextButton")
-    SubmitBtn.Size = UDim2.new(0.8, 0, 0, 40)
-    SubmitBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
-    SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
-    SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SubmitBtn.Text = "Launch 🚀"
-    SubmitBtn.TextSize = 15
-    SubmitBtn.Font = Enum.Font.GothamBold
-    SubmitBtn.Parent = KeyMain
+    LaunchBtn = Instance.new("TextButton")
+    LaunchBtn.Size = UDim2.new(0.8, 0, 0, 40)
+    LaunchBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
+    LaunchBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
+    LaunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    LaunchBtn.Text = "Launch 🚀"
+    LaunchBtn.TextSize = 15
+    LaunchBtn.Font = Enum.Font.GothamBold
+    LaunchBtn.Parent = KeyMain
 
     local BtnCorner = Instance.new("UICorner")
     BtnCorner.CornerRadius = UDim.new(0, 10)
-    BtnCorner.Parent = SubmitBtn
+    BtnCorner.Parent = LaunchBtn
 
-    SubmitBtn.MouseButton1Click:Connect(function()
+    LaunchBtn.MouseButton1Click:Connect(function()
         if KeyBox.Text == ValidKey then
             SaveKeyData(ValidKey)
             LoadAstroHub()
