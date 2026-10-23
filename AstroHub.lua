@@ -54,11 +54,16 @@ end
 getgenv().AstroRunning = false
 getgenv().SpamTPTarget = nil
 getgenv().VoidTrollTarget = nil
+getgenv().LoopTPTarget = nil
+getgenv().LoopAllWaypoints = false
+getgenv().WaypointDelay = 2
 
 local function _f3()
     getgenv().AstroRunning = false
     getgenv().SpamTPTarget = nil
     getgenv().VoidTrollTarget = nil
+    getgenv().LoopTPTarget = nil
+    getgenv().LoopAllWaypoints = false
     pcall(function()
         if _0p1.Character then
             local _h = _0p1.Character:FindFirstChildOfClass("Humanoid")
@@ -70,7 +75,7 @@ local function _f3()
             if _r then _r.AssemblyLinearVelocity = Vector3.new(0,0,0) end
         end
         for _, _o in pairs(_0g7:GetDescendants()) do
-            if ((_o.Name == "AstroHighlight") or (_o.Name == "AstroEggHighlight") or (_o.Name == "AstroBossHighlight") or (_o.Name == "AstroBossTag")) then
+            if ((_o.Name == "AstroHighlight") or (_o.Name == "AstroBossHighlight") or (_o.Name == "AstroBossTag")) then
                 _o:Destroy()
             end
         end
@@ -84,8 +89,10 @@ end
 
 _f3()
 
-if _0g1:FindFirstChild("AstroHubGui") then _0g1.AstroHubGui:Destroy() end
-if _0g1:FindFirstChild("AstroKeyGui") then _0g1.AstroKeyGui:Destroy() end
+pcall(function()
+    if _0g1:FindFirstChild("AstroHubGui") then _0g1.AstroHubGui:Destroy() end
+    if _0g1:FindFirstChild("AstroKeyGui") then _0g1.AstroKeyGui:Destroy() end
+end)
 
 getgenv().AutoReconnectState = false
 
@@ -111,22 +118,25 @@ end
 
 local function _loadHub()
     _snd()
-    if _0g1:FindFirstChild("AstroKeyGui") then _0g1.AstroKeyGui:Destroy() end
+    pcall(function()
+        if _0g1:FindFirstChild("AstroKeyGui") then _0g1.AstroKeyGui:Destroy() end
+    end)
     getgenv().AstroRunning = true
     
     local _gui = Instance.new("ScreenGui")
     _gui.Name = "AstroHubGui"
     _gui.Parent = _0g1
     _gui.IgnoreGuiInset = true
+    _gui.ResetOnSpawn = false
 
     local _btn = Instance.new("TextButton")
-    _btn.Size = UDim2.new(0, 55, 0, 55)
-    _btn.Position = UDim2.new(0, 20, 0.5, -28)
+    _btn.Size = UDim2.new(0, 50, 0, 50)
+    _btn.Position = UDim2.new(0, 20, 0.5, -25)
     _btn.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
     _btn.BackgroundTransparency = 0.1
     _btn.TextColor3 = Color3.fromRGB(0, 180, 255)
     _btn.Text = "🪐"
-    _btn.TextSize = 28
+    _btn.TextSize = 26
     _btn.Font = Enum.Font.GothamBold
     _btn.Parent = _gui
 
@@ -136,7 +146,7 @@ local function _loadHub()
 
     local _bs = Instance.new("UIStroke")
     _bs.Color = Color3.fromRGB(0, 150, 255)
-    _bs.Thickness = 2.5
+    _bs.Thickness = 2
     _bs.Parent = _btn
 
     local _dr, _ds, _dp
@@ -159,8 +169,8 @@ local function _loadHub()
     end)
 
     local _mf = Instance.new("Frame")
-    _mf.Size = UDim2.new(0, 540, 0, 380)
-    _mf.Position = UDim2.new(0.5, -270, 0.5, -190)
+    _mf.Size = UDim2.new(0, 520, 0, 360)
+    _mf.Position = UDim2.new(0.5, -260, 0.5, -180)
     _mf.BackgroundColor3 = Color3.fromRGB(10, 14, 25)
     _mf.BackgroundTransparency = 0.08
     _mf.BorderSizePixel = 0
@@ -173,11 +183,11 @@ local function _loadHub()
 
     local _mfs = Instance.new("UIStroke")
     _mfs.Color = Color3.fromRGB(0, 130, 255)
-    _mfs.Thickness = 2.5
+    _mfs.Thickness = 2
     _mfs.Parent = _mf
 
     local _tb = Instance.new("Frame")
-    _tb.Size = UDim2.new(1, 0, 0, 42)
+    _tb.Size = UDim2.new(1, 0, 0, 40)
     _tb.BackgroundColor3 = Color3.fromRGB(15, 22, 40)
     _tb.BackgroundTransparency = 0.2
     _tb.BorderSizePixel = 0
@@ -188,12 +198,12 @@ local function _loadHub()
     _tbc.Parent = _tb
 
     local _ttl = Instance.new("TextLabel")
-    _ttl.Size = UDim2.new(0, 300, 1, 0)
+    _ttl.Size = UDim2.new(0, 280, 1, 0)
     _ttl.Position = UDim2.new(0, 15, 0, 0)
     _ttl.BackgroundTransparency = 1
     _ttl.Text = "🌌 Astro Hub | Cosmic Edition 🚀"
     _ttl.TextColor3 = Color3.fromRGB(0, 190, 255)
-    _ttl.TextSize = 14
+    _ttl.TextSize = 13
     _ttl.Font = Enum.Font.GothamBold
     _ttl.TextXAlignment = Enum.TextXAlignment.Left
     _ttl.Parent = _tb
@@ -224,12 +234,12 @@ local function _loadHub()
     end)
 
     local _cb = Instance.new("TextButton")
-    _cb.Size = UDim2.new(0, 30, 0, 30)
-    _cb.Position = UDim2.new(1, -35, 0, 6)
+    _cb.Size = UDim2.new(0, 28, 0, 28)
+    _cb.Position = UDim2.new(1, -34, 0, 6)
     _cb.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
     _cb.Text = "X"
     _cb.TextColor3 = Color3.fromRGB(255, 255, 255)
-    _cb.TextSize = 15
+    _cb.TextSize = 14
     _cb.Font = Enum.Font.GothamBold
     _cb.Parent = _tb
 
@@ -238,12 +248,12 @@ local function _loadHub()
     _cbc.Parent = _cb
 
     local _mb = Instance.new("TextButton")
-    _mb.Size = UDim2.new(0, 30, 0, 30)
-    _mb.Position = UDim2.new(1, -70, 0, 6)
+    _mb.Size = UDim2.new(0, 28, 0, 28)
+    _mb.Position = UDim2.new(1, -66, 0, 6)
     _mb.BackgroundColor3 = Color3.fromRGB(35, 65, 110)
     _mb.Text = "—"
     _mb.TextColor3 = Color3.fromRGB(255, 255, 255)
-    _mb.TextSize = 15
+    _mb.TextSize = 14
     _mb.Font = Enum.Font.GothamBold
     _mb.Parent = _tb
 
@@ -262,8 +272,8 @@ local function _loadHub()
     end)
 
     local _sb = Instance.new("ScrollingFrame")
-    _sb.Size = UDim2.new(0, 150, 1, -42)
-    _sb.Position = UDim2.new(0, 0, 0, 42)
+    _sb.Size = UDim2.new(0, 140, 1, -40)
+    _sb.Position = UDim2.new(0, 0, 0, 40)
     _sb.BackgroundColor3 = Color3.fromRGB(12, 18, 30)
     _sb.BackgroundTransparency = 0.3
     _sb.BorderSizePixel = 0
@@ -277,8 +287,8 @@ local function _loadHub()
     _sbl.Parent = _sb
 
     local _ca = Instance.new("Frame")
-    _ca.Size = UDim2.new(1, -155, 1, -45)
-    _ca.Position = UDim2.new(0, 155, 0, 42)
+    _ca.Size = UDim2.new(1, -140, 1, -40)
+    _ca.Position = UDim2.new(0, 140, 0, 40)
     _ca.BackgroundTransparency = 1
     _ca.Parent = _mf
 
@@ -289,37 +299,46 @@ local function _loadHub()
         _ca.Visible = not _isMin
         _sb.Visible = not _isMin
         if _isMin then
-            _mf.Size = UDim2.new(0, 540, 0, 42)
+            _mf.Size = UDim2.new(0, 520, 0, 40)
             _mb.Text = "+"
         else
-            _mf.Size = UDim2.new(0, 540, 0, 380)
+            _mf.Size = UDim2.new(0, 520, 0, 360)
             _mb.Text = "—"
         end
     end)
 
     local _pgs = {}
-    local function _cp(_n)
-        local _sc = Instance.new("ScrollingFrame")
-        _sc.Size = UDim2.new(1, 0, 1, 0)
-        _sc.BackgroundTransparency = 1
-        _sc.CanvasSize = UDim2.new(0, 0, 0, 650)
-        _sc.ScrollBarThickness = 4
-        _sc.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
-        _sc.Visible = false
-        _sc.Parent = _ca
+    local function _cp(_n, _customScroll)
+        local _sc
+        if _customScroll then
+            _sc = Instance.new("Frame")
+            _sc.Size = UDim2.new(1, 0, 1, 0)
+            _sc.BackgroundTransparency = 1
+            _sc.Visible = false
+            _sc.Parent = _ca
+        else
+            _sc = Instance.new("ScrollingFrame")
+            _sc.Size = UDim2.new(1, 0, 1, 0)
+            _sc.BackgroundTransparency = 1
+            _sc.CanvasSize = UDim2.new(0, 0, 0, 900)
+            _sc.ScrollBarThickness = 4
+            _sc.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+            _sc.Visible = false
+            _sc.Parent = _ca
 
-        local _ly = Instance.new("UIListLayout")
-        _ly.Padding = UDim.new(0, 8)
-        _ly.HorizontalAlignment = Enum.HorizontalAlignment.Center
-        _ly.Parent = _sc
+            local _ly = Instance.new("UIListLayout")
+            _ly.Padding = UDim.new(0, 8)
+            _ly.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            _ly.Parent = _sc
+        end
 
         local _sbtn = Instance.new("TextButton")
-        _sbtn.Size = UDim2.new(0.9, 0, 0, 38)
+        _sbtn.Size = UDim2.new(0.9, 0, 0, 36)
         _sbtn.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
         _sbtn.BackgroundTransparency = 0.3
         _sbtn.TextColor3 = Color3.fromRGB(100, 200, 255)
         _sbtn.Text = _n
-        _sbtn.TextSize = 13
+        _sbtn.TextSize = 12
         _sbtn.Font = Enum.Font.GothamBold
         _sbtn.Parent = _sb
 
@@ -340,7 +359,7 @@ local function _loadHub()
 
     local function _ctg(_pp, _n, _cb)
         local _ct = Instance.new("Frame")
-        _ct.Size = UDim2.new(0.95, 0, 0, 38)
+        _ct.Size = UDim2.new(0.95, 0, 0, 36)
         _ct.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
         _ct.BackgroundTransparency = 0.2
         _ct.Parent = _pp
@@ -360,14 +379,14 @@ local function _loadHub()
         _clbl.BackgroundTransparency = 1
         _clbl.Text = _n
         _clbl.TextColor3 = Color3.fromRGB(180, 230, 255)
-        _clbl.TextSize = 12
+        _clbl.TextSize = 11
         _clbl.Font = Enum.Font.GothamBold
         _clbl.TextXAlignment = Enum.TextXAlignment.Left
         _clbl.Parent = _ct
 
         local _tgl = Instance.new("TextButton")
-        _tgl.Size = UDim2.new(0, 42, 0, 22)
-        _tgl.Position = UDim2.new(1, -50, 0.5, -11)
+        _tgl.Size = UDim2.new(0, 40, 0, 20)
+        _tgl.Position = UDim2.new(1, -48, 0.5, -10)
         _tgl.BackgroundColor3 = Color3.fromRGB(40, 55, 80)
         _tgl.Text = ""
         _tgl.Parent = _ct
@@ -377,8 +396,8 @@ local function _loadHub()
         _tgc.Parent = _tgl
 
         local _ind = Instance.new("Frame")
-        _ind.Size = UDim2.new(0, 18, 0, 18)
-        _ind.Position = UDim2.new(0, 2, 0.5, -9)
+        _ind.Size = UDim2.new(0, 16, 0, 16)
+        _ind.Position = UDim2.new(0, 2, 0.5, -8)
         _ind.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
         _ind.Parent = _tgl
 
@@ -392,11 +411,11 @@ local function _loadHub()
             _act = not _act
             if _act then
                 _tgl.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
-                _ind:TweenPosition(UDim2.new(1, -20, 0.5, -9), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+                _ind:TweenPosition(UDim2.new(1, -18, 0.5, -8), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
                 _ind.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             else
                 _tgl.BackgroundColor3 = Color3.fromRGB(40, 55, 80)
-                _ind:TweenPosition(UDim2.new(0, 2, 0.5, -9), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+                _ind:TweenPosition(UDim2.new(0, 2, 0.5, -8), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
                 _ind.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             end
             _cb(_act)
@@ -405,7 +424,7 @@ local function _loadHub()
 
     local function _csld(_pp, _n, _min, _max, _def, _cb)
         local _fr = Instance.new("Frame")
-        _fr.Size = UDim2.new(0.95, 0, 0, 42)
+        _fr.Size = UDim2.new(0.95, 0, 0, 40)
         _fr.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
         _fr.BackgroundTransparency = 0.2
         _fr.Parent = _pp
@@ -420,18 +439,18 @@ local function _loadHub()
         _frs.Parent = _fr
 
         local _lbl = Instance.new("TextLabel")
-        _lbl.Size = UDim2.new(1, -20, 0, 18)
+        _lbl.Size = UDim2.new(1, -20, 0, 16)
         _lbl.Position = UDim2.new(0, 10, 0, 3)
         _lbl.BackgroundTransparency = 1
-        _lbl.Text = _n .. ": " .. tostring(_def)
+        _lbl.Text = _n .. ": " .. tostring(_def) .. "s"
         _lbl.TextColor3 = Color3.fromRGB(130, 210, 255)
-        _lbl.TextSize = 11
+        _lbl.TextSize = 10
         _lbl.Font = Enum.Font.GothamBold
         _lbl.TextXAlignment = Enum.TextXAlignment.Left
         _lbl.Parent = _fr
 
         local _sbg = Instance.new("Frame")
-        _sbg.Size = UDim2.new(0.92, 0, 0, 6)
+        _sbg.Size = UDim2.new(0.92, 0, 0, 5)
         _sbg.Position = UDim2.new(0.04, 0, 0.72, 0)
         _sbg.BackgroundColor3 = Color3.fromRGB(30, 45, 70)
         _sbg.BorderSizePixel = 0
@@ -453,9 +472,10 @@ local function _loadHub()
 
         local function _upd(_inp)
             local _pos = math.clamp((_inp.Position.X - _sbg.AbsolutePosition.X) / _sbg.AbsoluteSize.X, 0, 1)
-            local _val = math.floor(_min + ((_max - _min) * _pos))
+            local _val = _min + ((_max - _min) * _pos)
+            _val = math.floor(_val * 10 + 0.5) / 10
             _fl.Size = UDim2.new(_pos, 0, 1, 0)
-            _lbl.Text = _n .. ": " .. tostring(_val)
+            _lbl.Text = _n .. ": " .. tostring(_val) .. "s"
             _cb(_val)
         end
 
@@ -481,15 +501,15 @@ local function _loadHub()
         end)
     end
 
-    local _pHome = _cp("🛰️ Home & Stats")
-    local _pPlayer = _cp("👨‍🚀 Player & Speed")
-    local _pCombat = _cp("🎯 Aimbot & Combat")
-    local _pTP = _cp("🌌 Player TP")
-    local _pTroll = _cp("💥 Trolls & Void")
-    local _pDetect = _cp("💎 Eggs & Rarities")
-    local _pBoss = _cp("👾 Boss Finder")
-    local _pVisual = _cp("👁️ ESP & Visuals")
-    local _pPerf = _cp("⚡ Performance")
+    local _pHome = _cp("🛰️ Home & Stats", false)
+    local _pPlayer = _cp("👨‍🚀 Player & Speed", false)
+    local _pCombat = _cp("🎯 Aimbot & Combat", false)
+    local _pTP = _cp("🌌 Player TP", false)
+    local _pWaypoints = _cp("📌 Waypoints Hub", true)
+    local _pTroll = _cp("💥 Trolls & Void", false)
+    local _pBoss = _cp("👾 Boss Finder", false)
+    local _pVisual = _cp("👁️ ESP & Visuals", false)
+    local _pPerf = _cp("⚡ Performance", false)
 
     local _sAct = false
     local _sVal = 16
@@ -587,69 +607,316 @@ local function _loadHub()
         end
     end)
 
-    local _savedPos = nil
-    local _wpFr = Instance.new("Frame")
-    _wpFr.Size = UDim2.new(0.95, 0, 0, 42)
-    _wpFr.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-    _wpFr.BackgroundTransparency = 0.2
-    _wpFr.Parent = _pPlayer
+    local _savedWaypoints = {}
 
-    local _wpCorner = Instance.new("UICorner")
-    _wpCorner.CornerRadius = UDim.new(0, 8)
-    _wpCorner.Parent = _wpFr
+    local _wpFixedTop = Instance.new("Frame")
+    _wpFixedTop.Size = UDim2.new(1, 0, 0, 180)
+    _wpFixedTop.Position = UDim2.new(0, 0, 0, 0)
+    _wpFixedTop.BackgroundTransparency = 1
+    _wpFixedTop.Parent = _pWaypoints
 
-    local _wpStroke = Instance.new("UIStroke")
-    _wpStroke.Color = Color3.fromRGB(0, 120, 220)
-    _wpStroke.Thickness = 1.2
-    _wpStroke.Parent = _wpFr
+    local _wpTopLayout = Instance.new("UIListLayout")
+    _wpTopLayout.Padding = UDim.new(0, 5)
+    _wpTopLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    _wpTopLayout.Parent = _wpFixedTop
 
-    local _btnSave = Instance.new("TextButton")
-    _btnSave.Size = UDim2.new(0.46, 0, 0.8, 0)
-    _btnSave.Position = UDim2.new(0.02, 0, 0.1, 0)
-    _btnSave.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
-    _btnSave.Text = "📌 Save Position"
-    _btnSave.TextColor3 = Color3.fromRGB(255, 255, 255)
-    _btnSave.TextSize = 11
-    _btnSave.Font = Enum.Font.GothamBold
-    _btnSave.Parent = _wpFr
+    local _wpTopFr = Instance.new("Frame")
+    _wpTopFr.Size = UDim2.new(0.95, 0, 0, 38)
+    _wpTopFr.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+    _wpTopFr.BackgroundTransparency = 0.2
+    _wpTopFr.Parent = _wpFixedTop
 
-    local _btnSaveCorner = Instance.new("UICorner")
-    _btnSaveCorner.CornerRadius = UDim.new(0, 6)
-    _btnSaveCorner.Parent = _btnSave
+    local _wptcc = Instance.new("UICorner")
+    _wptcc.CornerRadius = UDim.new(0, 8)
+    _wptcc.Parent = _wpTopFr
 
-    local _btnTPVal = Instance.new("TextButton")
-    _btnTPVal.Size = UDim2.new(0.46, 0, 0.8, 0)
-    _btnTPVal.Position = UDim2.new(0.52, 0, 0.1, 0)
-    _btnTPVal.BackgroundColor3 = Color3.fromRGB(20, 150, 80)
-    _btnTPVal.Text = "🌀 TP to Saved"
-    _btnTPVal.TextColor3 = Color3.fromRGB(255, 255, 255)
-    _btnTPVal.TextSize = 11
-    _btnTPVal.Font = Enum.Font.GothamBold
-    _btnTPVal.Parent = _wpFr
+    local _wptstr = Instance.new("UIStroke")
+    _wptstr.Color = Color3.fromRGB(0, 120, 220)
+    _wptstr.Thickness = 1.2
+    _wptstr.Parent = _wpTopFr
 
-    local _btnTPValCorner = Instance.new("UICorner")
-    _btnTPValCorner.CornerRadius = UDim.new(0, 6)
-    _btnTPValCorner.Parent = _btnTPVal
+    local _wpBox = Instance.new("TextBox")
+    _wpBox.Size = UDim2.new(0.58, 0, 0.8, 0)
+    _wpBox.Position = UDim2.new(0.02, 0, 0.1, 0)
+    _wpBox.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
+    _wpBox.BackgroundTransparency = 0.2
+    _wpBox.TextColor3 = Color3.fromRGB(150, 220, 255)
+    _wpBox.PlaceholderText = "Waypoint Name..."
+    _wpBox.Text = ""
+    _wpBox.TextSize = 11
+    _wpBox.Font = Enum.Font.GothamBold
+    _wpBox.Parent = _wpTopFr
 
-    _btnSave.MouseButton1Click:Connect(function()
-        _snd()
-        if (_0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart")) then
-            _savedPos = _0p1.Character.HumanoidRootPart.CFrame
-            _btnSave.Text = "✅ Position Saved!"
-            task.wait(1.5)
-            _btnSave.Text = "📌 Save Position"
+    local _bxc = Instance.new("UICorner")
+    _bxc.CornerRadius = UDim.new(0, 6)
+    _bxc.Parent = _wpBox
+
+    local _btnSaveWP = Instance.new("TextButton")
+    _btnSaveWP.Size = UDim2.new(0.36, 0, 0.8, 0)
+    _btnSaveWP.Position = UDim2.new(0.62, 0, 0.1, 0)
+    _btnSaveWP.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
+    _btnSaveWP.Text = "📌 Save Position"
+    _btnSaveWP.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnSaveWP.TextSize = 10
+    _btnSaveWP.Font = Enum.Font.GothamBold
+    _btnSaveWP.Parent = _wpTopFr
+
+    local _bswc = Instance.new("UICorner")
+    _bswc.CornerRadius = UDim.new(0, 6)
+    _bswc.Parent = _btnSaveWP
+
+    _csld(_wpFixedTop, "⏱️ Delay (Seconds / Decimals)", 0.1, 10, 2, function(_v)
+        getgenv().WaypointDelay = _v
+    end)
+
+    local _btnLoopAll = Instance.new("TextButton")
+    _btnLoopAll.Size = UDim2.new(0.95, 0, 0, 34)
+    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+    _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+    _btnLoopAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnLoopAll.TextSize = 11
+    _btnLoopAll.Font = Enum.Font.GothamBold
+    _btnLoopAll.Parent = _wpFixedTop
+
+    local _blac = Instance.new("UICorner")
+    _blac.CornerRadius = UDim.new(0, 8)
+    _blac.Parent = _btnLoopAll
+
+    local _blas = Instance.new("UIStroke")
+    _blas.Color = Color3.fromRGB(255, 100, 100)
+    _blas.Thickness = 1.2
+    _blas.Parent = _btnLoopAll
+
+    local _btnDeleteAll = Instance.new("TextButton")
+    _btnDeleteAll.Size = UDim2.new(0.95, 0, 0, 32)
+    _btnDeleteAll.BackgroundColor3 = Color3.fromRGB(160, 30, 30)
+    _btnDeleteAll.Text = "🗑️ Delete All Waypoints"
+    _btnDeleteAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnDeleteAll.TextSize = 10
+    _btnDeleteAll.Font = Enum.Font.GothamBold
+    _btnDeleteAll.Parent = _wpFixedTop
+
+    local _bdac = Instance.new("UICorner")
+    _bdac.CornerRadius = UDim.new(0, 8)
+    _bdac.Parent = _btnDeleteAll
+
+    local _wpScrollFrame = Instance.new("ScrollingFrame")
+    _wpScrollFrame.Size = UDim2.new(1, 0, 1, -185)
+    _wpScrollFrame.Position = UDim2.new(0, 0, 0, 185)
+    _wpScrollFrame.BackgroundTransparency = 1
+    _wpScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    _wpScrollFrame.ScrollBarThickness = 4
+    _wpScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+    _wpScrollFrame.Parent = _pWaypoints
+
+    local _wplLayout = Instance.new("UIListLayout")
+    _wplLayout.Padding = UDim.new(0, 8)
+    _wplLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    _wplLayout.Parent = _wpScrollFrame
+
+    task.spawn(function()
+        while true do
+            _0g3.RenderStepped:Wait()
+            if getgenv().AstroRunning and getgenv().LoopTPTarget then
+                pcall(function()
+                    local _targetCF = getgenv().LoopTPTarget
+                    local _myChar = _0p1.Character
+                    if _myChar and _myChar:FindFirstChild("HumanoidRootPart") then
+                        _myChar.HumanoidRootPart.CFrame = _targetCF
+                        _myChar.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    end
+                end)
+            end
         end
     end)
 
-    _btnTPVal.MouseButton1Click:Connect(function()
+    task.spawn(function()
+        while true do
+            task.wait(0.05)
+            if getgenv().AstroRunning and getgenv().LoopAllWaypoints then
+                if (#_savedWaypoints >= 2) then
+                    for _i = 2, #_savedWaypoints do
+                        if not getgenv().LoopAllWaypoints then break end
+                        local _wp = _savedWaypoints[_i]
+                        pcall(function()
+                            if _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
+                                _0p1.Character.HumanoidRootPart.CFrame = _wp.CFrame
+                                _0p1.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                                _btnLoopAll.Text = "🔄 Moving To: [" .. _i .. "/" .. #_savedWaypoints .. "] " .. _wp.Name
+                            end
+                        end)
+                        
+                        local _t = 0
+                        while (_t < getgenv().WaypointDelay) and getgenv().LoopAllWaypoints do
+                            task.wait(0.05)
+                            _t = _t + 0.05
+                        end
+                    end
+                else
+                    _btnLoopAll.Text = "⚠️ Need At Least 2 Waypoints!"
+                    getgenv().LoopAllWaypoints = false
+                    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                    task.wait(2)
+                    _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+                end
+            end
+        end
+    end)
+
+    _btnLoopAll.MouseButton1Click:Connect(function()
         _snd()
-        if _savedPos and _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
-            _0p1.Character.HumanoidRootPart.CFrame = _savedPos
+        getgenv().LoopAllWaypoints = not getgenv().LoopAllWaypoints
+        if getgenv().LoopAllWaypoints then
+            getgenv().LoopTPTarget = nil
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+            _btnLoopAll.Text = "🛑 Stop Loop (From 2nd Point)"
+        else
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+            _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+        end
+    end)
+
+    local refreshWaypointsUI
+    refreshWaypointsUI = function()
+        for _, _chld in pairs(_wpScrollFrame:GetChildren()) do
+            if _chld:IsA("Frame") then _chld:Destroy() end
+        end
+
+        for _idx, _wpData in ipairs(_savedWaypoints) do
+            local _card = Instance.new("Frame")
+            _card.Size = UDim2.new(0.95, 0, 0, 46)
+            _card.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+            _card.BackgroundTransparency = 0.2
+            _card.Parent = _wpScrollFrame
+
+            local _cc = Instance.new("UICorner")
+            _cc.CornerRadius = UDim.new(0, 8)
+            _cc.Parent = _card
+
+            local _str = Instance.new("UIStroke")
+            _str.Color = Color3.fromRGB(0, 120, 220)
+            _str.Thickness = 1.2
+            _str.Parent = _card
+
+            local _nLbl = Instance.new("TextLabel")
+            _nLbl.Size = UDim2.new(0.38, 0, 1, 0)
+            _nLbl.Position = UDim2.new(0.02, 0, 0, 0)
+            _nLbl.BackgroundTransparency = 1
+            _nLbl.Text = _idx .. ". 📌 " .. _wpData.Name
+            _nLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
+            _nLbl.TextSize = 11
+            _nLbl.Font = Enum.Font.GothamBold
+            _nLbl.TextXAlignment = Enum.TextXAlignment.Left
+            _nLbl.Parent = _card
+
+            local _tpBtn = Instance.new("TextButton")
+            _tpBtn.Size = UDim2.new(0.18, 0, 0.7, 0)
+            _tpBtn.Position = UDim2.new(0.41, 0, 0.15, 0)
+            _tpBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
+            _tpBtn.Text = "🚀 TP"
+            _tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            _tpBtn.TextSize = 10
+            _tpBtn.Font = Enum.Font.GothamBold
+            _tpBtn.Parent = _card
+
+            local _tbc = Instance.new("UICorner")
+            _tbc.CornerRadius = UDim.new(0, 6)
+            _tbc.Parent = _tpBtn
+
+            local _loopBtn = Instance.new("TextButton")
+            _loopBtn.Size = UDim2.new(0.24, 0, 0.7, 0)
+            _loopBtn.Position = UDim2.new(0.60, 0, 0.15, 0)
+            if getgenv().LoopTPTarget == _wpData.CFrame then
+                _loopBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                _loopBtn.Text = "🔄 Loop: ON"
+            else
+                _loopBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
+                _loopBtn.Text = "🔄 Loop: OFF"
+            end
+            _loopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            _loopBtn.TextSize = 10
+            _loopBtn.Font = Enum.Font.GothamBold
+            _loopBtn.Parent = _card
+
+            local _lbc = Instance.new("UICorner")
+            _lbc.CornerRadius = UDim.new(0, 6)
+            _lbc.Parent = _loopBtn
+
+            local _delBtn = Instance.new("TextButton")
+            _delBtn.Size = UDim2.new(0.13, 0, 0.7, 0)
+            _delBtn.Position = UDim2.new(0.85, 0, 0.15, 0)
+            _delBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+            _delBtn.Text = "❌"
+            _delBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            _delBtn.TextSize = 10
+            _delBtn.Font = Enum.Font.GothamBold
+            _delBtn.Parent = _card
+
+            local _dbc = Instance.new("UICorner")
+            _dbc.CornerRadius = UDim.new(0, 6)
+            _dbc.Parent = _delBtn
+
+            _tpBtn.MouseButton1Click:Connect(function()
+                _snd()
+                if _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
+                    _0p1.Character.HumanoidRootPart.CFrame = _wpData.CFrame
+                end
+            end)
+
+            _loopBtn.MouseButton1Click:Connect(function()
+                _snd()
+                getgenv().LoopAllWaypoints = false
+                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+
+                if getgenv().LoopTPTarget == _wpData.CFrame then
+                    getgenv().LoopTPTarget = nil
+                else
+                    getgenv().LoopTPTarget = _wpData.CFrame
+                end
+                refreshWaypointsUI()
+            end)
+
+            _delBtn.MouseButton1Click:Connect(function()
+                _snd()
+                if getgenv().LoopTPTarget == _wpData.CFrame then
+                    getgenv().LoopTPTarget = nil
+                end
+                table.remove(_savedWaypoints, _idx)
+                refreshWaypointsUI()
+            end)
+        end
+        _wpScrollFrame.CanvasSize = UDim2.new(0, 0, 0, #_savedWaypoints * 54)
+    end
+
+    _btnDeleteAll.MouseButton1Click:Connect(function()
+        _snd()
+        getgenv().LoopAllWaypoints = false
+        getgenv().LoopTPTarget = nil
+        _savedWaypoints = {}
+        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+        _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+        refreshWaypointsUI()
+    end)
+
+    _btnSaveWP.MouseButton1Click:Connect(function()
+        _snd()
+        if _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
+            local _wpName = _wpBox.Text
+            if (_wpName == "") then
+                _wpName = "Place " .. (#_savedWaypoints + 1)
+            end
+            table.insert(_savedWaypoints, {
+                Name = _wpName,
+                CFrame = _0p1.Character.HumanoidRootPart.CFrame
+            })
+            _wpBox.Text = ""
+            refreshWaypointsUI()
         end
     end)
 
     local _stFr = Instance.new("Frame")
-    _stFr.Size = UDim2.new(0.95, 0, 0, 130)
+    _stFr.Size = UDim2.new(0.95, 0, 0, 120)
     _stFr.BackgroundColor3 = Color3.fromRGB(20, 28, 48)
     _stFr.BackgroundTransparency = 0.2
     _stFr.Parent = _pHome
@@ -667,15 +934,15 @@ local function _loadHub()
     _stLbl.Size = UDim2.new(1, -20, 1, 0)
     _stLbl.Position = UDim2.new(0, 10, 0, 0)
     _stLbl.BackgroundTransparency = 1
-    _stLbl.Text = "⚡ FPS: --\n📡 Ping: -- ms\n💻 CPU: -- ms | 🎮 GPU: -- ms\n📍 Coords: X: 0, Y: 0, Z: 0"
+    _stLbl.Text = "⚡ FPS: --\n📡 Ping: -- ms\n💻 CPU: Active | 🎮 GPU: Stable\n📍 Coords: X: 0, Y: 0, Z: 0"
     _stLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
-    _stLbl.TextSize = 13
+    _stLbl.TextSize = 12
     _stLbl.Font = Enum.Font.GothamBold
     _stLbl.TextXAlignment = Enum.TextXAlignment.Left
     _stLbl.Parent = _stFr
 
     local _gmFr = Instance.new("Frame")
-    _gmFr.Size = UDim2.new(0.95, 0, 0, 140)
+    _gmFr.Size = UDim2.new(0.95, 0, 0, 130)
     _gmFr.BackgroundColor3 = Color3.fromRGB(20, 28, 48)
     _gmFr.BackgroundTransparency = 0.2
     _gmFr.Parent = _pHome
@@ -695,7 +962,7 @@ local function _loadHub()
     _gmLbl.BackgroundTransparency = 1
     _gmLbl.Text = "🎮 Game: Loading...\n👤 Player: " .. _0p1.DisplayName .. " (@" .. _0p1.Name .. ")\n👥 Friends Here: Checking..."
     _gmLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
-    _gmLbl.TextSize = 12
+    _gmLbl.TextSize = 11
     _gmLbl.Font = Enum.Font.GothamBold
     _gmLbl.TextXAlignment = Enum.TextXAlignment.Left
     _gmLbl.Parent = _gmFr
@@ -741,12 +1008,12 @@ local function _loadHub()
     end)
 
     local _dsBtn = Instance.new("TextButton")
-    _dsBtn.Size = UDim2.new(0.95, 0, 0, 45)
+    _dsBtn.Size = UDim2.new(0.95, 0, 0, 42)
     _dsBtn.BackgroundColor3 = Color3.fromRGB(0, 110, 220)
     _dsBtn.BackgroundTransparency = 0.1
     _dsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     _dsBtn.Text = "🚀 Join Astro Cosmic Discord 🌌"
-    _dsBtn.TextSize = 13
+    _dsBtn.TextSize = 12
     _dsBtn.Font = Enum.Font.GothamBold
     _dsBtn.Parent = _pHome
 
@@ -799,7 +1066,6 @@ local function _loadHub()
     _tpl.HorizontalAlignment = Enum.HorizontalAlignment.Center
     _tpl.Parent = _tpc
 
-    -- [حلقة Spam TP العادية]
     task.spawn(function()
         while true do
             _0g3.RenderStepped:Wait()
@@ -839,7 +1105,6 @@ local function _loadHub()
     _trollLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     _trollLayout.Parent = _trollContainer
 
-    -- [🔥 الحل النهائي الأسطوري: الشقلبة والتدوير والاصطدام الفيزيائي المدمر (Chaos Collision)]
     task.spawn(function()
         while true do
             _0g3.RenderStepped:Wait()
@@ -851,18 +1116,15 @@ local function _loadHub()
                         local _tHrp = _tPlr.Character.HumanoidRootPart
                         local _myHrp = _myChar.HumanoidRootPart
 
-                        -- تفعيل الاصطدام الكامل عشان شخصيتك تدفه بقوة
                         for _, _p in pairs(_myChar:GetDescendants()) do
                             if _p:IsA("BasePart") then _p.CanCollide = true end
                         end
 
-                        -- حساب حركة شقلبانية دائرية حول الضحية (تدور بسرعة وتدخل برأسه وجوانبه بشكل جنوني)
                         local _t = tick() * 25
                         local _offsetX = math.sin(_t) * 2.5
                         local _offsetZ = math.cos(_t) * 2.5
-                        local _offsetY = math.sin(_t * 2) * 2 + 15 -- تبدل الارتفاع بسرعة وتكبسه من فوق لتحت
+                        local _offsetY = math.sin(_t * 2) * 2 + 15
 
-                        -- دفرة فيزيائية مستمرة عبر تحريك الCFrame بشكل دائرى شقلباني يولد ضغط صدمات مرعب
                         _myHrp.CFrame = _tHrp.CFrame + Vector3.new(_offsetX, _offsetY, _offsetZ)
                         _myHrp.AssemblyLinearVelocity = Vector3.new(math.random(-1500, 1500), math.random(1000, 3000), math.random(-1500, 1500))
                     end
@@ -871,7 +1133,6 @@ local function _loadHub()
         end
     end)
 
-    -- [تعبئة قائمة TP العادية]
     task.spawn(function()
         while getgenv().AstroRunning do
             for _, _chld in pairs(_tpc:GetChildren()) do
@@ -880,7 +1141,7 @@ local function _loadHub()
             for _, _pl in pairs(_0g2:GetPlayers()) do
                 if (_pl ~= _0p1) then
                     local _pCard = Instance.new("Frame")
-                    _pCard.Size = UDim2.new(1, 0, 0, 48)
+                    _pCard.Size = UDim2.new(1, 0, 0, 46)
                     _pCard.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
                     _pCard.BackgroundTransparency = 0.2
                     _pCard.Parent = _tpc
@@ -895,7 +1156,7 @@ local function _loadHub()
                     _pNameLbl.BackgroundTransparency = 1
                     _pNameLbl.Text = _pl.DisplayName .. "\n(@" .. _pl.Name .. ")"
                     _pNameLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
-                    _pNameLbl.TextSize = 11
+                    _pNameLbl.TextSize = 10
                     _pNameLbl.Font = Enum.Font.GothamBold
                     _pNameLbl.TextXAlignment = Enum.TextXAlignment.Left
                     _pNameLbl.Parent = _pCard
@@ -962,12 +1223,11 @@ local function _loadHub()
                     end)
                 end
             end
-            _tpc.CanvasSize = UDim2.new(0, 0, 0, #_0g2:GetPlayers() * 55)
+            _tpc.CanvasSize = UDim2.new(0, 0, 0, #_0g2:GetPlayers() * 54)
             task.wait(4)
         end
     end)
 
-    -- [تعبئة قائمة التخريب (Trolls)]
     task.spawn(function()
         while getgenv().AstroRunning do
             for _, _chld in pairs(_trollContainer:GetChildren()) do
@@ -976,7 +1236,7 @@ local function _loadHub()
             for _, _pl in pairs(_0g2:GetPlayers()) do
                 if (_pl ~= _0p1) then
                     local _tCard = Instance.new("Frame")
-                    _tCard.Size = UDim2.new(1, 0, 0, 48)
+                    _tCard.Size = UDim2.new(1, 0, 0, 46)
                     _tCard.BackgroundColor3 = Color3.fromRGB(25, 15, 25)
                     _tCard.BackgroundTransparency = 0.2
                     _tCard.Parent = _trollContainer
@@ -996,7 +1256,7 @@ local function _loadHub()
                     _tNameLbl.BackgroundTransparency = 1
                     _tNameLbl.Text = "💥 " .. _pl.DisplayName .. " (@" .. _pl.Name .. ")"
                     _tNameLbl.TextColor3 = Color3.fromRGB(255, 150, 150)
-                    _tNameLbl.TextSize = 11
+                    _tNameLbl.TextSize = 10
                     _tNameLbl.Font = Enum.Font.GothamBold
                     _tNameLbl.TextXAlignment = Enum.TextXAlignment.Left
                     _tNameLbl.Parent = _tCard
@@ -1034,7 +1294,7 @@ local function _loadHub()
                     end)
                 end
             end
-            _trollContainer.CanvasSize = UDim2.new(0, 0, 0, #_0g2:GetPlayers() * 55)
+            _trollContainer.CanvasSize = UDim2.new(0, 0, 0, #_0g2:GetPlayers() * 54)
             task.wait(4)
         end
     end)
@@ -1117,35 +1377,6 @@ local function _loadHub()
     _csld(_pCombat, "Aimbot Max Distance", 50, 1000, 300, function(_v) _maxDst = _v end)
     _csld(_pCombat, "Aim Smoothness %", 10, 100, 35, function(_v) _abSmth = _v / 100 end)
 
-    local _egAct = false
-    _ctg(_pDetect, "Highlight Eggs & Rarities", function(_st)
-        _egAct = _st
-        task.spawn(function()
-            while _egAct and getgenv().AstroRunning do
-                for _, _obj in pairs(_0g7:GetDescendants()) do
-                    local _nm = string.lower(_obj.Name)
-                    if (string.find(_nm, "egg") or string.find(_nm, "divine") or string.find(_nm, "secret") or string.find(_nm, "mythic") or string.find(_nm, "legendary")) then
-                        if (_obj:IsA("Model") or _obj:IsA("BasePart")) then
-                            if not _obj:FindFirstChild("AstroEggHighlight") then
-                                local _hl = Instance.new("Highlight")
-                                _hl.Name = "AstroEggHighlight"
-                                _hl.FillColor = Color3.fromRGB(0, 150, 255)
-                                _hl.OutlineColor = Color3.fromRGB(255, 255, 255)
-                                _hl.Parent = _obj
-                            end
-                        end
-                    end
-                end
-                task.wait(3)
-            end
-            if not _egAct then
-                for _, _obj in pairs(_0g7:GetDescendants()) do
-                    if (_obj.Name == "AstroEggHighlight") then _obj:Destroy() end
-                end
-            end
-        end)
-    end)
-
     local _bsAct = false
     _ctg(_pBoss, "Highlight All Bosses", function(_st)
         _bsAct = _st
@@ -1174,7 +1405,7 @@ local function _loadHub()
                                 _tx.BackgroundTransparency = 1
                                 _tx.Text = "👹 BOSS: " .. _obj.Name
                                 _tx.TextColor3 = Color3.fromRGB(0, 200, 255)
-                                _tx.TextSize = 14
+                                _tx.TextSize = 13
                                 _tx.Font = Enum.Font.GothamBold
                                 _tx.Parent = _bg
                             end
@@ -1252,10 +1483,11 @@ else
     _kGui.Name = "AstroKeyGui"
     _kGui.Parent = _0g1
     _kGui.IgnoreGuiInset = true
+    _kGui.ResetOnSpawn = false
 
     local _kMain = Instance.new("Frame")
-    _kMain.Size = UDim2.new(0, 320, 0, 200)
-    _kMain.Position = UDim2.new(0.5, -160, 0.5, -100)
+    _kMain.Size = UDim2.new(0, 300, 0, 190)
+    _kMain.Position = UDim2.new(0.5, -150, 0.5, -95)
     _kMain.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
     _kMain.BackgroundTransparency = 0.1
     _kMain.BorderSizePixel = 0
@@ -1275,19 +1507,19 @@ else
     _kttl.BackgroundTransparency = 1
     _kttl.Text = "🚀 Astro Cosmic System 🪐"
     _kttl.TextColor3 = Color3.fromRGB(0, 190, 255)
-    _kttl.TextSize = 16
+    _kttl.TextSize = 15
     _kttl.Font = Enum.Font.GothamBold
     _kttl.Parent = _kMain
 
     local _kBox = Instance.new("TextBox")
-    _kBox.Size = UDim2.new(0.8, 0, 0, 40)
+    _kBox.Size = UDim2.new(0.8, 0, 0, 38)
     _kBox.Position = UDim2.new(0.1, 0, 0.35, 0)
     _kBox.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
     _kBox.BackgroundTransparency = 0.2
     _kBox.TextColor3 = Color3.fromRGB(150, 220, 255)
     _kBox.PlaceholderText = "Enter Key Here..."
     _kBox.Text = ""
-    _kBox.TextSize = 14
+    _kBox.TextSize = 13
     _kBox.Font = Enum.Font.Gotham
     _kBox.Parent = _kMain
 
@@ -1295,13 +1527,13 @@ else
     _kbcr.CornerRadius = UDim.new(0, 10)
     _kbcr.Parent = _kBox
 
-    _lBtn = Instance.new("TextButton")
-    _lBtn.Size = UDim2.new(0.8, 0, 0, 40)
+    local _lBtn = Instance.new("TextButton")
+    _lBtn.Size = UDim2.new(0.8, 0, 0, 38)
     _lBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
     _lBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
     _lBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     _lBtn.Text = "Launch 🚀"
-    _lBtn.TextSize = 15
+    _lBtn.TextSize = 14
     _lBtn.Font = Enum.Font.GothamBold
     _lBtn.Parent = _kMain
 
