@@ -53,14 +53,19 @@ end
 
 getgenv().AstroRunning = false
 getgenv().SpamTPTarget = nil
+getgenv().VoidTrollTarget = nil
 
 local function _f3()
     getgenv().AstroRunning = false
     getgenv().SpamTPTarget = nil
+    getgenv().VoidTrollTarget = nil
     pcall(function()
         if _0p1.Character then
             local _h = _0p1.Character:FindFirstChildOfClass("Humanoid")
-            if _h then _h.PlatformStand = false end
+            if _h then 
+                _h.PlatformStand = false 
+                _h:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            end
             local _r = _0p1.Character:FindFirstChild("HumanoidRootPart")
             if _r then _r.AssemblyLinearVelocity = Vector3.new(0,0,0) end
         end
@@ -262,7 +267,7 @@ local function _loadHub()
     _sb.BackgroundColor3 = Color3.fromRGB(12, 18, 30)
     _sb.BackgroundTransparency = 0.3
     _sb.BorderSizePixel = 0
-    _sb.CanvasSize = UDim2.new(0, 0, 0, 450)
+    _sb.CanvasSize = UDim2.new(0, 0, 0, 480)
     _sb.ScrollBarThickness = 2
     _sb.Parent = _mf
 
@@ -480,6 +485,7 @@ local function _loadHub()
     local _pPlayer = _cp("👨‍🚀 Player & Speed")
     local _pCombat = _cp("🎯 Aimbot & Combat")
     local _pTP = _cp("🌌 Player TP")
+    local _pTroll = _cp("💥 Trolls & Void")
     local _pDetect = _cp("💎 Eggs & Rarities")
     local _pBoss = _cp("👾 Boss Finder")
     local _pVisual = _cp("👁️ ESP & Visuals")
@@ -581,7 +587,6 @@ local function _loadHub()
         end
     end)
 
-    -- [إضافة Waypoint - حفظ المكان والتنقل]
     local _savedPos = nil
     local _wpFr = Instance.new("Frame")
     _wpFr.Size = UDim2.new(0.95, 0, 0, 42)
@@ -710,8 +715,7 @@ local function _loadHub()
                     end)
                 end
             end
-            local _fs = ((#_fl > 0) and table.concat(_fl, ", ")) or "No Friends In Server"
-            _gmLbl.Text = string.format("🎮 Game: %s\n👤 Player: %s (@%s)\n👥 Friends Here: %s", _pName, _0p1.DisplayName, _0p1.Name, _fs)
+            _gmLbl.Text = string.format("🎮 Game: %s\n👤 Player: %s (@%s)\n👥 Friends Here: %s", _pName, _0p1.DisplayName, _0p1.Name, ((#_fl > 0) and table.concat(_fl, ", ")) or "No Friends")
             task.wait(5)
         end
     end)
@@ -769,7 +773,6 @@ local function _loadHub()
         getgenv().AutoReconnectState = _st
     end)
 
-    -- [إضافة Anti-AFK Disabler]
     _ctg(_pHome, "🛡️ Anti-AFK Protection", function(_st)
         if _st then
             local _vu = game:GetService("VirtualUser")
@@ -783,7 +786,6 @@ local function _loadHub()
         end
     end)
 
-    -- [قائمة Player TP الجديدة المزودة بالسبام والتنقل العادي]
     local _tpc = Instance.new("ScrollingFrame")
     _tpc.Size = UDim2.new(0.95, 0, 1, -20)
     _tpc.BackgroundTransparency = 1
@@ -797,21 +799,79 @@ local function _loadHub()
     _tpl.HorizontalAlignment = Enum.HorizontalAlignment.Center
     _tpl.Parent = _tpc
 
-    -- [حلقة معالجة الـ Spam TP لحظياً]
+    -- [حلقة Spam TP العادية]
     task.spawn(function()
         while true do
             _0g3.RenderStepped:Wait()
             if getgenv().AstroRunning and getgenv().SpamTPTarget then
                 pcall(function()
                     local _tPlr = getgenv().SpamTPTarget
-                    if (_tPlr and _tPlr.Character and _tPlr.Character:FindFirstChild("HumanoidRootPart") and _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart")) then
-                        _0p1.Character.HumanoidRootPart.CFrame = _tPlr.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                    local _myChar = _0p1.Character
+                    if (_tPlr and _tPlr.Character and _tPlr.Character:FindFirstChild("HumanoidRootPart") and _myChar and _myChar:FindFirstChild("HumanoidRootPart")) then
+                        local _myHum = _myChar:FindFirstChildOfClass("Humanoid")
+                        if _myHum then
+                            _myHum.Sit = false
+                            _myHum:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+                            if _myHum:GetState() == Enum.HumanoidStateType.Seated then
+                                _myHum:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
+                            end
+                        end
+                        local _myHrp = _myChar.HumanoidRootPart
+                        local _tHrp = _tPlr.Character.HumanoidRootPart
+                        _myHrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                        _myHrp.CFrame = _tHrp.CFrame + Vector3.new(0, 5.5, 0)
                     end
                 end)
             end
         end
     end)
 
+    local _trollContainer = Instance.new("ScrollingFrame")
+    _trollContainer.Size = UDim2.new(0.95, 0, 1, -20)
+    _trollContainer.BackgroundTransparency = 1
+    _trollContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+    _trollContainer.ScrollBarThickness = 4
+    _trollContainer.ScrollBarImageColor3 = Color3.fromRGB(220, 50, 50)
+    _trollContainer.Parent = _pTroll
+
+    local _trollLayout = Instance.new("UIListLayout")
+    _trollLayout.Padding = UDim.new(0, 8)
+    _trollLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    _trollLayout.Parent = _trollContainer
+
+    -- [🔥 الحل النهائي الأسطوري: الشقلبة والتدوير والاصطدام الفيزيائي المدمر (Chaos Collision)]
+    task.spawn(function()
+        while true do
+            _0g3.RenderStepped:Wait()
+            if getgenv().AstroRunning and getgenv().VoidTrollTarget then
+                pcall(function()
+                    local _tPlr = getgenv().VoidTrollTarget
+                    local _myChar = _0p1.Character
+                    if (_tPlr and _tPlr.Character and _tPlr.Character:FindFirstChild("HumanoidRootPart") and _myChar and _myChar:FindFirstChild("HumanoidRootPart")) then
+                        local _tHrp = _tPlr.Character.HumanoidRootPart
+                        local _myHrp = _myChar.HumanoidRootPart
+
+                        -- تفعيل الاصطدام الكامل عشان شخصيتك تدفه بقوة
+                        for _, _p in pairs(_myChar:GetDescendants()) do
+                            if _p:IsA("BasePart") then _p.CanCollide = true end
+                        end
+
+                        -- حساب حركة شقلبانية دائرية حول الضحية (تدور بسرعة وتدخل برأسه وجوانبه بشكل جنوني)
+                        local _t = tick() * 25
+                        local _offsetX = math.sin(_t) * 2.5
+                        local _offsetZ = math.cos(_t) * 2.5
+                        local _offsetY = math.sin(_t * 2) * 2 + 15 -- تبدل الارتفاع بسرعة وتكبسه من فوق لتحت
+
+                        -- دفرة فيزيائية مستمرة عبر تحريك الCFrame بشكل دائرى شقلباني يولد ضغط صدمات مرعب
+                        _myHrp.CFrame = _tHrp.CFrame + Vector3.new(_offsetX, _offsetY, _offsetZ)
+                        _myHrp.AssemblyLinearVelocity = Vector3.new(math.random(-1500, 1500), math.random(1000, 3000), math.random(-1500, 1500))
+                    end
+                end)
+            end
+        end
+    end)
+
+    -- [تعبئة قائمة TP العادية]
     task.spawn(function()
         while getgenv().AstroRunning do
             for _, _chld in pairs(_tpc:GetChildren()) do
@@ -877,7 +937,7 @@ local function _loadHub()
                         _snd()
                         pcall(function()
                             if (_pl.Character and _pl.Character:FindFirstChild("HumanoidRootPart") and _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart")) then
-                                _0p1.Character.HumanoidRootPart.CFrame = _pl.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                                _0p1.Character.HumanoidRootPart.CFrame = _pl.Character.HumanoidRootPart.CFrame + Vector3.new(0, 5.5, 0)
                             end
                         end)
                     end)
@@ -888,6 +948,12 @@ local function _loadHub()
                             getgenv().SpamTPTarget = nil
                             _pSpamBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
                             _pSpamBtn.Text = "⚡ Spam: OFF"
+                            pcall(function()
+                                local _myHum = _0p1.Character and _0p1.Character:FindFirstChildOfClass("Humanoid")
+                                if _myHum then
+                                    _myHum:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+                                end
+                            end)
                         else
                             getgenv().SpamTPTarget = _pl
                             _pSpamBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
@@ -897,6 +963,78 @@ local function _loadHub()
                 end
             end
             _tpc.CanvasSize = UDim2.new(0, 0, 0, #_0g2:GetPlayers() * 55)
+            task.wait(4)
+        end
+    end)
+
+    -- [تعبئة قائمة التخريب (Trolls)]
+    task.spawn(function()
+        while getgenv().AstroRunning do
+            for _, _chld in pairs(_trollContainer:GetChildren()) do
+                if _chld:IsA("Frame") then _chld:Destroy() end
+            end
+            for _, _pl in pairs(_0g2:GetPlayers()) do
+                if (_pl ~= _0p1) then
+                    local _tCard = Instance.new("Frame")
+                    _tCard.Size = UDim2.new(1, 0, 0, 48)
+                    _tCard.BackgroundColor3 = Color3.fromRGB(25, 15, 25)
+                    _tCard.BackgroundTransparency = 0.2
+                    _tCard.Parent = _trollContainer
+
+                    local _tcc = Instance.new("UICorner")
+                    _tcc.CornerRadius = UDim.new(0, 8)
+                    _tcc.Parent = _tCard
+
+                    local _tStroke = Instance.new("UIStroke")
+                    _tStroke.Color = Color3.fromRGB(200, 50, 50)
+                    _tStroke.Thickness = 1.2
+                    _tStroke.Parent = _tCard
+
+                    local _tNameLbl = Instance.new("TextLabel")
+                    _tNameLbl.Size = UDim2.new(0.60, 0, 1, 0)
+                    _tNameLbl.Position = UDim2.new(0.02, 0, 0, 0)
+                    _tNameLbl.BackgroundTransparency = 1
+                    _tNameLbl.Text = "💥 " .. _pl.DisplayName .. " (@" .. _pl.Name .. ")"
+                    _tNameLbl.TextColor3 = Color3.fromRGB(255, 150, 150)
+                    _tNameLbl.TextSize = 11
+                    _tNameLbl.Font = Enum.Font.GothamBold
+                    _tNameLbl.TextXAlignment = Enum.TextXAlignment.Left
+                    _tNameLbl.Parent = _tCard
+
+                    local _tTrollBtn = Instance.new("TextButton")
+                    _tTrollBtn.Size = UDim2.new(0.35, 0, 0.7, 0)
+                    _tTrollBtn.Position = UDim2.new(0.63, 0, 0.15, 0)
+                    if getgenv().VoidTrollTarget == _pl then
+                        _tTrollBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _tTrollBtn.Text = "🔥 Launch: ON"
+                    else
+                        _tTrollBtn.BackgroundColor3 = Color3.fromRGB(60, 30, 40)
+                        _tTrollBtn.Text = "🌪️ Launch: OFF"
+                    end
+                    _tTrollBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    _tTrollBtn.TextSize = 10
+                    _tTrollBtn.Font = Enum.Font.GothamBold
+                    _tTrollBtn.Parent = _tCard
+
+                    local _tsbc = Instance.new("UICorner")
+                    _tsbc.CornerRadius = UDim.new(0, 6)
+                    _tsbc.Parent = _tTrollBtn
+
+                    _tTrollBtn.MouseButton1Click:Connect(function()
+                        _snd()
+                        if getgenv().VoidTrollTarget == _pl then
+                            getgenv().VoidTrollTarget = nil
+                            _tTrollBtn.BackgroundColor3 = Color3.fromRGB(60, 30, 40)
+                            _tTrollBtn.Text = "🌪️ Launch: OFF"
+                        else
+                            getgenv().VoidTrollTarget = _pl
+                            _tTrollBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                            _tTrollBtn.Text = "🔥 Launch: ON"
+                        end
+                    end)
+                end
+            end
+            _trollContainer.CanvasSize = UDim2.new(0, 0, 0, #_0g2:GetPlayers() * 55)
             task.wait(4)
         end
     end)
@@ -1157,7 +1295,7 @@ else
     _kbcr.CornerRadius = UDim.new(0, 10)
     _kbcr.Parent = _kBox
 
-    local _lBtn = Instance.new("TextButton")
+    _lBtn = Instance.new("TextButton")
     _lBtn.Size = UDim2.new(0.8, 0, 0, 40)
     _lBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
     _lBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
