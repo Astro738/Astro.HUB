@@ -54,14 +54,19 @@ end
 getgenv().AstroRunning = false
 getgenv().SpamTPTarget = nil
 getgenv().VoidTrollTarget = nil
+getgenv().UndergroundKillTarget = nil
+getgenv().BackstabTarget = nil
 getgenv().LoopTPTarget = nil
 getgenv().LoopAllWaypoints = false
-getgenv().WaypointDelay = 2
+getgenv().WaypointDelay = 0.5
+getgenv().WaypointStartPoint = 1
 
 local function _f3()
     getgenv().AstroRunning = false
     getgenv().SpamTPTarget = nil
     getgenv().VoidTrollTarget = nil
+    getgenv().UndergroundKillTarget = nil
+    getgenv().BackstabTarget = nil
     getgenv().LoopTPTarget = nil
     getgenv().LoopAllWaypoints = false
     pcall(function()
@@ -422,7 +427,7 @@ local function _loadHub()
         end)
     end
 
-    local function _csld(_pp, _n, _min, _max, _def, _cb)
+    local function _csld(_pp, _n, _min, _max, _def, _isDecimal, _cb)
         local _fr = Instance.new("Frame")
         _fr.Size = UDim2.new(0.95, 0, 0, 40)
         _fr.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
@@ -442,7 +447,7 @@ local function _loadHub()
         _lbl.Size = UDim2.new(1, -20, 0, 16)
         _lbl.Position = UDim2.new(0, 10, 0, 3)
         _lbl.BackgroundTransparency = 1
-        _lbl.Text = _n .. ": " .. tostring(_def) .. "s"
+        _lbl.Text = _n .. ": " .. tostring(_def) .. (_isDecimal and "s" or "")
         _lbl.TextColor3 = Color3.fromRGB(130, 210, 255)
         _lbl.TextSize = 10
         _lbl.Font = Enum.Font.GothamBold
@@ -473,9 +478,14 @@ local function _loadHub()
         local function _upd(_inp)
             local _pos = math.clamp((_inp.Position.X - _sbg.AbsolutePosition.X) / _sbg.AbsoluteSize.X, 0, 1)
             local _val = _min + ((_max - _min) * _pos)
-            _val = math.floor(_val * 10 + 0.5) / 10
+            if _isDecimal then
+                _val = math.floor(_val * 100 + 0.5) / 100
+                _lbl.Text = _n .. ": " .. tostring(_val) .. "s"
+            else
+                _val = math.floor(_val + 0.5)
+                _lbl.Text = _n .. ": " .. tostring(_val)
+            end
             _fl.Size = UDim2.new(_pos, 0, 1, 0)
-            _lbl.Text = _n .. ": " .. tostring(_val) .. "s"
             _cb(_val)
         end
 
@@ -534,7 +544,7 @@ local function _loadHub()
         end
     end)
 
-    _csld(_pPlayer, "👟 WalkSpeed Boost", 16, 2000, 16, function(_v) _sVal = _v end)
+    _csld(_pPlayer, "👟 WalkSpeed Boost", 16, 2000, 16, false, function(_v) _sVal = _v end)
 
     _ctg(_pPlayer, "🛸 Pro Anti-Kick Fly", function(_st)
         _fly = _st
@@ -572,7 +582,7 @@ local function _loadHub()
         end
     end)
 
-    _csld(_pPlayer, "🚀 Fly Speed Boost", 20, 2000, 50, function(_v) _flySpd = _v end)
+    _csld(_pPlayer, "🚀 Fly Speed Boost", 20, 2000, 50, false, function(_v) _flySpd = _v end)
 
     _ctg(_pPlayer, "🥾 Infinite Jump", function(_st)
         if _st then
@@ -610,7 +620,7 @@ local function _loadHub()
     local _savedWaypoints = {}
 
     local _wpFixedTop = Instance.new("Frame")
-    _wpFixedTop.Size = UDim2.new(1, 0, 0, 180)
+    _wpFixedTop.Size = UDim2.new(1, 0, 0, 220)
     _wpFixedTop.Position = UDim2.new(0, 0, 0, 0)
     _wpFixedTop.BackgroundTransparency = 1
     _wpFixedTop.Parent = _pWaypoints
@@ -665,15 +675,20 @@ local function _loadHub()
     _bswc.CornerRadius = UDim.new(0, 6)
     _bswc.Parent = _btnSaveWP
 
-    _csld(_wpFixedTop, "⏱️ Delay (Seconds / Decimals)", 0.1, 10, 2, function(_v)
+    _csld(_wpFixedTop, "⏱️ Delay (0.01s - 60s)", 0.01, 60, 0.5, true, function(_v)
         getgenv().WaypointDelay = _v
     end)
 
+    _csld(_wpFixedTop, "🎯 Start From Point", 1, 20, 1, false, function(_v)
+        getgenv().WaypointStartPoint = _v
+    end)
+
     local _btnLoopAll = Instance.new("TextButton")
-    _btnLoopAll.Size = UDim2.new(0.95, 0, 0, 34)
-    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
-    _btnLoopAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnLoopAll.Size = UDim2.new(0.95, 0, 0, 36)
+    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+    _btnLoopAll.BackgroundTransparency = 0.2
+    _btnLoopAll.Text = "⚡ Start Auto Loop"
+    _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
     _btnLoopAll.TextSize = 11
     _btnLoopAll.Font = Enum.Font.GothamBold
     _btnLoopAll.Parent = _wpFixedTop
@@ -683,8 +698,8 @@ local function _loadHub()
     _blac.Parent = _btnLoopAll
 
     local _blas = Instance.new("UIStroke")
-    _blas.Color = Color3.fromRGB(255, 100, 100)
-    _blas.Thickness = 1.2
+    _blas.Color = Color3.fromRGB(0, 140, 255)
+    _blas.Thickness = 1.5
     _blas.Parent = _btnLoopAll
 
     local _btnDeleteAll = Instance.new("TextButton")
@@ -701,8 +716,8 @@ local function _loadHub()
     _bdac.Parent = _btnDeleteAll
 
     local _wpScrollFrame = Instance.new("ScrollingFrame")
-    _wpScrollFrame.Size = UDim2.new(1, 0, 1, -185)
-    _wpScrollFrame.Position = UDim2.new(0, 0, 0, 185)
+    _wpScrollFrame.Size = UDim2.new(1, 0, 1, -225)
+    _wpScrollFrame.Position = UDim2.new(0, 0, 0, 225)
     _wpScrollFrame.BackgroundTransparency = 1
     _wpScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
     _wpScrollFrame.ScrollBarThickness = 4
@@ -730,35 +745,49 @@ local function _loadHub()
         end
     end)
 
+    -- [🔥 محرك الانتقال التلقائي للـ Waypoints المطور بالكامل وبدون أي جليتش]
     task.spawn(function()
+        local _currentIdx = 1
         while true do
-            task.wait(0.05)
             if getgenv().AstroRunning and getgenv().LoopAllWaypoints then
-                if (#_savedWaypoints >= 2) then
-                    for _i = 2, #_savedWaypoints do
-                        if not getgenv().LoopAllWaypoints then break end
-                        local _wp = _savedWaypoints[_i]
-                        pcall(function()
-                            if _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
-                                _0p1.Character.HumanoidRootPart.CFrame = _wp.CFrame
-                                _0p1.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                                _btnLoopAll.Text = "🔄 Moving To: [" .. _i .. "/" .. #_savedWaypoints .. "] " .. _wp.Name
-                            end
-                        end)
-                        
-                        local _t = 0
-                        while (_t < getgenv().WaypointDelay) and getgenv().LoopAllWaypoints do
-                            task.wait(0.05)
-                            _t = _t + 0.05
+                if (#_savedWaypoints >= 1) then
+                    local _startIdx = math.clamp(getgenv().WaypointStartPoint, 1, #_savedWaypoints)
+                    if (_currentIdx < _startIdx or _currentIdx > #_savedWaypoints) then
+                        _currentIdx = _startIdx
+                    end
+                    
+                    local _wp = _savedWaypoints[_currentIdx]
+                    pcall(function()
+                        if _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
+                            _0p1.Character.HumanoidRootPart.CFrame = _wp.CFrame
+                            _0p1.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                            _btnLoopAll.Text = "🔄 Moving To: [" .. _currentIdx .. "/" .. #_savedWaypoints .. "] " .. _wp.Name
+                        end
+                    end)
+                    
+                    local _delayNeeded = math.max(0.01, getgenv().WaypointDelay)
+                    task.wait(_delayNeeded)
+
+                    if getgenv().LoopAllWaypoints then
+                        _currentIdx = _currentIdx + 1
+                        if (_currentIdx > #_savedWaypoints) then
+                            _currentIdx = _startIdx
                         end
                     end
                 else
-                    _btnLoopAll.Text = "⚠️ Need At Least 2 Waypoints!"
+                    _btnLoopAll.Text = "⚠️ Need At Least 1 Waypoint!"
                     getgenv().LoopAllWaypoints = false
-                    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+                    _btnLoopAll.TextColor3 = Color3.fromRGB(220, 50, 50)
+                    _blas.Color = Color3.fromRGB(220, 50, 50)
                     task.wait(2)
-                    _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+                    _btnLoopAll.Text = "⚡ Start Auto Loop"
+                    _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
+                    _blas.Color = Color3.fromRGB(0, 140, 255)
                 end
+            else
+                _currentIdx = math.clamp(getgenv().WaypointStartPoint, 1, math.max(1, #_savedWaypoints))
+                task.wait(0.1)
             end
         end
     end)
@@ -768,11 +797,15 @@ local function _loadHub()
         getgenv().LoopAllWaypoints = not getgenv().LoopAllWaypoints
         if getgenv().LoopAllWaypoints then
             getgenv().LoopTPTarget = nil
-            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
-            _btnLoopAll.Text = "🛑 Stop Loop (From 2nd Point)"
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+            _btnLoopAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+            _blas.Color = Color3.fromRGB(100, 220, 255)
+            _btnLoopAll.Text = "🛑 Stop Auto Loop"
         else
-            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-            _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+            _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
+            _blas.Color = Color3.fromRGB(0, 140, 255)
+            _btnLoopAll.Text = "⚡ Start Auto Loop"
         end
     end)
 
@@ -866,8 +899,10 @@ local function _loadHub()
             _loopBtn.MouseButton1Click:Connect(function()
                 _snd()
                 getgenv().LoopAllWaypoints = false
-                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-                _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+                _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
+                _blas.Color = Color3.fromRGB(0, 140, 255)
+                _btnLoopAll.Text = "⚡ Start Auto Loop"
 
                 if getgenv().LoopTPTarget == _wpData.CFrame then
                     getgenv().LoopTPTarget = nil
@@ -894,8 +929,10 @@ local function _loadHub()
         getgenv().LoopAllWaypoints = false
         getgenv().LoopTPTarget = nil
         _savedWaypoints = {}
-        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-        _btnLoopAll.Text = "⚡ Start Loop (From 2nd Point)"
+        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+        _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
+        _blas.Color = Color3.fromRGB(0, 140, 255)
+        _btnLoopAll.Text = "⚡ Start Auto Loop"
         refreshWaypointsUI()
     end)
 
@@ -1097,13 +1134,59 @@ local function _loadHub()
     _trollContainer.BackgroundTransparency = 1
     _trollContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
     _trollContainer.ScrollBarThickness = 4
-    _trollContainer.ScrollBarImageColor3 = Color3.fromRGB(220, 50, 50)
+    _trollContainer.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
     _trollContainer.Parent = _pTroll
 
     local _trollLayout = Instance.new("UIListLayout")
     _trollLayout.Padding = UDim.new(0, 8)
     _trollLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     _trollLayout.Parent = _trollContainer
+
+    task.spawn(function()
+        while true do
+            _0g3.RenderStepped:Wait()
+            if getgenv().AstroRunning and getgenv().UndergroundKillTarget then
+                pcall(function()
+                    local _tPlr = getgenv().UndergroundKillTarget
+                    local _myChar = _0p1.Character
+                    if (_tPlr and _tPlr.Character and _tPlr.Character:FindFirstChild("HumanoidRootPart") and _myChar and _myChar:FindFirstChild("HumanoidRootPart")) then
+                        local _tHrp = _tPlr.Character.HumanoidRootPart
+                        local _myHrp = _myChar.HumanoidRootPart
+
+                        for _, _p in pairs(_myChar:GetDescendants()) do
+                            if _p:IsA("BasePart") then _p.CanCollide = false end
+                        end
+
+                        _myHrp.CFrame = _tHrp.CFrame * CFrame.new(0, -3.2, 0)
+                        _myHrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    end
+                end)
+            end
+        end
+    end)
+
+    task.spawn(function()
+        while true do
+            _0g3.RenderStepped:Wait()
+            if getgenv().AstroRunning and getgenv().BackstabTarget then
+                pcall(function()
+                    local _tPlr = getgenv().BackstabTarget
+                    local _myChar = _0p1.Character
+                    if (_tPlr and _tPlr.Character and _tPlr.Character:FindFirstChild("HumanoidRootPart") and _myChar and _myChar:FindFirstChild("HumanoidRootPart")) then
+                        local _tHrp = _tPlr.Character.HumanoidRootPart
+                        local _myHrp = _myChar.HumanoidRootPart
+
+                        for _, _p in pairs(_myChar:GetDescendants()) do
+                            if _p:IsA("BasePart") then _p.CanCollide = false end
+                        end
+
+                        _myHrp.CFrame = _tHrp.CFrame * CFrame.new(0, 0, 1.5)
+                        _myHrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    end
+                end)
+            end
+        end
+    end)
 
     task.spawn(function()
         while true do
@@ -1236,8 +1319,8 @@ local function _loadHub()
             for _, _pl in pairs(_0g2:GetPlayers()) do
                 if (_pl ~= _0p1) then
                     local _tCard = Instance.new("Frame")
-                    _tCard.Size = UDim2.new(1, 0, 0, 46)
-                    _tCard.BackgroundColor3 = Color3.fromRGB(25, 15, 25)
+                    _tCard.Size = UDim2.new(1, 0, 0, 48)
+                    _tCard.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
                     _tCard.BackgroundTransparency = 0.2
                     _tCard.Parent = _trollContainer
 
@@ -1246,50 +1329,108 @@ local function _loadHub()
                     _tcc.Parent = _tCard
 
                     local _tStroke = Instance.new("UIStroke")
-                    _tStroke.Color = Color3.fromRGB(200, 50, 50)
+                    _tStroke.Color = Color3.fromRGB(0, 120, 220)
                     _tStroke.Thickness = 1.2
                     _tStroke.Parent = _tCard
 
                     local _tNameLbl = Instance.new("TextLabel")
-                    _tNameLbl.Size = UDim2.new(0.60, 0, 1, 0)
+                    _tNameLbl.Size = UDim2.new(0.32, 0, 1, 0)
                     _tNameLbl.Position = UDim2.new(0.02, 0, 0, 0)
                     _tNameLbl.BackgroundTransparency = 1
-                    _tNameLbl.Text = "💥 " .. _pl.DisplayName .. " (@" .. _pl.Name .. ")"
-                    _tNameLbl.TextColor3 = Color3.fromRGB(255, 150, 150)
+                    _tNameLbl.Text = "🗡️ " .. _pl.DisplayName
+                    _tNameLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
                     _tNameLbl.TextSize = 10
                     _tNameLbl.Font = Enum.Font.GothamBold
                     _tNameLbl.TextXAlignment = Enum.TextXAlignment.Left
                     _tNameLbl.Parent = _tCard
 
-                    local _tTrollBtn = Instance.new("TextButton")
-                    _tTrollBtn.Size = UDim2.new(0.35, 0, 0.7, 0)
-                    _tTrollBtn.Position = UDim2.new(0.63, 0, 0.15, 0)
+                    local _vLaunchBtn = Instance.new("TextButton")
+                    _vLaunchBtn.Size = UDim2.new(0.21, 0, 0.7, 0)
+                    _vLaunchBtn.Position = UDim2.new(0.34, 0, 0.15, 0)
                     if getgenv().VoidTrollTarget == _pl then
-                        _tTrollBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-                        _tTrollBtn.Text = "🔥 Launch: ON"
+                        _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _vLaunchBtn.Text = "🚀 Void: ON"
                     else
-                        _tTrollBtn.BackgroundColor3 = Color3.fromRGB(60, 30, 40)
-                        _tTrollBtn.Text = "🌪️ Launch: OFF"
+                        _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
+                        _vLaunchBtn.Text = "🚀 Launch"
                     end
-                    _tTrollBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    _tTrollBtn.TextSize = 10
-                    _tTrollBtn.Font = Enum.Font.GothamBold
-                    _tTrollBtn.Parent = _tCard
+                    _vLaunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    _vLaunchBtn.TextSize = 9
+                    _vLaunchBtn.Font = Enum.Font.GothamBold
+                    _vLaunchBtn.Parent = _tCard
 
-                    local _tsbc = Instance.new("UICorner")
-                    _tsbc.CornerRadius = UDim.new(0, 6)
-                    _tsbc.Parent = _tTrollBtn
+                    local _vlc = Instance.new("UICorner")
+                    _vlc.CornerRadius = UDim.new(0, 6)
+                    _vlc.Parent = _vLaunchBtn
 
-                    _tTrollBtn.MouseButton1Click:Connect(function()
+                    local _uKillBtn = Instance.new("TextButton")
+                    _uKillBtn.Size = UDim2.new(0.22, 0, 0.7, 0)
+                    _uKillBtn.Position = UDim2.new(0.56, 0, 0.15, 0)
+                    if getgenv().UndergroundKillTarget == _pl then
+                        _uKillBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _uKillBtn.Text = "🕳️ Under: ON"
+                    else
+                        _uKillBtn.BackgroundColor3 = Color3.fromRGB(30, 50, 80)
+                        _uKillBtn.Text = "🕳️ Ground"
+                    end
+                    _uKillBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    _uKillBtn.TextSize = 9
+                    _uKillBtn.Font = Enum.Font.GothamBold
+                    _uKillBtn.Parent = _tCard
+
+                    local _ukc = Instance.new("UICorner")
+                    _ukc.CornerRadius = UDim.new(0, 6)
+                    _ukc.Parent = _uKillBtn
+
+                    local _bstabBtn = Instance.new("TextButton")
+                    _bstabBtn.Size = UDim2.new(0.20, 0, 0.7, 0)
+                    _bstabBtn.Position = UDim2.new(0.79, 0, 0.15, 0)
+                    if getgenv().BackstabTarget == _pl then
+                        _bstabBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _bstabBtn.Text = "🥷 Back: ON"
+                    else
+                        _bstabBtn.BackgroundColor3 = Color3.fromRGB(50, 30, 60)
+                        _bstabBtn.Text = "🥷 Backstab"
+                    end
+                    _bstabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    _bstabBtn.TextSize = 9
+                    _bstabBtn.Font = Enum.Font.GothamBold
+                    _bstabBtn.Parent = _tCard
+
+                    local _bsc = Instance.new("UICorner")
+                    _bsc.CornerRadius = UDim.new(0, 6)
+                    _bsc.Parent = _bstabBtn
+
+                    _vLaunchBtn.MouseButton1Click:Connect(function()
                         _snd()
+                        getgenv().UndergroundKillTarget = nil
+                        getgenv().BackstabTarget = nil
                         if getgenv().VoidTrollTarget == _pl then
                             getgenv().VoidTrollTarget = nil
-                            _tTrollBtn.BackgroundColor3 = Color3.fromRGB(60, 30, 40)
-                            _tTrollBtn.Text = "🌪️ Launch: OFF"
                         else
                             getgenv().VoidTrollTarget = _pl
-                            _tTrollBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-                            _tTrollBtn.Text = "🔥 Launch: ON"
+                        end
+                    end)
+
+                    _uKillBtn.MouseButton1Click:Connect(function()
+                        _snd()
+                        getgenv().BackstabTarget = nil
+                        getgenv().VoidTrollTarget = nil
+                        if getgenv().UndergroundKillTarget == _pl then
+                            getgenv().UndergroundKillTarget = nil
+                        else
+                            getgenv().UndergroundKillTarget = _pl
+                        end
+                    end)
+
+                    _bstabBtn.MouseButton1Click:Connect(function()
+                        _snd()
+                        getgenv().UndergroundKillTarget = nil
+                        getgenv().VoidTrollTarget = nil
+                        if getgenv().BackstabTarget == _pl then
+                            getgenv().BackstabTarget = nil
+                        else
+                            getgenv().BackstabTarget = _pl
                         end
                     end)
                 end
@@ -1374,8 +1515,8 @@ local function _loadHub()
         end)
     end)
 
-    _csld(_pCombat, "Aimbot Max Distance", 50, 1000, 300, function(_v) _maxDst = _v end)
-    _csld(_pCombat, "Aim Smoothness %", 10, 100, 35, function(_v) _abSmth = _v / 100 end)
+    _csld(_pCombat, "Aimbot Max Distance", 50, 1000, 300, false, function(_v) _maxDst = _v end)
+    _csld(_pCombat, "Aim Smoothness %", 10, 100, 35, false, function(_v) _abSmth = _v / 100 end)
 
     local _bsAct = false
     _ctg(_pBoss, "Highlight All Bosses", function(_st)
