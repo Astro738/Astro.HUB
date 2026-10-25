@@ -124,26 +124,39 @@ local function _snd()
     end)
 end
 
+-- [✨ نظام الانتقال التدريجي والآمن ضد الحماية]
 local function _stealthTP(_targetCFrame)
     pcall(function()
         local _myChar = _0p1.Character
         if _myChar and _myChar:FindFirstChild("HumanoidRootPart") then
             local _hrp = _myChar.HumanoidRootPart
             local _hum = _myChar:FindFirstChildOfClass("Humanoid")
-            if _hum then _hum.PlatformStand = true end
+            if _hum then 
+                _hum.PlatformStand = true 
+                pcall(function() _hum:ChangeState(Enum.HumanoidStateType.Swimming) end)
+            end
             for _, _p in pairs(_myChar:GetDescendants()) do
                 if _p:IsA("BasePart") then _p.CanCollide = false end
             end
-            local _steps = 4
-            local _currentCF = _hrp.CFrame
-            for i = 1, _steps do
-                if not getgenv().AstroRunning then break end
-                _hrp.CFrame = _currentCF:Lerp(_targetCFrame, i / _steps)
-                _hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                task.wait(0.01)
+            
+            local _startCF = _hrp.CFrame
+            local _dist = (_startCF.Position - _targetCFrame.Position).Magnitude
+            
+            if _dist > 100 then
+                local _steps = 5
+                for i = 1, _steps do
+                    if not getgenv().AstroRunning then break end
+                    _hrp.CFrame = _startCF:Lerp(_targetCFrame, i / _steps)
+                    _hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    task.wait(0.015)
+                end
             end
+            
             _hrp.CFrame = _targetCFrame
             _hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+            _hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+            
+            task.wait(0.02)
             if _hum then _hum.PlatformStand = false end
             for _, _p in pairs(_myChar:GetDescendants()) do
                 if _p:IsA("BasePart") then _p.CanCollide = true end
@@ -719,10 +732,11 @@ local function _loadHub()
         getgenv().WaypointStartPoint = _v
     end)
 
+    -- [✨ الزر الأسطوري الاحترافي لـ Auto Loop بنمط متناسق]
     local _btnLoopAll = Instance.new("TextButton")
     _btnLoopAll.Size = UDim2.new(0.95, 0, 0, 36)
-    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-    _btnLoopAll.BackgroundTransparency = 0.2
+    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
+    _btnLoopAll.BackgroundTransparency = 0.1
     _btnLoopAll.Text = "⚡ Start Auto Loop"
     _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
     _btnLoopAll.TextSize = 11
@@ -738,11 +752,13 @@ local function _loadHub()
     _blas.Thickness = 1.5
     _blas.Parent = _btnLoopAll
 
+    -- [✨ زر الحذف الجماعي بتصميم فخم ومستوحى من ثيم الكون]
     local _btnDeleteAll = Instance.new("TextButton")
     _btnDeleteAll.Size = UDim2.new(0.95, 0, 0, 32)
-    _btnDeleteAll.BackgroundColor3 = Color3.fromRGB(160, 30, 30)
+    _btnDeleteAll.BackgroundColor3 = Color3.fromRGB(45, 15, 25)
+    _btnDeleteAll.BackgroundTransparency = 0.2
     _btnDeleteAll.Text = "🗑️ Delete All Waypoints"
-    _btnDeleteAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnDeleteAll.TextColor3 = Color3.fromRGB(255, 130, 130)
     _btnDeleteAll.TextSize = 10
     _btnDeleteAll.Font = Enum.Font.GothamBold
     _btnDeleteAll.Parent = _wpFixedTop
@@ -750,6 +766,11 @@ local function _loadHub()
     local _bdac = Instance.new("UICorner")
     _bdac.CornerRadius = UDim.new(0, 8)
     _bdac.Parent = _btnDeleteAll
+
+    local _bdastr = Instance.new("UIStroke")
+    _bdastr.Color = Color3.fromRGB(150, 40, 50)
+    _bdastr.Thickness = 1.2
+    _bdastr.Parent = _btnDeleteAll
 
     local _wpScrollFrame = Instance.new("ScrollingFrame")
     _wpScrollFrame.Size = UDim2.new(1, 0, 1, -225)
@@ -774,6 +795,7 @@ local function _loadHub()
         end
     end)
 
+    -- [✨ حلقة الانتقال التدريجي والناعم للنقاط المحفوظة بدون توقف وبشكل مستمر]
     task.spawn(function()
         local _currentIdx = 1
         while true do
@@ -802,7 +824,7 @@ local function _loadHub()
                 else
                     _btnLoopAll.Text = "⚠️ Need At Least 1 Waypoint!"
                     getgenv().LoopAllWaypoints = false
-                    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+                    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
                     _btnLoopAll.TextColor3 = Color3.fromRGB(220, 50, 50)
                     _blas.Color = Color3.fromRGB(220, 50, 50)
                     task.wait(2)
@@ -822,12 +844,12 @@ local function _loadHub()
         getgenv().LoopAllWaypoints = not getgenv().LoopAllWaypoints
         if getgenv().LoopAllWaypoints then
             getgenv().LoopTPTarget = nil
-            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
             _btnLoopAll.TextColor3 = Color3.fromRGB(255, 255, 255)
-            _blas.Color = Color3.fromRGB(100, 220, 255)
+            _blas.Color = Color3.fromRGB(0, 190, 255)
             _btnLoopAll.Text = "🛑 Stop Auto Loop"
         else
-            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
             _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
             _blas.Color = Color3.fromRGB(0, 140, 255)
             _btnLoopAll.Text = "⚡ Start Auto Loop"
@@ -885,10 +907,10 @@ local function _loadHub()
             _loopBtn.Size = UDim2.new(0.24, 0, 0.7, 0)
             _loopBtn.Position = UDim2.new(0.60, 0, 0.15, 0)
             if getgenv().LoopTPTarget == _wpData.CFrame then
-                _loopBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                _loopBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
                 _loopBtn.Text = "⚡ Spam: ON"
             else
-                _loopBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
+                _loopBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
                 _loopBtn.Text = "⚡ Spam: OFF"
             end
             _loopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -900,12 +922,13 @@ local function _loadHub()
             _lbc.CornerRadius = UDim.new(0, 6)
             _lbc.Parent = _loopBtn
 
+            -- [✨ زر الحذف الفردي بتصميم احترافي متناسق وناعم]
             local _delBtn = Instance.new("TextButton")
             _delBtn.Size = UDim2.new(0.13, 0, 0.7, 0)
             _delBtn.Position = UDim2.new(0.85, 0, 0.15, 0)
-            _delBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+            _delBtn.BackgroundColor3 = Color3.fromRGB(50, 20, 30)
             _delBtn.Text = "❌"
-            _delBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            _delBtn.TextColor3 = Color3.fromRGB(255, 140, 140)
             _delBtn.TextSize = 10
             _delBtn.Font = Enum.Font.GothamBold
             _delBtn.Parent = _card
@@ -913,6 +936,11 @@ local function _loadHub()
             local _dbc = Instance.new("UICorner")
             _dbc.CornerRadius = UDim.new(0, 6)
             _dbc.Parent = _delBtn
+
+            local _dbstr = Instance.new("UIStroke")
+            _dbstr.Color = Color3.fromRGB(120, 35, 45)
+            _dbstr.Thickness = 1
+            _dbstr.Parent = _delBtn
 
             _tpBtn.MouseButton1Click:Connect(function()
                 _snd()
@@ -922,7 +950,7 @@ local function _loadHub()
             _loopBtn.MouseButton1Click:Connect(function()
                 _snd()
                 getgenv().LoopAllWaypoints = false
-                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
                 _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
                 _blas.Color = Color3.fromRGB(0, 140, 255)
                 _btnLoopAll.Text = "⚡ Start Auto Loop"
@@ -952,7 +980,7 @@ local function _loadHub()
         getgenv().LoopAllWaypoints = false
         getgenv().LoopTPTarget = nil
         _savedWaypoints = {}
-        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
+        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
         _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
         _blas.Color = Color3.fromRGB(0, 140, 255)
         _btnLoopAll.Text = "⚡ Start Auto Loop"
@@ -1349,10 +1377,10 @@ local function _loadHub()
                     _pSpamBtn.Size = UDim2.new(0.24, 0, 0.7, 0)
                     _pSpamBtn.Position = UDim2.new(0.74, 0, 0.15, 0)
                     if getgenv().SpamTPTarget == _pl then
-                        _pSpamBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _pSpamBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
                         _pSpamBtn.Text = "⚡ Spam: ON"
                     else
-                        _pSpamBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
+                        _pSpamBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
                         _pSpamBtn.Text = "⚡ Spam: OFF"
                     end
                     _pSpamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1377,12 +1405,12 @@ local function _loadHub()
                         _snd()
                         if getgenv().SpamTPTarget == _pl then
                             getgenv().SpamTPTarget = nil
-                            _pSpamBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
+                            _pSpamBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
                             _pSpamBtn.Text = "⚡ Spam: OFF"
                             _f3()
                         else
                             getgenv().SpamTPTarget = _pl
-                            _pSpamBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                            _pSpamBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
                             _pSpamBtn.Text = "⚡ Spam: ON"
                         end
                     end)
@@ -1430,10 +1458,10 @@ local function _loadHub()
                     _vLaunchBtn.Size = UDim2.new(0.21, 0, 0.7, 0)
                     _vLaunchBtn.Position = UDim2.new(0.34, 0, 0.15, 0)
                     if getgenv().VoidTrollTarget == _pl then
-                        _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
                         _vLaunchBtn.Text = "🚀 Void: ON"
                     else
-                        _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(40, 60, 90)
+                        _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
                         _vLaunchBtn.Text = "🚀 Launch"
                     end
                     _vLaunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1449,7 +1477,7 @@ local function _loadHub()
                     _uKillBtn.Size = UDim2.new(0.22, 0, 0.7, 0)
                     _uKillBtn.Position = UDim2.new(0.56, 0, 0.15, 0)
                     if getgenv().UndergroundKillTarget == _pl then
-                        _uKillBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _uKillBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
                         _uKillBtn.Text = "🩹 Glue: ON"
                     else
                         _uKillBtn.BackgroundColor3 = Color3.fromRGB(30, 50, 80)
@@ -1468,7 +1496,7 @@ local function _loadHub()
                     _bstabBtn.Size = UDim2.new(0.20, 0, 0.7, 0)
                     _bstabBtn.Position = UDim2.new(0.79, 0, 0.15, 0)
                     if getgenv().BackstabTarget == _pl then
-                        _bstabBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                        _bstabBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
                         _bstabBtn.Text = "🥷 Belly: ON"
                     else
                         _bstabBtn.BackgroundColor3 = Color3.fromRGB(50, 30, 60)
@@ -1794,7 +1822,7 @@ else
 
     local _kbcr = Instance.new("UICorner")
     _kbcr.CornerRadius = UDim.new(0, 10)
-    _kbcr.Parent = _kBox
+    _kBox.Parent = _kBox
 
     local _lBtn = Instance.new("TextButton")
     _lBtn.Size = UDim2.new(0.8, 0, 0, 38)
