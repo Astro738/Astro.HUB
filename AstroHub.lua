@@ -124,7 +124,6 @@ local function _snd()
     end)
 end
 
--- [✨ نظام الانتقال التدريجي والآمن ضد الحماية]
 local function _stealthTP(_targetCFrame)
     pcall(function()
         local _myChar = _0p1.Character
@@ -139,16 +138,28 @@ local function _stealthTP(_targetCFrame)
                 if _p:IsA("BasePart") then _p.CanCollide = false end
             end
             
-            local _startCF = _hrp.CFrame
-            local _dist = (_startCF.Position - _targetCFrame.Position).Magnitude
+            local _startPos = _hrp.Position
+            local _targetPos = _targetCFrame.Position
+            local _dist = (_startPos - _targetPos).Magnitude
             
-            if _dist > 100 then
-                local _steps = 5
-                for i = 1, _steps do
+            if _dist <= 30 then
+                _hrp.CFrame = _targetCFrame
+            else
+                local _speed = 280
+                local _duration = _dist / _speed
+                local _startTime = tick()
+                
+                while (tick() - _startTime) < _duration do
                     if not getgenv().AstroRunning then break end
-                    _hrp.CFrame = _startCF:Lerp(_targetCFrame, i / _steps)
-                    _hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                    task.wait(0.015)
+                    local _alpha = math.clamp((tick() - _startTime) / _duration, 0, 1)
+                    _alpha = _alpha * _alpha * (3 - 2 * _alpha)
+                    
+                    local _currentPos = _startPos:Lerp(_targetPos, _alpha)
+                    _hrp.CFrame = CFrame.new(_currentPos, _targetPos)
+                    
+                    local _dir = (_targetPos - _startPos).Unit
+                    _hrp.AssemblyLinearVelocity = _dir * _speed
+                    _0g3.RenderStepped:Wait()
                 end
             end
             
@@ -156,7 +167,7 @@ local function _stealthTP(_targetCFrame)
             _hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
             _hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
             
-            task.wait(0.02)
+            task.wait(0.03)
             if _hum then _hum.PlatformStand = false end
             for _, _p in pairs(_myChar:GetDescendants()) do
                 if _p:IsA("BasePart") then _p.CanCollide = true end
@@ -732,7 +743,6 @@ local function _loadHub()
         getgenv().WaypointStartPoint = _v
     end)
 
-    -- [✨ الزر الأسطوري الاحترافي لـ Auto Loop بنمط متناسق]
     local _btnLoopAll = Instance.new("TextButton")
     _btnLoopAll.Size = UDim2.new(0.95, 0, 0, 36)
     _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
@@ -752,7 +762,6 @@ local function _loadHub()
     _blas.Thickness = 1.5
     _blas.Parent = _btnLoopAll
 
-    -- [✨ زر الحذف الجماعي بتصميم فخم ومستوحى من ثيم الكون]
     local _btnDeleteAll = Instance.new("TextButton")
     _btnDeleteAll.Size = UDim2.new(0.95, 0, 0, 32)
     _btnDeleteAll.BackgroundColor3 = Color3.fromRGB(45, 15, 25)
@@ -795,7 +804,6 @@ local function _loadHub()
         end
     end)
 
-    -- [✨ حلقة الانتقال التدريجي والناعم للنقاط المحفوظة بدون توقف وبشكل مستمر]
     task.spawn(function()
         local _currentIdx = 1
         while true do
@@ -922,7 +930,6 @@ local function _loadHub()
             _lbc.CornerRadius = UDim.new(0, 6)
             _lbc.Parent = _loopBtn
 
-            -- [✨ زر الحذف الفردي بتصميم احترافي متناسق وناعم]
             local _delBtn = Instance.new("TextButton")
             _delBtn.Size = UDim2.new(0.13, 0, 0.7, 0)
             _delBtn.Position = UDim2.new(0.85, 0, 0.15, 0)
@@ -1783,8 +1790,8 @@ else
     _kGui.ResetOnSpawn = false
 
     local _kMain = Instance.new("Frame")
-    _kMain.Size = UDim2.new(0, 300, 0, 190)
-    _kMain.Position = UDim2.new(0.5, -150, 0.5, -95)
+    _kMain.Size = UDim2.new(0, 320, 0, 210)
+    _kMain.Position = UDim2.new(0.5, -160, 0.5, -105)
     _kMain.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
     _kMain.BackgroundTransparency = 0.1
     _kMain.BorderSizePixel = 0
@@ -1800,7 +1807,7 @@ else
     _kst.Parent = _kMain
 
     local _kttl = Instance.new("TextLabel")
-    _kttl.Size = UDim2.new(1, 0, 0, 40)
+    _kttl.Size = UDim2.new(1, 0, 0, 45)
     _kttl.BackgroundTransparency = 1
     _kttl.Text = "🚀 Astro Cosmic System 🪐"
     _kttl.TextColor3 = Color3.fromRGB(0, 190, 255)
@@ -1809,8 +1816,8 @@ else
     _kttl.Parent = _kMain
 
     local _kBox = Instance.new("TextBox")
-    _kBox.Size = UDim2.new(0.8, 0, 0, 38)
-    _kBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+    _kBox.Size = UDim2.new(0.85, 0, 0, 40)
+    _kBox.Position = UDim2.new(0.075, 0, 0.30, 0)
     _kBox.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
     _kBox.BackgroundTransparency = 0.2
     _kBox.TextColor3 = Color3.fromRGB(150, 220, 255)
@@ -1822,11 +1829,11 @@ else
 
     local _kbcr = Instance.new("UICorner")
     _kbcr.CornerRadius = UDim.new(0, 10)
-    _kBox.Parent = _kBox
+    _kbcr.Parent = _kBox
 
     local _lBtn = Instance.new("TextButton")
-    _lBtn.Size = UDim2.new(0.8, 0, 0, 38)
-    _lBtn.Position = UDim2.new(0.1, 0, 0.65, 0)
+    _lBtn.Size = UDim2.new(0.85, 0, 0, 42)
+    _lBtn.Position = UDim2.new(0.075, 0, 0.60, 0)
     _lBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
     _lBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     _lBtn.Text = "Launch 🚀"
