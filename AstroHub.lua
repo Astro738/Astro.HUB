@@ -261,7 +261,7 @@ local function _loadHub()
     _ttl.Size = UDim2.new(0, 280, 1, 0)
     _ttl.Position = UDim2.new(0, 15, 0, 0)
     _ttl.BackgroundTransparency = 1
-    _ttl.Text = "🌌 Astro Hub | Cosmic Edition 🚀"
+    _ttl.Text = "🌌 Astro Hub | Pro Utility Edition 🚀"
     _ttl.TextColor3 = Color3.fromRGB(0, 190, 255)
     _ttl.TextSize = 13
     _ttl.Font = Enum.Font.GothamBold
@@ -943,11 +943,6 @@ local function _loadHub()
             local _dbc = Instance.new("UICorner")
             _dbc.CornerRadius = UDim.new(0, 6)
             _dbc.Parent = _delBtn
-
-            local _dbstr = Instance.new("UIStroke")
-            _dbstr.Color = Color3.fromRGB(120, 35, 45)
-            _dbstr.Thickness = 1
-            _dbstr.Parent = _delBtn
 
             _tpBtn.MouseButton1Click:Connect(function()
                 _snd()
@@ -1760,6 +1755,50 @@ local function _loadHub()
         end)
     end)
 
+    -- [🔥 الإضافات الفعّالة لخدمة اللاعب (نسخ الشكل + الأوتو فارم + التنقل السريع)]
+    _ctg(_pVisual, "👥 Clone Nearest Player Outfit", function(_st)
+        if _st then
+            pcall(function()
+                local myChar = _0p1.Character
+                local myHrp = myChar and myChar:FindFirstChild("HumanoidRootPart")
+                if not myHrp then return end
+                local targetPlr, minDst = nil, math.huge
+                for _, pl in pairs(_0g2:GetPlayers()) do
+                    if pl ~= _0p1 and pl.Character and pl.Character:FindFirstChild("HumanoidRootPart") then
+                        local dst = (myHrp.Position - pl.Character.HumanoidRootPart.Position).Magnitude
+                        if dst < minDst then
+                            minDst = dst
+                            targetPlr = pl
+                        end
+                    end
+                end
+                if targetPlr and targetPlr.Character then
+                    for _, item in pairs(targetPlr.Character:GetChildren()) do
+                        if item:IsA("Accessory") or item:IsA("Shirt") or item:IsA("Pants") or item:IsA("CharacterMesh") then
+                            item:Clone().Parent = myChar
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+
+    local _autoFarmState = false
+    _ctg(_pVisual, "⚡ Fast Auto-Clicker / Farm Helper", function(_st)
+        _autoFarmState = _st
+        task.spawn(function()
+            local vim = game:GetService("VirtualInputManager")
+            while _autoFarmState and getgenv().AstroRunning do
+                pcall(function()
+                    vim:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+                    task.wait(0.05)
+                    vim:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+                end)
+                task.wait(0.15)
+            end
+        end)
+    end)
+
     _ctg(_pPerf, "Potato Mode (Boost FPS)", function(_st)
         if _st then
             for _, _v in pairs(_0g7:GetDescendants()) do
@@ -1829,7 +1868,7 @@ else
 
     local _kbcr = Instance.new("UICorner")
     _kbcr.CornerRadius = UDim.new(0, 10)
-    _kbcr.Parent = _kBox
+    _kBox.Parent = _kBox
 
     local _lBtn = Instance.new("TextButton")
     _lBtn.Size = UDim2.new(0.85, 0, 0, 42)
