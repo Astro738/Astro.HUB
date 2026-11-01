@@ -23,6 +23,129 @@ end
 
 local _lnk = _dec({104, 116, 116, 112, 115, 58, 47, 47, 100, 105, 115, 99, 111, 114, 100, 46, 103, 103, 47, 118, 110, 84, 114, 67, 101, 50, 71, 83, 89})
 
+getgenv().CurrentLang = "AR"
+local _langDict = {
+    EN = {
+        title = "❖ ASTRO HUB | GOAT PRO EDITION",
+        home = "🛰️ [ Dashboard ]",
+        player = "🚀 [ Player & Speed ]",
+        combat = "🎯 [ Combat & Aimbot ]",
+        tp = "🌌 [ Teleport ]",
+        waypoints = "📌 [ Waypoints Hub ]",
+        troll = "💥 [ Troll & Void ]",
+        boss = "👾 [ Boss ESP ]",
+        visual = "👁️ [ ESP & Visuals ]",
+        autoClickerTab = "🖱️ [ Pro Auto-Clicker ]",
+        perf = "⚡ [ Performance ]",
+        themes = "🎨 [ Theme Studio ]",
+        saveWp = "📌 Save Position",
+        startLoop = "⚡ Start Auto Loop",
+        stopLoop = "🛑 Stop Loop",
+        delAllWp = "🗑️ Delete All",
+        tpOnce = "🚀 TP",
+        spamOn = "⚡ Spam: ON",
+        spamOff = "⚡ Spam: OFF",
+        voidOn = "🚀 Void: ON",
+        voidBtn = "🚀 Launch",
+        glueOn = "🩹 Glue: ON",
+        glueBtn = "🩹 Glue Back",
+        bellyOn = "🥷 Belly: ON",
+        bellyBtn = "🥷 Belly Lay",
+        joinDiscord = "🚀 Join Discord Server 🌌",
+        copiedDiscord = "✅ Link Copied!",
+        needWp = "⚠️ Need At Least 1 Waypoint!",
+        movingTo = "🔄 Moving To: ",
+        speedTgl = "⚡ Custom WalkSpeed",
+        speedSlid = "👟 Speed Boost",
+        flyTgl = "🛸 Pro Fly (Anti-Kick)",
+        flySlid = "🚀 Fly Speed",
+        infJump = "🥾 Infinite Jump",
+        noclip = "👻 Noclip Mode",
+        delaySlid = "⏱️ Delay (s)",
+        startPoint = "🎯 Start Index",
+        autoReconnect = "Auto Reconnect",
+        antiAfk = "🛡️ Anti-AFK",
+        aimbot = "Aimbot (Smart)",
+        hitbox = "Giant Hitbox",
+        aimDist = "Max Distance",
+        aimSmooth = "Smoothness %",
+        botEsp = "Highlight Bots",
+        monsterEsp = "Highlight Monsters",
+        playerEsp = "Clean Player ESP",
+        cloneOutfit = "👥 Clone Outfit",
+        acTgl = "⚡ Enable Pro Auto-Clicker",
+        acSpeed = "⚡ Clicks Per Second (CPS)",
+        potatoMode = "Potato Mode",
+        themeCyan = "🌌 Cyber Cyan (Default)",
+        themeGold = "👑 Obsidian Gold",
+        themeRed = "🩸 Neon Red",
+        themeGreen = "🌿 Emerald Mint",
+        themeRgb = "🌈 Dynamic RGB Mode",
+    },
+    AR = {
+        title = "❖ أسترو هب | النسخة الأسطورية الـ GOAT",
+        home = "🛰️ لوحة التحكم الرئيسية",
+        player = "👨‍🚀 حركات اللاعب والسرعة",
+        combat = "🎯 الايمبوت والقتال",
+        tp = "🌌 الانتقال للاعبين",
+        waypoints = "📌 نظام الاحداثيات",
+        troll = "💥 التمستر والترول",
+        boss = "👾 كشف الوحوش والرؤساء",
+        visual = "👁️ الكشف والمظهر",
+        autoClickerTab = "🖱️ أوتوكليكر احترافي مستقل",
+        perf = "⚡ الأداء والسرعة",
+        themes = "🎨 استوديو الثيمات والألوان",
+        saveWp = "📌 حفظ الموقع الحالي",
+        startLoop = "⚡ بدء التكرار التلقائي",
+        stopLoop = "🛑 إيقاف التكرار",
+        delAllWp = "🗑️ حذف كل الاحداثيات",
+        tpOnce = "🚀 انتقال مرة",
+        spamOn = "⚡ سبام: شغال",
+        spamOff = "⚡ سبام: مطفي",
+        voidOn = "🚀 الفراغ: شغال",
+        voidBtn = "🚀 طرد للفراغ",
+        glueOn = "🩹 اللصق: شغال",
+        glueBtn = "🩹 لصق بالظهر",
+        bellyOn = "🥷 بطن: شغال",
+        bellyBtn = "🥷 تنويم بطن",
+        joinDiscord = "🚀 انضم لديسكورد أسترو 🌌",
+        copiedDiscord = "✅ تم نسخ الرابط بنجاح!",
+        needWp = "⚠️ تحتاج لإضافة نقطة واحدة على الأقل!",
+        movingTo = "🔄 جاري الانتقال إلى: ",
+        speedTgl = "⚡ تفعيل السرعة المخصصة",
+        speedSlid = "👟 قوة سرعة المشي",
+        flyTgl = "🛸 طيران احترافي (مضاد للكيك)",
+        flySlid = "🚀 سرعة الطيران",
+        infJump = "🥾 قفز لاانهائي",
+        noclip = "👻 اختراق الجدران (نوكليب)",
+        delaySlid = "⏱️ التأخير بين النقاط (ثواني)",
+        startPoint = "🎯 البدء من النقطة رقم",
+        autoReconnect = "إعادة الاتصال التلقائي",
+        antiAfk = "🛡️ حماية عدم الاكتفاء (Anti-AFK)",
+        aimbot = "ايمبوت ذكي (فحص التيمات)",
+        hitbox = "توسيع الهيت بوكس للأعداء",
+        aimDist = "أقصى مسافة للايمبوت",
+        aimSmooth = "نعومة الايمبوت %",
+        botEsp = "كشف جميع البوتات / الـ NPCs",
+        monsterEsp = "كشف الوحوش والرؤساء",
+        playerEsp = "كشف اللاعبين (ESP نظيف)",
+        cloneOutfit = "👥 نسخ ملابس أقرب لاعب",
+        acTgl = "⚡ تفعيل الأوتوكليكر الخرافي",
+        acSpeed = "⚡ عدد النقرات بالثانية (CPS)",
+        potatoMode = "وضع البطاطس (رفع الفريمات)",
+        themeCyan = "🌌 أزرق سايبر (الافتراضي)",
+        themeGold = "👑 ذهبي ملوكي فاخر",
+        themeRed = "🩸 أحمر نيون / كريمسون",
+        themeGreen = "🌿 أخضر زمردي نعناعي",
+        themeRgb = "🌈 وضع الـ RGB المتحرك التلقائي",
+    }
+}
+
+local function _L(_key)
+    local dict = _langDict[getgenv().CurrentLang]
+    return (dict and dict[_key]) or _langDict.EN[_key] or _key
+end
+
 getgenv().AstroRunning = false
 getgenv().SpamTPTarget = nil
 getgenv().VoidTrollTarget = nil
@@ -95,6 +218,8 @@ local function _snd()
     end)
 end
 
+local _travelSpeedVal = 500
+
 local function _stealthTP(_targetCFrame)
     pcall(function()
         local _myChar = _0p1.Character
@@ -116,7 +241,7 @@ local function _stealthTP(_targetCFrame)
             if _dist <= 30 then
                 _hrp.CFrame = _targetCFrame
             else
-                local _speed = 280
+                local _speed = math.clamp(_travelSpeedVal, 50, 2000)
                 local _duration = _dist / _speed
                 local _startTime = tick()
                 
@@ -156,50 +281,18 @@ _gui.Parent = _0g1
 _gui.IgnoreGuiInset = true
 _gui.ResetOnSpawn = false
 
-local _btn = Instance.new("TextButton")
-_btn.Size = UDim2.new(0, 50, 0, 50)
-_btn.Position = UDim2.new(0, 20, 0.5, -25)
-_btn.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
-_btn.BackgroundTransparency = 0.1
-_btn.TextColor3 = Color3.fromRGB(0, 180, 255)
-_btn.Text = "🪐"
-_btn.TextSize = 26
-_btn.Font = Enum.Font.GothamBold
-_btn.Parent = _gui
-
-local _bc = Instance.new("UICorner")
-_bc.CornerRadius = UDim.new(1, 0)
-_bc.Parent = _btn
-
-local _bs = Instance.new("UIStroke")
-_bs.Color = Color3.fromRGB(0, 150, 255)
-_bs.Thickness = 2
-_bs.Parent = _btn
-
-local _dr, _ds, _dp
-_btn.InputBegan:Connect(function(_inp)
-    if ((_inp.UserInputType == Enum.UserInputType.MouseButton1) or (_inp.UserInputType == Enum.UserInputType.Touch)) then
-        _dr = true
-        _ds = _inp.Position
-        _dp = _btn.Position
-        _inp.Changed:Connect(function()
-            if (_inp.UserInputState == Enum.UserInputState.End) then _dr = false end
-        end)
-    end
-end)
-
-_0g4.InputChanged:Connect(function(_inp)
-    if (_dr and ((_inp.UserInputType == Enum.UserInputType.MouseMovement) or (_inp.UserInputType == Enum.UserInputType.Touch))) then
-        local _dl = _inp.Position - _ds
-        _btn.Position = UDim2.new(_dp.X.Scale, _dp.X.Offset + _dl.X, _dp.Y.Scale, _dp.Y.Offset + _dl.Y)
-    end
-end)
+local _sizes = {
+    {w = 520, h = 370},
+    {w = 650, h = 450},
+    {w = 780, h = 530}
+}
+local _currentSizeIdx = 1
 
 local _mf = Instance.new("Frame")
-_mf.Size = UDim2.new(0, 520, 0, 360)
-_mf.Position = UDim2.new(0.5, -260, 0.5, -180)
-_mf.BackgroundColor3 = Color3.fromRGB(10, 14, 25)
-_mf.BackgroundTransparency = 0.08
+_mf.Size = UDim2.new(0, _sizes[_currentSizeIdx].w, 0, _sizes[_currentSizeIdx].h)
+_mf.Position = UDim2.new(0.5, -(_sizes[_currentSizeIdx].w/2), 0.5, -(_sizes[_currentSizeIdx].h/2))
+_mf.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
+_mf.BackgroundTransparency = 0.05
 _mf.BorderSizePixel = 0
 _mf.Visible = true
 _mf.Parent = _gui
@@ -209,14 +302,15 @@ _mfc.CornerRadius = UDim.new(0, 14)
 _mfc.Parent = _mf
 
 local _mfs = Instance.new("UIStroke")
-_mfs.Color = Color3.fromRGB(0, 130, 255)
-_mfs.Thickness = 2
+_mfs.Color = Color3.fromRGB(0, 180, 220)
+_mfs.Thickness = 1.5
+_mfs.Transparency = 0.3
 _mfs.Parent = _mf
 
 local _tb = Instance.new("Frame")
-_tb.Size = UDim2.new(1, 0, 0, 40)
-_tb.BackgroundColor3 = Color3.fromRGB(15, 22, 40)
-_tb.BackgroundTransparency = 0.2
+_tb.Size = UDim2.new(1, 0, 0, 46)
+_tb.BackgroundColor3 = Color3.fromRGB(16, 19, 25)
+_tb.BackgroundTransparency = 0
 _tb.BorderSizePixel = 0
 _tb.Parent = _mf
 
@@ -226,61 +320,83 @@ _tbc.Parent = _tb
 
 local _ttl = Instance.new("TextLabel")
 _ttl.Size = UDim2.new(0, 280, 1, 0)
-_ttl.Position = UDim2.new(0, 15, 0, 0)
+_ttl.Position = UDim2.new(0, 16, 0, 0)
 _ttl.BackgroundTransparency = 1
-_ttl.Text = "🌌 Astro Hub | Pro Utility Edition 🚀"
-_ttl.TextColor3 = Color3.fromRGB(0, 190, 255)
-_ttl.TextSize = 13
+_ttl.Text = _L("title")
+_ttl.TextColor3 = Color3.fromRGB(0, 220, 255)
+_ttl.TextSize = 11
 _ttl.Font = Enum.Font.GothamBold
 _ttl.TextXAlignment = Enum.TextXAlignment.Left
 _ttl.Parent = _tb
 
-local _tdg, _tdi, _tds, _tdp
+local _mfDr, _mfDs, _mfDp
 _tb.InputBegan:Connect(function(_inp)
     if ((_inp.UserInputType == Enum.UserInputType.MouseButton1) or (_inp.UserInputType == Enum.UserInputType.Touch)) then
-        _tdg = true
-        _tds = _inp.Position
-        _tdp = _mf.Position
+        _mfDr = true
+        _mfDs = _inp.Position
+        _mfDp = _mf.Position
         _inp.Changed:Connect(function()
-            if (_inp.UserInputState == Enum.UserInputState.End) then _tdg = false end
+            if (_inp.UserInputState == Enum.UserInputState.End) then _mfDr = false end
         end)
     end
 end)
 
-_tb.InputChanged:Connect(function(_inp)
-    if ((_inp.UserInputType == Enum.UserInputType.MouseMovement) or (_inp.UserInputType == Enum.UserInputType.Touch)) then
-        _tdi = _inp
-    end
-end)
-
 _0g4.InputChanged:Connect(function(_inp)
-    if ((_inp == _tdi) and _tdg) then
-        local _dl = _inp.Position - _tds
-        _mf.Position = UDim2.new(_tdp.X.Scale, _tdp.X.Offset + _dl.X, _tdp.Y.Scale, _tdp.Y.Offset + _dl.Y)
+    if (_mfDr and ((_inp.UserInputType == Enum.UserInputType.MouseMovement) or (_inp.UserInputType == Enum.UserInputType.Touch))) then
+        local _dl = _inp.Position - _mfDs
+        _mf.Position = UDim2.new(_mfDp.X.Scale, _mfDp.X.Offset + _dl.X, _mfDp.Y.Scale, _mfDp.Y.Offset + _dl.Y)
     end
 end)
 
-local _cb = Instance.new("TextButton")
-_cb.Size = UDim2.new(0, 28, 0, 28)
-_cb.Position = UDim2.new(1, -34, 0, 6)
-_cb.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-_cb.Text = "X"
-_cb.TextColor3 = Color3.fromRGB(255, 255, 255)
-_cb.TextSize = 14
-_cb.Font = Enum.Font.GothamBold
-_cb.Parent = _tb
+local _langBtn = Instance.new("TextButton")
+_langBtn.Size = UDim2.new(0, 30, 0, 26)
+_langBtn.Position = UDim2.new(1, -162, 0, 10)
+_langBtn.BackgroundColor3 = Color3.fromRGB(24, 28, 36)
+_langBtn.Text = "EN"
+_langBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+_langBtn.TextSize = 10
+_langBtn.Font = Enum.Font.GothamBold
+_langBtn.Parent = _tb
 
-local _cbc = Instance.new("UICorner")
-_cbc.CornerRadius = UDim.new(0, 6)
-_cbc.Parent = _cb
+local _lbc = Instance.new("UICorner")
+_lbc.CornerRadius = UDim.new(0, 6)
+_lbc.Parent = _langBtn
+
+local _sizePlusBtn = Instance.new("TextButton")
+_sizePlusBtn.Size = UDim2.new(0, 26, 0, 26)
+_sizePlusBtn.Position = UDim2.new(1, -128, 0, 10)
+_sizePlusBtn.BackgroundColor3 = Color3.fromRGB(24, 28, 36)
+_sizePlusBtn.Text = "+"
+_sizePlusBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+_sizePlusBtn.TextSize = 12
+_sizePlusBtn.Font = Enum.Font.GothamBold
+_sizePlusBtn.Parent = _tb
+
+local _spc = Instance.new("UICorner")
+_spc.CornerRadius = UDim.new(0, 6)
+_spc.Parent = _sizePlusBtn
+
+local _sizeMinusBtn = Instance.new("TextButton")
+_sizeMinusBtn.Size = UDim2.new(0, 26, 0, 26)
+_sizeMinusBtn.Position = UDim2.new(1, -98, 0, 10)
+_sizeMinusBtn.BackgroundColor3 = Color3.fromRGB(24, 28, 36)
+_sizeMinusBtn.Text = "-"
+_sizeMinusBtn.TextColor3 = Color3.fromRGB(0, 210, 255)
+_sizeMinusBtn.TextSize = 12
+_sizeMinusBtn.Font = Enum.Font.GothamBold
+_sizeMinusBtn.Parent = _tb
+
+local _smc = Instance.new("UICorner")
+_smc.CornerRadius = UDim.new(0, 6)
+_smc.Parent = _sizeMinusBtn
 
 local _mb = Instance.new("TextButton")
-_mb.Size = UDim2.new(0, 28, 0, 28)
-_mb.Position = UDim2.new(1, -66, 0, 6)
-_mb.BackgroundColor3 = Color3.fromRGB(35, 65, 110)
+_mb.Size = UDim2.new(0, 26, 0, 26)
+_mb.Position = UDim2.new(1, -68, 0, 10)
+_mb.BackgroundColor3 = Color3.fromRGB(24, 28, 36)
 _mb.Text = "—"
 _mb.TextColor3 = Color3.fromRGB(255, 255, 255)
-_mb.TextSize = 14
+_mb.TextSize = 11
 _mb.Font = Enum.Font.GothamBold
 _mb.Parent = _tb
 
@@ -288,23 +404,143 @@ local _mbc = Instance.new("UICorner")
 _mbc.CornerRadius = UDim.new(0, 6)
 _mbc.Parent = _mb
 
-_btn.MouseButton1Click:Connect(function()
+local _cb = Instance.new("TextButton")
+_cb.Size = UDim2.new(0, 26, 0, 26)
+_cb.Position = UDim2.new(1, -34, 0, 10)
+_cb.BackgroundColor3 = Color3.fromRGB(180, 45, 60)
+_cb.Text = "X"
+_cb.TextColor3 = Color3.fromRGB(255, 255, 255)
+_cb.TextSize = 10
+_cb.Font = Enum.Font.GothamBold
+_cb.Parent = _tb
+
+local _cbc = Instance.new("UICorner")
+_cbc.CornerRadius = UDim.new(0, 6)
+_cbc.Parent = _cb
+
+local function _updateWindowSize(idx)
+    _currentSizeIdx = math.clamp(idx, 1, #_sizes)
+    local s = _sizes[_currentSizeIdx]
+    _mf.Size = UDim2.new(0, s.w, 0, s.h)
+end
+
+_sizePlusBtn.MouseButton1Click:Connect(function()
     _snd()
-    _mf.Visible = not _mf.Visible
+    _updateWindowSize(_currentSizeIdx + 1)
+end)
+
+_sizeMinusBtn.MouseButton1Click:Connect(function()
+    _snd()
+    _updateWindowSize(_currentSizeIdx - 1)
+end)
+
+local _miniWidget = Instance.new("Frame")
+_miniWidget.Size = UDim2.new(0, 185, 0, 48)
+_miniWidget.Position = UDim2.new(0.5, -92, 0.1, 0)
+_miniWidget.BackgroundColor3 = Color3.fromRGB(12, 14, 18)
+_miniWidget.BackgroundTransparency = 0.05
+_miniWidget.Visible = false
+_miniWidget.Parent = _gui
+
+local _mwc = Instance.new("UICorner")
+_mwc.CornerRadius = UDim.new(0, 10)
+_mwc.Parent = _miniWidget
+
+local _mws = Instance.new("UIStroke")
+_mws.Color = Color3.fromRGB(0, 180, 220)
+_mws.Thickness = 1.2
+_mws.Parent = _miniWidget
+
+local _miniAvatar = Instance.new("ImageLabel")
+_miniAvatar.Size = UDim2.new(0, 38, 0, 38)
+_miniAvatar.Position = UDim2.new(0, 5, 0.5, -19)
+_miniAvatar.BackgroundTransparency = 1
+_miniAvatar.Image = "rbxassetid://0"
+_miniAvatar.Parent = _miniWidget
+
+local _mac = Instance.new("UICorner")
+_mac.CornerRadius = UDim.new(1, 0)
+_mac.Parent = _miniAvatar
+
+pcall(function()
+    local content, isReady = _0g2:GetUserThumbnailAsync(_0p1.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    if isReady then _miniAvatar.Image = content end
+end)
+
+local _miniInfo = Instance.new("TextButton")
+_miniInfo.Size = UDim2.new(1, -45, 1, 0)
+_miniInfo.Position = UDim2.new(0, 46, 0, 0)
+_miniInfo.BackgroundTransparency = 1
+_miniInfo.Text = "FPS: -- | Ping: -- ms"
+_miniInfo.TextColor3 = Color3.fromRGB(0, 220, 255)
+_miniInfo.TextSize = 11
+_miniInfo.Font = Enum.Font.GothamBold
+_miniInfo.Parent = _miniWidget
+
+local _mwDr, _mwDs, _mwDp, _isDraggingWidget = false, nil, nil, false
+_miniWidget.InputBegan:Connect(function(_inp)
+    if ((_inp.UserInputType == Enum.UserInputType.MouseButton1) or (_inp.UserInputType == Enum.UserInputType.Touch)) then
+        _mwDr = true
+        _isDraggingWidget = false
+        _mwDs = _inp.Position
+        _mwDp = _miniWidget.Position
+        _inp.Changed:Connect(function()
+            if (_inp.UserInputState == Enum.UserInputState.End) then _mwDr = false end
+        end)
+    end
+end)
+
+_0g4.InputChanged:Connect(function(_inp)
+    if (_mwDr and ((_inp.UserInputType == Enum.UserInputType.MouseMovement) or (_inp.UserInputType == Enum.UserInputType.Touch))) then
+        local _dl = _inp.Position - _mwDs
+        if _dl.Magnitude > 5 then
+            _isDraggingWidget = true
+        end
+        _miniWidget.Position = UDim2.new(_mwDp.X.Scale, _mwDp.X.Offset + _dl.X, _mwDp.Y.Scale, _mwDp.Y.Offset + _dl.Y)
+    end
+end)
+
+_miniInfo.MouseButton1Click:Connect(function()
+    if not _isDraggingWidget then
+        _snd()
+        _mf.Visible = true
+        _miniWidget.Visible = false
+    end
+end)
+
+_mb.MouseButton1Click:Connect(function()
+    _snd()
+    _mf.Visible = false
+    _miniWidget.Visible = true
 end)
 
 _cb.MouseButton1Click:Connect(function()
     _snd()
     _mf.Visible = false
+    _miniWidget.Visible = false
+end)
+
+local _updateGuiTexts
+_langBtn.MouseButton1Click:Connect(function()
+    _snd()
+    if getgenv().CurrentLang == "AR" then
+        getgenv().CurrentLang = "EN"
+        _langBtn.Text = "AR"
+    else
+        getgenv().CurrentLang = "AR"
+        _langBtn.Text = "EN"
+    end
+    _ttl.Text = _L("title")
+    if _updateGuiTexts then _updateGuiTexts() end
 end)
 
 local _sb = Instance.new("ScrollingFrame")
-_sb.Size = UDim2.new(0, 140, 1, -40)
-_sb.Position = UDim2.new(0, 0, 0, 40)
-_sb.BackgroundColor3 = Color3.fromRGB(12, 18, 30)
-_sb.BackgroundTransparency = 0.3
+_sb.Size = UDim2.new(0, 150, 1, -56)
+_sb.Position = UDim2.new(0, 0, 0, 50)
+_sb.BackgroundColor3 = Color3.fromRGB(14, 17, 23)
+_sb.BackgroundTransparency = 0.2
 _sb.BorderSizePixel = 0
-_sb.CanvasSize = UDim2.new(0, 0, 0, 480)
+_sb.CanvasSize = UDim2.new(0, 0, 0, 560)
 _sb.ScrollBarThickness = 2
 _sb.Parent = _mf
 
@@ -313,29 +549,67 @@ _sbl.Padding = UDim.new(0, 6)
 _sbl.HorizontalAlignment = Enum.HorizontalAlignment.Center
 _sbl.Parent = _sb
 
+local _profileCard = Instance.new("Frame")
+_profileCard.Size = UDim2.new(0.92, 0, 0, 52)
+_profileCard.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+_profileCard.Parent = _sb
+
+local _pcc = Instance.new("UICorner")
+_pcc.CornerRadius = UDim.new(0, 8)
+_pcc.Parent = _profileCard
+
+local _pcstr = Instance.new("UIStroke")
+_pcstr.Color = Color3.fromRGB(0, 180, 220)
+_pcstr.Thickness = 1
+_pcstr.Transparency = 0.4
+_pcstr.Parent = _profileCard
+
+local _avatarImg = Instance.new("ImageLabel")
+_avatarImg.Size = UDim2.new(0, 38, 0, 38)
+_avatarImg.Position = UDim2.new(0, 7, 0.5, -19)
+_avatarImg.BackgroundTransparency = 1
+_avatarImg.Image = "rbxassetid://0"
+_avatarImg.Parent = _profileCard
+
+local _avc = Instance.new("UICorner")
+_avc.CornerRadius = UDim.new(1, 0)
+_avc.Parent = _avatarImg
+
+pcall(function()
+    local content, isReady = _0g2:GetUserThumbnailAsync(_0p1.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    if isReady then _avatarImg.Image = content end
+end)
+
+local _profNameLbl = Instance.new("TextLabel")
+_profNameLbl.Size = UDim2.new(1, -52, 0, 20)
+_profNameLbl.Position = UDim2.new(0, 50, 0, 7)
+_profNameLbl.BackgroundTransparency = 1
+_profNameLbl.Text = _0p1.DisplayName
+_profNameLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+_profNameLbl.TextSize = 11
+_profNameLbl.Font = Enum.Font.GothamBold
+_profNameLbl.TextXAlignment = Enum.TextXAlignment.Left
+_profNameLbl.Parent = _profileCard
+
+local _profUserLbl = Instance.new("TextLabel")
+_profUserLbl.Size = UDim2.new(1, -52, 0, 16)
+_profUserLbl.Position = UDim2.new(0, 50, 0, 25)
+_profUserLbl.BackgroundTransparency = 1
+_profUserLbl.Text = "@" .. _0p1.Name
+_profUserLbl.TextColor3 = Color3.fromRGB(0, 180, 230)
+_profUserLbl.TextSize = 9
+_profUserLbl.Font = Enum.Font.Gotham
+_profUserLbl.TextXAlignment = Enum.TextXAlignment.Left
+_profUserLbl.Parent = _profileCard
+
 local _ca = Instance.new("Frame")
-_ca.Size = UDim2.new(1, -140, 1, -40)
-_ca.Position = UDim2.new(0, 140, 0, 40)
+_ca.Size = UDim2.new(1, -150, 1, -46)
+_ca.Position = UDim2.new(0, 150, 0, 46)
 _ca.BackgroundTransparency = 1
 _ca.Parent = _mf
 
-local _isMin = false
-_mb.MouseButton1Click:Connect(function()
-    _snd()
-    _isMin = not _isMin
-    _ca.Visible = not _isMin
-    _sb.Visible = not _isMin
-    if _isMin then
-        _mf.Size = UDim2.new(0, 520, 0, 40)
-        _mb.Text = "+"
-    else
-        _mf.Size = UDim2.new(0, 520, 0, 360)
-        _mb.Text = "—"
-    end
-end)
-
 local _pgs = {}
-local function _cp(_n, _customScroll)
+local function _cp(_nKey, _customScroll)
     local _sc
     if _customScroll then
         _sc = Instance.new("Frame")
@@ -348,8 +622,8 @@ local function _cp(_n, _customScroll)
         _sc.Size = UDim2.new(1, 0, 1, 0)
         _sc.BackgroundTransparency = 1
         _sc.CanvasSize = UDim2.new(0, 0, 0, 900)
-        _sc.ScrollBarThickness = 4
-        _sc.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+        _sc.ScrollBarThickness = 3
+        _sc.ScrollBarImageColor3 = Color3.fromRGB(0, 180, 220)
         _sc.Visible = false
         _sc.Parent = _ca
 
@@ -360,14 +634,15 @@ local function _cp(_n, _customScroll)
     end
 
     local _sbtn = Instance.new("TextButton")
-    _sbtn.Size = UDim2.new(0.9, 0, 0, 36)
-    _sbtn.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
-    _sbtn.BackgroundTransparency = 0.3
-    _sbtn.TextColor3 = Color3.fromRGB(100, 200, 255)
-    _sbtn.Text = _n
-    _sbtn.TextSize = 12
+    _sbtn.Size = UDim2.new(0.92, 0, 0, 36)
+    _sbtn.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+    _sbtn.TextColor3 = Color3.fromRGB(180, 210, 235)
+    _sbtn.Text = _L(_nKey)
+    _sbtn.TextSize = 11
     _sbtn.Font = Enum.Font.GothamBold
     _sbtn.Parent = _sb
+
+    _sbtn:SetAttribute("LangKey", _nKey)
 
     local _stc = Instance.new("UICorner")
     _stc.CornerRadius = UDim.new(0, 8)
@@ -384,11 +659,10 @@ local function _cp(_n, _customScroll)
     return _sc
 end
 
-local function _ctg(_pp, _n, _cb)
+local function _ctg(_pp, _nKey, _cb)
     local _ct = Instance.new("Frame")
     _ct.Size = UDim2.new(0.95, 0, 0, 38)
-    _ct.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-    _ct.BackgroundTransparency = 0.2
+    _ct.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
     _ct.Parent = _pp
 
     local _cc = Instance.new("UICorner")
@@ -396,25 +670,28 @@ local function _ctg(_pp, _n, _cb)
     _cc.Parent = _ct
 
     local _cstr = Instance.new("UIStroke")
-    _cstr.Color = Color3.fromRGB(0, 120, 220)
-    _cstr.Thickness = 1.2
+    _cstr.Name = "ThemeStroke"
+    _cstr.Color = Color3.fromRGB(0, 150, 200)
+    _cstr.Thickness = 1
+    _cstr.Transparency = 0.5
     _cstr.Parent = _ct
 
     local _clbl = Instance.new("TextLabel")
     _clbl.Size = UDim2.new(1, -65, 1, 0)
     _clbl.Position = UDim2.new(0, 12, 0, 0)
     _clbl.BackgroundTransparency = 1
-    _clbl.Text = _n
-    _clbl.TextColor3 = Color3.fromRGB(180, 230, 255)
+    _clbl.Text = _L(_nKey)
+    _clbl.TextColor3 = Color3.fromRGB(220, 235, 250)
     _clbl.TextSize = 11
     _clbl.Font = Enum.Font.GothamBold
     _clbl.TextXAlignment = Enum.TextXAlignment.Left
     _clbl.Parent = _ct
+    _clbl:SetAttribute("LangKey", _nKey)
 
     local _tgl = Instance.new("TextButton")
     _tgl.Size = UDim2.new(0, 44, 0, 22)
     _tgl.Position = UDim2.new(1, -52, 0.5, -11)
-    _tgl.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
+    _tgl.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
     _tgl.Text = ""
     _tgl.Parent = _ct
 
@@ -425,7 +702,7 @@ local function _ctg(_pp, _n, _cb)
     local _ind = Instance.new("Frame")
     _ind.Size = UDim2.new(0, 18, 0, 18)
     _ind.Position = UDim2.new(0, 2, 0.5, -9)
-    _ind.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+    _ind.BackgroundColor3 = Color3.fromRGB(160, 180, 200)
     _ind.Parent = _tgl
 
     local _indc = Instance.new("UICorner")
@@ -437,23 +714,22 @@ local function _ctg(_pp, _n, _cb)
         _snd()
         _act = not _act
         if _act then
-            _tgl.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
+            _tgl.BackgroundColor3 = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 180, 230)
             _ind:TweenPosition(UDim2.new(1, -20, 0.5, -9), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
             _ind.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         else
-            _tgl.BackgroundColor3 = Color3.fromRGB(35, 45, 65)
+            _tgl.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
             _ind:TweenPosition(UDim2.new(0, 2, 0.5, -9), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
-            _ind.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+            _ind.BackgroundColor3 = Color3.fromRGB(160, 180, 200)
         end
         _cb(_act)
     end)
 end
 
-local function _csld(_pp, _n, _min, _max, _def, _isDecimal, _cb)
+local function _csld(_pp, _nKey, _min, _max, _def, _isDecimal, _cb)
     local _fr = Instance.new("Frame")
     _fr.Size = UDim2.new(0.95, 0, 0, 40)
-    _fr.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-    _fr.BackgroundTransparency = 0.2
+    _fr.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
     _fr.Parent = _pp
 
     local _frc = Instance.new("UICorner")
@@ -461,25 +737,30 @@ local function _csld(_pp, _n, _min, _max, _def, _isDecimal, _cb)
     _frc.Parent = _fr
 
     local _frs = Instance.new("UIStroke")
-    _frs.Color = Color3.fromRGB(0, 120, 220)
-    _frs.Thickness = 1.2
+    _frs.Name = "ThemeStroke"
+    _frs.Color = Color3.fromRGB(0, 150, 200)
+    _frs.Thickness = 1
+    _frs.Transparency = 0.5
     _frs.Parent = _fr
 
     local _lbl = Instance.new("TextLabel")
     _lbl.Size = UDim2.new(1, -20, 0, 16)
     _lbl.Position = UDim2.new(0, 10, 0, 3)
     _lbl.BackgroundTransparency = 1
-    _lbl.Text = _n .. ": " .. tostring(_def) .. (_isDecimal and "s" or "")
-    _lbl.TextColor3 = Color3.fromRGB(130, 210, 255)
+    _lbl.Text = _L(_nKey) .. ": " .. tostring(_def) .. (_isDecimal and "s" or "")
+    _lbl.TextColor3 = Color3.fromRGB(180, 210, 235)
     _lbl.TextSize = 10
     _lbl.Font = Enum.Font.GothamBold
     _lbl.TextXAlignment = Enum.TextXAlignment.Left
     _lbl.Parent = _fr
+    _lbl:SetAttribute("LangKey", _nKey)
+    _lbl:SetAttribute("IsDecimal", _isDecimal)
+    _lbl:SetAttribute("CurrentVal", _def)
 
     local _sbg = Instance.new("Frame")
     _sbg.Size = UDim2.new(0.92, 0, 0, 5)
     _sbg.Position = UDim2.new(0.04, 0, 0.72, 0)
-    _sbg.BackgroundColor3 = Color3.fromRGB(30, 45, 70)
+    _sbg.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
     _sbg.BorderSizePixel = 0
     _sbg.Parent = _fr
 
@@ -488,8 +769,9 @@ local function _csld(_pp, _n, _min, _max, _def, _isDecimal, _cb)
     _sbgc.Parent = _sbg
 
     local _fl = Instance.new("Frame")
+    _fl.Name = "SliderFill"
     _fl.Size = UDim2.new((_def - _min) / (_max - _min), 0, 1, 0)
-    _fl.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    _fl.BackgroundColor3 = Color3.fromRGB(0, 180, 230)
     _fl.BorderSizePixel = 0
     _fl.Parent = _sbg
 
@@ -502,11 +784,12 @@ local function _csld(_pp, _n, _min, _max, _def, _isDecimal, _cb)
         local _val = _min + ((_max - _min) * _pos)
         if _isDecimal then
             _val = math.floor(_val * 100 + 0.5) / 100
-            _lbl.Text = _n .. ": " .. tostring(_val) .. "s"
+            _lbl.Text = _L(_nKey) .. ": " .. tostring(_val) .. "s"
         else
             _val = math.floor(_val + 0.5)
-            _lbl.Text = _n .. ": " .. tostring(_val)
+            _lbl.Text = _L(_nKey) .. ": " .. tostring(_val)
         end
+        _lbl:SetAttribute("CurrentVal", _val)
         _fl.Size = UDim2.new(_pos, 0, 1, 0)
         _cb(_val)
     end
@@ -533,25 +816,133 @@ local function _csld(_pp, _n, _min, _max, _def, _isDecimal, _cb)
     end)
 end
 
-local _pHome = _cp("🛰️ Home & Stats", false)
-local _pPlayer = _cp("👨‍🚀 Player & Speed", false)
-local _pCombat = _cp("🎯 Aimbot & Combat", false)
-local _pTP = _cp("🌌 Player TP", false)
-local _pWaypoints = _cp("📌 Waypoints Hub", true)
-local _pTroll = _cp("💥 Trolls & Void", false)
-local _pBoss = _cp("👾 Boss & Chasers ESP", false)
-local _pVisual = _cp("👁️ ESP & Visuals", false)
-local _pPerf = _cp("⚡ Performance", false)
+local _pHome = _cp("home", false)
+local _pPlayer = _cp("player", false)
+local _pCombat = _cp("combat", false)
+local _pTP = _cp("tp", false)
+local _pWaypoints = _cp("waypoints", true)
+local _pTroll = _cp("troll", false)
+local _pBoss = _cp("boss", false)
+local _pVisual = _cp("visual", false)
+local _pAutoClicker = _cp("autoClickerTab", false)
+local _pPerf = _cp("perf", false)
+local _pThemes = _cp("themes", false)
+
+_mf:SetAttribute("ActiveColor", Color3.fromRGB(0, 180, 230))
+getgenv().RGBModeActive = false
+
+task.spawn(function()
+    while true do
+        _0g3.RenderStepped:Wait()
+        if getgenv().RGBModeActive and getgenv().AstroRunning then
+            local t = tick() * 2
+            local rgbCol = Color3.fromHSV((t % 5) / 5, 1, 1)
+            _mf:SetAttribute("ActiveColor", rgbCol)
+            _mfs.Color = rgbCol
+            _ttl.TextColor3 = rgbCol
+            _miniInfo.TextColor3 = rgbCol
+            _profUserLbl.TextColor3 = rgbCol
+            _pcstr.Color = rgbCol
+            _mws.Color = rgbCol
+            
+            for _, obj in pairs(_mf:GetDescendants()) do
+                if obj:IsA("UIStroke") and obj.Name == "ThemeStroke" then
+                    obj.Color = rgbCol
+                elseif obj.Name == "SliderFill" then
+                    obj.BackgroundColor3 = rgbCol
+                elseif obj:IsA("TextButton") and (obj.BackgroundColor3 ~= Color3.fromRGB(180, 45, 60) and obj.BackgroundColor3 ~= Color3.fromRGB(26, 32, 42) and obj.BackgroundColor3 ~= Color3.fromRGB(18, 22, 30)) then
+                    obj.BackgroundColor3 = rgbCol
+                end
+            end
+        end
+    end
+end)
+
+local function _applyTheme(_primaryColor, _titleColor)
+    getgenv().RGBModeActive = false
+    _mf:SetAttribute("ActiveColor", _primaryColor)
+    _mfs.Color = _primaryColor
+    _ttl.TextColor3 = _titleColor
+    _miniInfo.TextColor3 = _titleColor
+    _profUserLbl.TextColor3 = _primaryColor
+    _pcstr.Color = _primaryColor
+    _mws.Color = _primaryColor
+    
+    for _, obj in pairs(_mf:GetDescendants()) do
+        if obj:IsA("UIStroke") and obj.Name == "ThemeStroke" then
+            obj.Color = _primaryColor
+        elseif obj.Name == "SliderFill" then
+            obj.BackgroundColor3 = _primaryColor
+        elseif obj:IsA("TextButton") and (obj.BackgroundColor3 ~= Color3.fromRGB(180, 45, 60) and obj.BackgroundColor3 ~= Color3.fromRGB(26, 32, 42) and obj.BackgroundColor3 ~= Color3.fromRGB(18, 22, 30)) then
+            obj.BackgroundColor3 = _primaryColor
+        end
+    end
+end
+
+local function _createThemeButton(_nKey, _col, _tCol, _isRgb)
+    local _btn = Instance.new("TextButton")
+    _btn.Size = UDim2.new(0.95, 0, 0, 42)
+    _btn.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+    _btn.Text = _L(_nKey)
+    _btn.TextColor3 = _tCol
+    _btn.TextSize = 12
+    _btn.Font = Enum.Font.GothamBold
+    _btn.Parent = _pThemes
+    _btn:SetAttribute("LangKey", _nKey)
+
+    local _btc = Instance.new("UICorner")
+    _btc.CornerRadius = UDim.new(0, 8)
+    _btc.Parent = _btn
+
+    local _bts = Instance.new("UIStroke")
+    _bts.Name = "ThemeStroke"
+    _bts.Color = _col
+    _bts.Thickness = 1.2
+    _bts.Parent = _btn
+
+    _btn.MouseButton1Click:Connect(function()
+        _snd()
+        if _isRgb then
+            getgenv().RGBModeActive = true
+        else
+            _applyTheme(_col, _tCol)
+        end
+    end)
+end
+
+_createThemeButton("themeCyan", Color3.fromRGB(0, 180, 230), Color3.fromRGB(0, 220, 255), false)
+_createThemeButton("themeGold", Color3.fromRGB(220, 170, 50), Color3.fromRGB(255, 200, 80), false)
+_createThemeButton("themeRed", Color3.fromRGB(220, 50, 70), Color3.fromRGB(255, 80, 100), false)
+_createThemeButton("themeGreen", Color3.fromRGB(50, 200, 120), Color3.fromRGB(80, 255, 150), false)
+_createThemeButton("themeRgb", Color3.fromRGB(255, 255, 255), Color3.fromRGB(255, 255, 255), true)
 
 getgenv().SpeedActive = false
 getgenv().SpeedVal = 16
 
-_ctg(_pPlayer, "⚡ Enable Custom Speed", function(_st)
+_ctg(_pPlayer, "speedTgl", function(_st)
     getgenv().SpeedActive = _st
+    pcall(function()
+        if _0p1.Character and _0p1.Character:FindFirstChildOfClass("Humanoid") then
+            local _hum = _0p1.Character:FindFirstChildOfClass("Humanoid")
+            if _st then
+                getgenv().OriginalWalkSpeed = _hum.WalkSpeed
+                _hum.WalkSpeed = getgenv().SpeedVal
+            else
+                _hum.WalkSpeed = getgenv().OriginalWalkSpeed or 16
+            end
+        end
+    end)
 end)
 
-_csld(_pPlayer, "👟 WalkSpeed Boost", 16, 2000, 16, false, function(_v)
+_csld(_pPlayer, "speedSlid", 16, 2000, 16, false, function(_v)
     getgenv().SpeedVal = _v
+    if getgenv().SpeedActive then
+        pcall(function()
+            if _0p1.Character and _0p1.Character:FindFirstChildOfClass("Humanoid") then
+                _0p1.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = _v
+            end
+        end)
+    end
 end)
 
 task.spawn(function()
@@ -561,7 +952,7 @@ task.spawn(function()
             pcall(function()
                 if _0p1.Character then
                     local _hum = _0p1.Character:FindFirstChildOfClass("Humanoid")
-                    if _hum then
+                    if _hum and _hum.WalkSpeed ~= getgenv().SpeedVal then
                         _hum.WalkSpeed = getgenv().SpeedVal
                     end
                 end
@@ -573,7 +964,7 @@ end)
 local _fly = false
 local _flySpd = 50
 
-_ctg(_pPlayer, "🛸 Pro Anti-Kick Fly", function(_st)
+_ctg(_pPlayer, "flyTgl", function(_st)
     _fly = _st
     local _ch = _0p1.Character
     if (not _ch or not _ch:FindFirstChild("HumanoidRootPart")) then return end
@@ -609,9 +1000,9 @@ _ctg(_pPlayer, "🛸 Pro Anti-Kick Fly", function(_st)
     end
 end)
 
-_csld(_pPlayer, "🚀 Fly Speed Boost", 20, 2000, 50, false, function(_v) _flySpd = _v end)
+_csld(_pPlayer, "flySlid", 20, 2000, 50, false, function(_v) _flySpd = _v end)
 
-_ctg(_pPlayer, "🥾 Infinite Jump", function(_st)
+_ctg(_pPlayer, "infJump", function(_st)
     if _st then
         _G.InfJump = _0g4.JumpRequest:Connect(function()
             if not getgenv().AstroRunning then return end
@@ -624,7 +1015,7 @@ _ctg(_pPlayer, "🥾 Infinite Jump", function(_st)
     end
 end)
 
-_ctg(_pPlayer, "👻 Safe Noclip", function(_st)
+_ctg(_pPlayer, "noclip", function(_st)
     if _st then
         _G.NoclipConn = _0g3.Stepped:Connect(function()
             if not getgenv().AstroRunning then return end
@@ -644,23 +1035,87 @@ _ctg(_pPlayer, "👻 Safe Noclip", function(_st)
     end
 end)
 
-local _savedWaypoints = {}
+-- نظام الأوتوكليكر الاحترافي المستقل والمطوّر
+getgenv().ProACActive = false
+getgenv().ProACCps = 10 -- افتراضي 10 نقرات بالثانية
+
+_ctg(_pAutoClicker, "acTgl", function(_st)
+    getgenv().ProACActive = _st
+    task.spawn(function()
+        local vim = game:GetService("VirtualInputManager")
+        while getgenv().ProACActive and getgenv().AstroRunning do
+            pcall(function()
+                local vp = _0c1.ViewportSize
+                -- إضافة انحراف بشري بسيط جداً في الإحداثيات عشان ما يصير ثاابت وكأنهبوت تقليدي
+                local humanX = (vp.X / 2) + math.random(-5, 5)
+                local humanY = (vp.Y / 2) + math.random(-5, 5)
+                
+                vim:SendMouseButtonEvent(humanX, humanY, 0, true, game, 0)
+                task.wait(0.01)
+                vim:SendMouseButtonEvent(humanX, humanY, 0, false, game, 0)
+            end)
+            local waitTime = 1 / math.clamp(getgenv().ProACCps, 1, 100)
+            task.wait(waitTime)
+        end
+    end)
+end)
+
+_csld(_pAutoClicker, "acSpeed", 1, 50, 10, false, function(_v)
+    getgenv().ProACCps = _v
+end)
+
+local _waypointProfiles = {
+    {name = "Profile 1", waypoints = {}},
+    {name = "Profile 2", waypoints = {}}
+}
+local _activeProfileIdx = 1
 
 local _wpFixedTop = Instance.new("Frame")
-_wpFixedTop.Size = UDim2.new(1, 0, 0, 220)
+_wpFixedTop.Size = UDim2.new(1, 0, 0, 310)
 _wpFixedTop.Position = UDim2.new(0, 0, 0, 0)
 _wpFixedTop.BackgroundTransparency = 1
 _wpFixedTop.Parent = _pWaypoints
 
 local _wpTopLayout = Instance.new("UIListLayout")
-_wpTopLayout.Padding = UDim.new(0, 5)
+_wpTopLayout.Padding = UDim.new(0, 6)
 _wpTopLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 _wpTopLayout.Parent = _wpFixedTop
 
+local _profileBar = Instance.new("Frame")
+_profileBar.Size = UDim2.new(0.95, 0, 0, 34)
+_profileBar.BackgroundTransparency = 1
+_profileBar.Parent = _wpFixedTop
+
+local _btnProf1 = Instance.new("TextButton")
+_btnProf1.Size = UDim2.new(0.48, 0, 1, 0)
+_btnProf1.BackgroundColor3 = Color3.fromRGB(0, 180, 230)
+_btnProf1.Text = "📁 List 1"
+_btnProf1.TextColor3 = Color3.fromRGB(255, 255, 255)
+_btnProf1.TextSize = 10
+_btnProf1.Font = Enum.Font.GothamBold
+_btnProf1.Parent = _profileBar
+
+local _bp1c = Instance.new("UICorner")
+_bp1c.CornerRadius = UDim.new(0, 6)
+_bp1c.Parent = _btnProf1
+
+local _btnProf2 = Instance.new("TextButton")
+_btnProf2.Size = UDim2.new(0.48, 0, 1, 0)
+_btnProf2.Position = UDim2.new(0.52, 0, 0, 0)
+_btnProf2.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+_btnProf2.Text = "📁 List 2"
+_btnProf2.TextColor3 = Color3.fromRGB(180, 210, 235)
+_btnProf2.TextSize = 10
+_btnProf2.Font = Enum.Font.GothamBold
+_btnProf2.Parent = _profileBar
+
+local _bp2c = Instance.new("UICorner")
+_bp2c.CornerRadius = UDim.new(0, 6)
+_bp2c.Parent = _btnProf2
+
 local _wpTopFr = Instance.new("Frame")
 _wpTopFr.Size = UDim2.new(0.95, 0, 0, 38)
-_wpTopFr.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-_wpTopFr.BackgroundTransparency = 0.2
+_wpTopFr.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
 _wpTopFr.Parent = _wpFixedTop
 
 local _wptcc = Instance.new("UICorner")
@@ -668,16 +1123,17 @@ _wptcc.CornerRadius = UDim.new(0, 8)
 _wptcc.Parent = _wpTopFr
 
 local _wptstr = Instance.new("UIStroke")
-_wptstr.Color = Color3.fromRGB(0, 120, 220)
-_wptstr.Thickness = 1.2
+_wptstr.Name = "ThemeStroke"
+_wptstr.Color = Color3.fromRGB(0, 150, 200)
+_wptstr.Thickness = 1
+_wptstr.Transparency = 0.5
 _wptstr.Parent = _wpTopFr
 
 local _wpBox = Instance.new("TextBox")
 _wpBox.Size = UDim2.new(0.58, 0, 0.8, 0)
 _wpBox.Position = UDim2.new(0.02, 0, 0.1, 0)
-_wpBox.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
-_wpBox.BackgroundTransparency = 0.2
-_wpBox.TextColor3 = Color3.fromRGB(150, 220, 255)
+_wpBox.BackgroundColor3 = Color3.fromRGB(14, 18, 26)
+_wpBox.TextColor3 = Color3.fromRGB(200, 230, 255)
 _wpBox.PlaceholderText = "Waypoint Name..."
 _wpBox.Text = ""
 _wpBox.TextSize = 11
@@ -691,70 +1147,72 @@ _bxc.Parent = _wpBox
 local _btnSaveWP = Instance.new("TextButton")
 _btnSaveWP.Size = UDim2.new(0.36, 0, 0.8, 0)
 _btnSaveWP.Position = UDim2.new(0.62, 0, 0.1, 0)
-_btnSaveWP.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
-_btnSaveWP.Text = "📌 Save Position"
+_btnSaveWP.BackgroundColor3 = Color3.fromRGB(0, 180, 230)
+_btnSaveWP.Text = _L("saveWp")
 _btnSaveWP.TextColor3 = Color3.fromRGB(255, 255, 255)
 _btnSaveWP.TextSize = 10
 _btnSaveWP.Font = Enum.Font.GothamBold
 _btnSaveWP.Parent = _wpTopFr
+_btnSaveWP:SetAttribute("LangKey", "saveWp")
 
 local _bswc = Instance.new("UICorner")
 _bswc.CornerRadius = UDim.new(0, 6)
 _bswc.Parent = _btnSaveWP
 
-_csld(_wpFixedTop, "⏱️ Delay For All (0.01s - 60s)", 0.01, 60, 0.5, true, function(_v)
+_csld(_wpFixedTop, "flySlid", 50, 2000, 500, false, function(_v)
+    _travelSpeedVal = _v
+end)
+
+_csld(_wpFixedTop, "delaySlid", 0.01, 60, 0.5, true, function(_v)
     getgenv().WaypointDelay = _v
 end)
 
-_csld(_wpFixedTop, "🎯 Start From Point", 1, 20, 1, false, function(_v)
+_csld(_wpFixedTop, "startPoint", 1, 20, 1, false, function(_v)
     getgenv().WaypointStartPoint = _v
 end)
 
 local _btnLoopAll = Instance.new("TextButton")
 _btnLoopAll.Size = UDim2.new(0.95, 0, 0, 36)
-_btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
-_btnLoopAll.BackgroundTransparency = 0.1
-_btnLoopAll.Text = "⚡ Start Auto Loop"
-_btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
+_btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+_btnLoopAll.Text = _L("startLoop")
+_btnLoopAll.TextColor3 = Color3.fromRGB(0, 200, 255)
 _btnLoopAll.TextSize = 11
 _btnLoopAll.Font = Enum.Font.GothamBold
 _btnLoopAll.Parent = _wpFixedTop
+_btnLoopAll:SetAttribute("LangKey", "startLoop")
 
 local _blac = Instance.new("UICorner")
 _blac.CornerRadius = UDim.new(0, 8)
 _blac.Parent = _btnLoopAll
 
 local _blas = Instance.new("UIStroke")
-_blas.Color = Color3.fromRGB(0, 140, 255)
-_blas.Thickness = 1.5
+_blas.Name = "ThemeStroke"
+_blas.Color = Color3.fromRGB(0, 150, 200)
+_blas.Thickness = 1
+_blas.Transparency = 0.5
 _blas.Parent = _btnLoopAll
 
 local _btnDeleteAll = Instance.new("TextButton")
 _btnDeleteAll.Size = UDim2.new(0.95, 0, 0, 32)
-_btnDeleteAll.BackgroundColor3 = Color3.fromRGB(45, 15, 25)
-_btnDeleteAll.BackgroundTransparency = 0.2
-_btnDeleteAll.Text = "🗑️ Delete All Waypoints"
+_btnDeleteAll.BackgroundColor3 = Color3.fromRGB(45, 18, 24)
+_btnDeleteAll.Text = _L("delAllWp")
 _btnDeleteAll.TextColor3 = Color3.fromRGB(255, 130, 130)
 _btnDeleteAll.TextSize = 10
 _btnDeleteAll.Font = Enum.Font.GothamBold
 _btnDeleteAll.Parent = _wpFixedTop
+_btnDeleteAll:SetAttribute("LangKey", "delAllWp")
 
 local _bdac = Instance.new("UICorner")
 _bdac.CornerRadius = UDim.new(0, 8)
 _bdac.Parent = _btnDeleteAll
 
-local _bdastr = Instance.new("UIStroke")
-_bdastr.Color = Color3.fromRGB(150, 40, 50)
-_bdastr.Thickness = 1.2
-_bdastr.Parent = _btnDeleteAll
-
 local _wpScrollFrame = Instance.new("ScrollingFrame")
-_wpScrollFrame.Size = UDim2.new(1, 0, 1, -225)
-_wpScrollFrame.Position = UDim2.new(0, 0, 0, 225)
+_wpScrollFrame.Size = UDim2.new(1, 0, 1, -315)
+_wpScrollFrame.Position = UDim2.new(0, 0, 0, 315)
 _wpScrollFrame.BackgroundTransparency = 1
 _wpScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-_wpScrollFrame.ScrollBarThickness = 4
-_wpScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+_wpScrollFrame.ScrollBarThickness = 3
+_wpScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 180, 220)
 _wpScrollFrame.Parent = _pWaypoints
 
 local _wplLayout = Instance.new("UIListLayout")
@@ -771,77 +1229,18 @@ task.spawn(function()
     end
 end)
 
-task.spawn(function()
-    local _currentIdx = 1
-    while true do
-        if getgenv().AstroRunning and getgenv().LoopAllWaypoints then
-            if (#_savedWaypoints >= 1) then
-                local _startIdx = math.clamp(getgenv().WaypointStartPoint, 1, #_savedWaypoints)
-                if (_currentIdx < _startIdx or _currentIdx > #_savedWaypoints) then
-                    _currentIdx = _startIdx
-                end
-                
-                local _wp = _savedWaypoints[_currentIdx]
-                pcall(function()
-                    _stealthTP(_wp.CFrame)
-                    _btnLoopAll.Text = "🔄 Moving To: [" .. _currentIdx .. "/" .. #_savedWaypoints .. "] " .. _wp.Name
-                end)
-                
-                local _delayNeeded = math.max(0.01, getgenv().WaypointDelay)
-                task.wait(_delayNeeded)
-
-                if getgenv().LoopAllWaypoints then
-                    _currentIdx = _currentIdx + 1
-                    if (_currentIdx > #_savedWaypoints) then
-                        _currentIdx = 1
-                    end
-                end
-            else
-                _btnLoopAll.Text = "⚠️ Need At Least 1 Waypoint!"
-                getgenv().LoopAllWaypoints = false
-                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
-                _btnLoopAll.TextColor3 = Color3.fromRGB(220, 50, 50)
-                _blas.Color = Color3.fromRGB(220, 50, 50)
-                task.wait(2)
-                _btnLoopAll.Text = "⚡ Start Auto Loop"
-                _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
-                _blas.Color = Color3.fromRGB(0, 140, 255)
-            end
-        else
-            _currentIdx = math.clamp(getgenv().WaypointStartPoint, 1, math.max(1, #_savedWaypoints))
-            task.wait(0.1)
-        end
-    end
-end)
-
-_btnLoopAll.MouseButton1Click:Connect(function()
-    _snd()
-    getgenv().LoopAllWaypoints = not getgenv().LoopAllWaypoints
-    if getgenv().LoopAllWaypoints then
-        getgenv().LoopTPTarget = nil
-        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-        _btnLoopAll.TextColor3 = Color3.fromRGB(255, 255, 255)
-        _blas.Color = Color3.fromRGB(0, 190, 255)
-        _btnLoopAll.Text = "🛑 Stop Auto Loop"
-    else
-        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
-        _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
-        _blas.Color = Color3.fromRGB(0, 140, 255)
-        _btnLoopAll.Text = "⚡ Start Auto Loop"
-    end
-end)
-
 local refreshWaypointsUI
 refreshWaypointsUI = function()
     for _, _chld in pairs(_wpScrollFrame:GetChildren()) do
         if _chld:IsA("Frame") then _chld:Destroy() end
     end
 
-    for _idx, _wpData in ipairs(_savedWaypoints) do
+    local currentList = _waypointProfiles[_activeProfileIdx].waypoints
+
+    for _idx, _wpData in ipairs(currentList) do
         local _card = Instance.new("Frame")
         _card.Size = UDim2.new(0.95, 0, 0, 46)
-        _card.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-        _card.BackgroundTransparency = 0.2
+        _card.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
         _card.Parent = _wpScrollFrame
 
         local _cc = Instance.new("UICorner")
@@ -849,8 +1248,10 @@ refreshWaypointsUI = function()
         _cc.Parent = _card
 
         local _str = Instance.new("UIStroke")
-        _str.Color = Color3.fromRGB(0, 120, 220)
-        _str.Thickness = 1.2
+        _str.Name = "ThemeStroke"
+        _str.Color = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 150, 200)
+        _str.Thickness = 1
+        _str.Transparency = 0.5
         _str.Parent = _card
 
         local _nLbl = Instance.new("TextLabel")
@@ -858,7 +1259,7 @@ refreshWaypointsUI = function()
         _nLbl.Position = UDim2.new(0.02, 0, 0, 0)
         _nLbl.BackgroundTransparency = 1
         _nLbl.Text = _idx .. ". 📌 " .. _wpData.Name
-        _nLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
+        _nLbl.TextColor3 = Color3.fromRGB(200, 230, 255)
         _nLbl.TextSize = 11
         _nLbl.Font = Enum.Font.GothamBold
         _nLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -867,8 +1268,8 @@ refreshWaypointsUI = function()
         local _tpBtn = Instance.new("TextButton")
         _tpBtn.Size = UDim2.new(0.18, 0, 0.7, 0)
         _tpBtn.Position = UDim2.new(0.41, 0, 0.15, 0)
-        _tpBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
-        _tpBtn.Text = "🚀 TP Once"
+        _tpBtn.BackgroundColor3 = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 180, 230)
+        _tpBtn.Text = _L("tpOnce")
         _tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         _tpBtn.TextSize = 10
         _tpBtn.Font = Enum.Font.GothamBold
@@ -883,10 +1284,10 @@ refreshWaypointsUI = function()
         _loopBtn.Position = UDim2.new(0.60, 0, 0.15, 0)
         if getgenv().LoopTPTarget == _wpData.CFrame then
             _loopBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
-            _loopBtn.Text = "⚡ Spam: ON"
+            _loopBtn.Text = _L("spamOn")
         else
-            _loopBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
-            _loopBtn.Text = "⚡ Spam: OFF"
+            _loopBtn.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
+            _loopBtn.Text = _L("spamOff")
         end
         _loopBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         _loopBtn.TextSize = 10
@@ -919,10 +1320,9 @@ refreshWaypointsUI = function()
         _loopBtn.MouseButton1Click:Connect(function()
             _snd()
             getgenv().LoopAllWaypoints = false
-            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
-            _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
-            _blas.Color = Color3.fromRGB(0, 140, 255)
-            _btnLoopAll.Text = "⚡ Start Auto Loop"
+            _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+            _btnLoopAll.TextColor3 = Color3.fromRGB(0, 200, 255)
+            _btnLoopAll.Text = _L("startLoop")
 
             if getgenv().LoopTPTarget == _wpData.CFrame then
                 getgenv().LoopTPTarget = nil
@@ -937,33 +1337,111 @@ refreshWaypointsUI = function()
             if getgenv().LoopTPTarget == _wpData.CFrame then
                 getgenv().LoopTPTarget = nil
             end
-            table.remove(_savedWaypoints, _idx)
+            table.remove(currentList, _idx)
             refreshWaypointsUI()
         end)
     end
-    _wpScrollFrame.CanvasSize = UDim2.new(0, 0, 0, #_savedWaypoints * 54)
+    _wpScrollFrame.CanvasSize = UDim2.new(0, 0, 0, #currentList * 54)
 end
+
+_btnProf1.MouseButton1Click:Connect(function()
+    _snd()
+    _activeProfileIdx = 1
+    _btnProf1.BackgroundColor3 = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 180, 230)
+    _btnProf1.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnProf2.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+    _btnProf2.TextColor3 = Color3.fromRGB(180, 210, 235)
+    refreshWaypointsUI()
+end)
+
+_btnProf2.MouseButton1Click:Connect(function()
+    _snd()
+    _activeProfileIdx = 2
+    _btnProf2.BackgroundColor3 = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 180, 230)
+    _btnProf2.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _btnProf1.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+    _btnProf1.TextColor3 = Color3.fromRGB(180, 210, 235)
+    refreshWaypointsUI()
+end)
+
+task.spawn(function()
+    local _currentIdx = 1
+    while true do
+        if getgenv().AstroRunning and getgenv().LoopAllWaypoints then
+            local currentList = _waypointProfiles[_activeProfileIdx].waypoints
+            if (#currentList >= 1) then
+                local _startIdx = math.clamp(getgenv().WaypointStartPoint, 1, #currentList)
+                if (_currentIdx < _startIdx or _currentIdx > #currentList) then
+                    _currentIdx = _startIdx
+                end
+                
+                local _wp = currentList[_currentIdx]
+                pcall(function()
+                    _stealthTP(_wp.CFrame)
+                    _btnLoopAll.Text = _L("movingTo") .. "[" .. _currentIdx .. "/" .. #currentList .. "] " .. _wp.Name
+                end)
+                
+                local _delayNeeded = math.max(0.01, getgenv().WaypointDelay)
+                task.wait(_delayNeeded)
+
+                if getgenv().LoopAllWaypoints then
+                    _currentIdx = _currentIdx + 1
+                    if (_currentIdx > #currentList) then
+                        _currentIdx = 1
+                    end
+                end
+            else
+                _btnLoopAll.Text = _L("needWp")
+                getgenv().LoopAllWaypoints = false
+                _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+                _btnLoopAll.TextColor3 = Color3.fromRGB(255, 100, 100)
+                task.wait(2)
+                _btnLoopAll.Text = _L("startLoop")
+                _btnLoopAll.TextColor3 = Color3.fromRGB(0, 200, 255)
+            end
+        else
+            local currentList = _waypointProfiles[_activeProfileIdx].waypoints
+            _currentIdx = math.clamp(getgenv().WaypointStartPoint, 1, math.max(1, #currentList))
+            task.wait(0.1)
+        end
+    end
+end)
+
+_btnLoopAll.MouseButton1Click:Connect(function()
+    _snd()
+    getgenv().LoopAllWaypoints = not getgenv().LoopAllWaypoints
+    if getgenv().LoopAllWaypoints then
+        getgenv().LoopTPTarget = nil
+        _btnLoopAll.BackgroundColor3 = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 180, 230)
+        _btnLoopAll.TextColor3 = Color3.fromRGB(255, 255, 255)
+        _btnLoopAll.Text = _L("stopLoop")
+    else
+        _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+        _btnLoopAll.TextColor3 = Color3.fromRGB(0, 200, 255)
+        _btnLoopAll.Text = _L("startLoop")
+    end
+end)
 
 _btnDeleteAll.MouseButton1Click:Connect(function()
     _snd()
     getgenv().LoopAllWaypoints = false
     getgenv().LoopTPTarget = nil
-    _savedWaypoints = {}
-    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(15, 25, 45)
-    _btnLoopAll.TextColor3 = Color3.fromRGB(0, 190, 255)
-    _blas.Color = Color3.fromRGB(0, 140, 255)
-    _btnLoopAll.Text = "⚡ Start Auto Loop"
+    _waypointProfiles[_activeProfileIdx].waypoints = {}
+    _btnLoopAll.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
+    _btnLoopAll.TextColor3 = Color3.fromRGB(0, 200, 255)
+    _btnLoopAll.Text = _L("startLoop")
     refreshWaypointsUI()
 end)
 
 _btnSaveWP.MouseButton1Click:Connect(function()
     _snd()
     if _0p1.Character and _0p1.Character:FindFirstChild("HumanoidRootPart") then
+        local currentList = _waypointProfiles[_activeProfileIdx].waypoints
         local _wpName = _wpBox.Text
         if (_wpName == "") then
-            _wpName = "Place " .. (#_savedWaypoints + 1)
+            _wpName = "Place " .. (#currentList + 1)
         end
-        table.insert(_savedWaypoints, {
+        table.insert(currentList, {
             Name = _wpName,
             CFrame = _0p1.Character.HumanoidRootPart.CFrame
         })
@@ -974,17 +1452,18 @@ end)
 
 local _stFr = Instance.new("Frame")
 _stFr.Size = UDim2.new(0.95, 0, 0, 120)
-_stFr.BackgroundColor3 = Color3.fromRGB(20, 28, 48)
-_stFr.BackgroundTransparency = 0.2
+_stFr.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
 _stFr.Parent = _pHome
 
 local _stfcc = Instance.new("UICorner")
-_stfcc.CornerRadius = UDim.new(0, 10)
+_stfcc.CornerRadius = UDim.new(0, 8)
 _stfcc.Parent = _stFr
 
 local _stfs = Instance.new("UIStroke")
-_stfs.Color = Color3.fromRGB(0, 140, 255)
-_stfs.Thickness = 1.5
+_stfs.Name = "ThemeStroke"
+_stfs.Color = Color3.fromRGB(0, 150, 200)
+_stfs.Thickness = 1
+_stfs.Transparency = 0.5
 _stfs.Parent = _stFr
 
 local _stLbl = Instance.new("TextLabel")
@@ -992,7 +1471,7 @@ _stLbl.Size = UDim2.new(1, -20, 1, 0)
 _stLbl.Position = UDim2.new(0, 10, 0, 0)
 _stLbl.BackgroundTransparency = 1
 _stLbl.Text = "⚡ FPS: --\n📡 Ping: -- ms\n💻 CPU: Active | 🎮 GPU: Stable\n📍 Coords: X: 0, Y: 0, Z: 0"
-_stLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
+_stLbl.TextColor3 = Color3.fromRGB(200, 230, 255)
 _stLbl.TextSize = 12
 _stLbl.Font = Enum.Font.GothamBold
 _stLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -1000,17 +1479,18 @@ _stLbl.Parent = _stFr
 
 local _gmFr = Instance.new("Frame")
 _gmFr.Size = UDim2.new(0.95, 0, 0, 130)
-_gmFr.BackgroundColor3 = Color3.fromRGB(20, 28, 48)
-_gmFr.BackgroundTransparency = 0.2
+_gmFr.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
 _gmFr.Parent = _pHome
 
 local _gmfcc = Instance.new("UICorner")
-_gmfcc.CornerRadius = UDim.new(0, 10)
+_gmfcc.CornerRadius = UDim.new(0, 8)
 _gmfcc.Parent = _gmFr
 
 local _gmfs = Instance.new("UIStroke")
-_gmfs.Color = Color3.fromRGB(0, 140, 255)
-_gmfs.Thickness = 1.5
+_gmfs.Name = "ThemeStroke"
+_gmfs.Color = Color3.fromRGB(0, 150, 200)
+_gmfs.Thickness = 1
+_gmfs.Transparency = 0.5
 _gmfs.Parent = _gmFr
 
 local _gmLbl = Instance.new("TextLabel")
@@ -1018,7 +1498,7 @@ _gmLbl.Size = UDim2.new(1, -20, 1, 0)
 _gmLbl.Position = UDim2.new(0, 10, 0, 0)
 _gmLbl.BackgroundTransparency = 1
 _gmLbl.Text = "🎮 Game: Loading...\n👤 Player: " .. _0p1.DisplayName .. " (@" .. _0p1.Name .. ")\n👥 Friends Here: Checking..."
-_gmLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
+_gmLbl.TextColor3 = Color3.fromRGB(200, 230, 255)
 _gmLbl.TextSize = 11
 _gmLbl.Font = Enum.Font.GothamBold
 _gmLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -1059,6 +1539,7 @@ _0g3.RenderStepped:Connect(function()
             _crds = string.format("X: %d, Y: %d, Z: %d", math.floor(_ps.X), math.floor(_ps.Y), math.floor(_ps.Z))
         end
         _stLbl.Text = string.format("⚡ FPS: %d | 📡 Ping: %d ms\n💻 CPU: Active | 🎮 GPU: Stable\n📍 Coords: %s", _fps, _pg, _crds)
+        _miniInfo.Text = string.format("FPS: %d | Ping: %d ms", _fps, _pg)
         _fc = 0
         _lUpd = tick()
     end
@@ -1066,13 +1547,13 @@ end)
 
 local _dsBtn = Instance.new("TextButton")
 _dsBtn.Size = UDim2.new(0.95, 0, 0, 42)
-_dsBtn.BackgroundColor3 = Color3.fromRGB(0, 110, 220)
-_dsBtn.BackgroundTransparency = 0.1
+_dsBtn.BackgroundColor3 = Color3.fromRGB(0, 160, 220)
 _dsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-_dsBtn.Text = "🚀 Join Astro Cosmic Discord 🌌"
+_dsBtn.Text = _L("joinDiscord")
 _dsBtn.TextSize = 12
 _dsBtn.Font = Enum.Font.GothamBold
 _dsBtn.Parent = _pHome
+_dsBtn:SetAttribute("LangKey", "joinDiscord")
 
 local _dsc = Instance.new("UICorner")
 _dsc.CornerRadius = UDim.new(0, 8)
@@ -1082,17 +1563,17 @@ _dsBtn.MouseButton1Click:Connect(function()
     _snd()
     if setclipboard then
         setclipboard(_lnk)
-        _dsBtn.Text = "✅ Link Copied! Welcome Aboard 🚀"
+        _dsBtn.Text = _L("copiedDiscord")
         task.wait(2.5)
-        _dsBtn.Text = "🚀 Join Astro Cosmic Discord 🌌"
+        _dsBtn.Text = _L("joinDiscord")
     end
 end)
 
-_ctg(_pHome, "Auto Reconnect Server", function(_st)
+_ctg(_pHome, "autoReconnect", function(_st)
     getgenv().AutoReconnectState = _st
 end)
 
-_ctg(_pHome, "🛡️ Anti-AFK Protection", function(_st)
+_ctg(_pHome, "antiAfk", function(_st)
     if _st then
         local _vu = game:GetService("VirtualUser")
         _G.AntiAfkConn = _0p1.Idled:Connect(function()
@@ -1109,8 +1590,8 @@ local _tpc = Instance.new("ScrollingFrame")
 _tpc.Size = UDim2.new(0.95, 0, 1, -20)
 _tpc.BackgroundTransparency = 1
 _tpc.CanvasSize = UDim2.new(0, 0, 0, 0)
-_tpc.ScrollBarThickness = 4
-_tpc.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+_tpc.ScrollBarThickness = 3
+_tpc.ScrollBarImageColor3 = Color3.fromRGB(0, 180, 220)
 _tpc.Parent = _pTP
 
 local _tpl = Instance.new("UIListLayout")
@@ -1169,8 +1650,8 @@ local _trollContainer = Instance.new("ScrollingFrame")
 _trollContainer.Size = UDim2.new(0.95, 0, 1, -20)
 _trollContainer.BackgroundTransparency = 1
 _trollContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-_trollContainer.ScrollBarThickness = 4
-_trollContainer.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+_trollContainer.ScrollBarThickness = 3
+_trollContainer.ScrollBarImageColor3 = Color3.fromRGB(0, 180, 220)
 _trollContainer.Parent = _pTroll
 
 local _trollLayout = Instance.new("UIListLayout")
@@ -1309,8 +1790,7 @@ task.spawn(function()
             if (_pl ~= _0p1) then
                 local _pCard = Instance.new("Frame")
                 _pCard.Size = UDim2.new(1, 0, 0, 46)
-                _pCard.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-                _pCard.BackgroundTransparency = 0.2
+                _pCard.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
                 _pCard.Parent = _tpc
 
                 local _pcc = Instance.new("UICorner")
@@ -1322,7 +1802,7 @@ task.spawn(function()
                 _pNameLbl.Position = UDim2.new(0.02, 0, 0, 0)
                 _pNameLbl.BackgroundTransparency = 1
                 _pNameLbl.Text = _pl.DisplayName .. "\n(@" .. _pl.Name .. ")"
-                _pNameLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
+                _pNameLbl.TextColor3 = Color3.fromRGB(200, 230, 255)
                 _pNameLbl.TextSize = 10
                 _pNameLbl.Font = Enum.Font.GothamBold
                 _pNameLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -1331,12 +1811,13 @@ task.spawn(function()
                 local _pOnceBtn = Instance.new("TextButton")
                 _pOnceBtn.Size = UDim2.new(0.23, 0, 0.7, 0)
                 _pOnceBtn.Position = UDim2.new(0.50, 0, 0.15, 0)
-                _pOnceBtn.BackgroundColor3 = Color3.fromRGB(0, 130, 255)
-                _pOnceBtn.Text = "🚀 TP Once"
+                _pOnceBtn.BackgroundColor3 = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 180, 230)
+                _pOnceBtn.Text = _L("tpOnce")
                 _pOnceBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 _pOnceBtn.TextSize = 10
                 _pOnceBtn.Font = Enum.Font.GothamBold
                 _pOnceBtn.Parent = _pCard
+                _pOnceBtn:SetAttribute("LangKey", "tpOnce")
 
                 local _pobc = Instance.new("UICorner")
                 _pobc.CornerRadius = UDim.new(0, 6)
@@ -1347,10 +1828,10 @@ task.spawn(function()
                 _pSpamBtn.Position = UDim2.new(0.74, 0, 0.15, 0)
                 if getgenv().SpamTPTarget == _pl then
                     _pSpamBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
-                    _pSpamBtn.Text = "⚡ Spam: ON"
+                    _pSpamBtn.Text = _L("spamOn")
                 else
-                    _pSpamBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
-                    _pSpamBtn.Text = "⚡ Spam: OFF"
+                    _pSpamBtn.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
+                    _pSpamBtn.Text = _L("spamOff")
                 end
                 _pSpamBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 _pSpamBtn.TextSize = 10
@@ -1374,13 +1855,13 @@ task.spawn(function()
                     _snd()
                     if getgenv().SpamTPTarget == _pl then
                         getgenv().SpamTPTarget = nil
-                        _pSpamBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
-                        _pSpamBtn.Text = "⚡ Spam: OFF"
+                        _pSpamBtn.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
+                        _pSpamBtn.Text = _L("spamOff")
                         _f3()
                     else
                         getgenv().SpamTPTarget = _pl
                         _pSpamBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
-                        _pSpamBtn.Text = "⚡ Spam: ON"
+                        _pSpamBtn.Text = _L("spamOn")
                     end
                 end)
             end
@@ -1399,8 +1880,7 @@ task.spawn(function()
             if (_pl ~= _0p1) then
                 local _tCard = Instance.new("Frame")
                 _tCard.Size = UDim2.new(1, 0, 0, 48)
-                _tCard.BackgroundColor3 = Color3.fromRGB(18, 25, 42)
-                _tCard.BackgroundTransparency = 0.2
+                _tCard.BackgroundColor3 = Color3.fromRGB(18, 22, 30)
                 _tCard.Parent = _trollContainer
 
                 local _tcc = Instance.new("UICorner")
@@ -1408,8 +1888,10 @@ task.spawn(function()
                 _tcc.Parent = _tCard
 
                 local _tStroke = Instance.new("UIStroke")
-                _tStroke.Color = Color3.fromRGB(0, 120, 220)
-                _tStroke.Thickness = 1.2
+                _tStroke.Name = "ThemeStroke"
+                _tStroke.Color = _mf:GetAttribute("ActiveColor") or Color3.fromRGB(0, 150, 200)
+                _tStroke.Thickness = 1
+                _tStroke.Transparency = 0.5
                 _tStroke.Parent = _tCard
 
                 local _tNameLbl = Instance.new("TextLabel")
@@ -1417,7 +1899,7 @@ task.spawn(function()
                 _tNameLbl.Position = UDim2.new(0.02, 0, 0, 0)
                 _tNameLbl.BackgroundTransparency = 1
                 _tNameLbl.Text = "🗡️ " .. _pl.DisplayName
-                _tNameLbl.TextColor3 = Color3.fromRGB(150, 220, 255)
+                _tNameLbl.TextColor3 = Color3.fromRGB(200, 230, 255)
                 _tNameLbl.TextSize = 10
                 _tNameLbl.Font = Enum.Font.GothamBold
                 _tNameLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -1428,10 +1910,10 @@ task.spawn(function()
                 _vLaunchBtn.Position = UDim2.new(0.34, 0, 0.15, 0)
                 if getgenv().VoidTrollTarget == _pl then
                     _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
-                    _vLaunchBtn.Text = "🚀 Void: ON"
+                    _vLaunchBtn.Text = _L("voidOn")
                 else
-                    _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
-                    _vLaunchBtn.Text = "🚀 Launch"
+                    _vLaunchBtn.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
+                    _vLaunchBtn.Text = _L("voidBtn")
                 end
                 _vLaunchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 _vLaunchBtn.TextSize = 9
@@ -1447,10 +1929,10 @@ task.spawn(function()
                 _uKillBtn.Position = UDim2.new(0.56, 0, 0.15, 0)
                 if getgenv().UndergroundKillTarget == _pl then
                     _uKillBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
-                    _uKillBtn.Text = "🩹 Glue: ON"
+                    _uKillBtn.Text = _L("glueOn")
                 else
-                    _uKillBtn.BackgroundColor3 = Color3.fromRGB(30, 50, 80)
-                    _uKillBtn.Text = "🩹 Glue Back"
+                    _uKillBtn.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
+                    _uKillBtn.Text = _L("glueBtn")
                 end
                 _uKillBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 _uKillBtn.TextSize = 9
@@ -1466,10 +1948,10 @@ task.spawn(function()
                 _bstabBtn.Position = UDim2.new(0.79, 0, 0.15, 0)
                 if getgenv().BackstabTarget == _pl then
                     _bstabBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 70)
-                    _bstabBtn.Text = "🥷 Belly: ON"
+                    _bstabBtn.Text = _L("bellyOn")
                 else
-                    _bstabBtn.BackgroundColor3 = Color3.fromRGB(50, 30, 60)
-                    _bstabBtn.Text = "🥷 Belly Lay"
+                    _bstabBtn.BackgroundColor3 = Color3.fromRGB(26, 32, 42)
+                    _bstabBtn.Text = _L("bellyBtn")
                 end
                 _bstabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
                 _bstabBtn.TextSize = 9
@@ -1526,7 +2008,7 @@ local _abConn
 local _maxDst = 300
 local _abSmth = 0.35
 
-_ctg(_pCombat, "Aimbot (Smart Team Check)", function(_st)
+_ctg(_pCombat, "aimbot", function(_st)
     if _abConn then _abConn:Disconnect(); _abConn = nil end
     if _st then
         _abConn = _0g3.RenderStepped:Connect(function()
@@ -1566,7 +2048,7 @@ _ctg(_pCombat, "Aimbot (Smart Team Check)", function(_st)
 end)
 
 local _mhAct = false
-_ctg(_pCombat, "Massive Giant Hitbox (Very Big)", function(_st)
+_ctg(_pCombat, "hitbox", function(_st)
     _mhAct = _st
     task.spawn(function()
         while _mhAct and getgenv().AstroRunning do
@@ -1597,11 +2079,11 @@ _ctg(_pCombat, "Massive Giant Hitbox (Very Big)", function(_st)
     end)
 end)
 
-_csld(_pCombat, "Aimbot Max Distance", 50, 1000, 300, false, function(_v) _maxDst = _v end)
-_csld(_pCombat, "Aim Smoothness %", 10, 100, 35, false, function(_v) _abSmth = _v / 100 end)
+_csld(_pCombat, "aimDist", 50, 1000, 300, false, function(_v) _maxDst = _v end)
+_csld(_pCombat, "aimSmooth", 10, 100, 35, false, function(_v) _abSmth = _v / 100 end)
 
 local _botEspAct = false
-_ctg(_pBoss, "Highlight All Bots / NPCs", function(_st)
+_ctg(_pBoss, "botEsp", function(_st)
     _botEspAct = _st
     task.spawn(function()
         while _botEspAct and getgenv().AstroRunning do
@@ -1645,7 +2127,7 @@ _ctg(_pBoss, "Highlight All Bots / NPCs", function(_st)
 end)
 
 local _bsAct = false
-_ctg(_pBoss, "Highlight All Monsters & Chasers", function(_st)
+_ctg(_pBoss, "monsterEsp", function(_st)
     _bsAct = _st
     task.spawn(function()
         while _bsAct and getgenv().AstroRunning do
@@ -1689,7 +2171,7 @@ _ctg(_pBoss, "Highlight All Monsters & Chasers", function(_st)
 end)
 
 local _espAct = false
-_ctg(_pVisual, "Player ESP (Smart Clean)", function(_st)
+_ctg(_pVisual, "playerEsp", function(_st)
     _espAct = _st
     task.spawn(function()
         while _espAct and getgenv().AstroRunning do
@@ -1701,7 +2183,7 @@ _ctg(_pVisual, "Player ESP (Smart Clean)", function(_st)
                         if not _ch:FindFirstChild("AstroHighlight") then
                             local _hl = Instance.new("Highlight")
                             _hl.Name = "AstroHighlight"
-                            _hl.FillColor = Color3.fromRGB(0, 130, 255)
+                            _hl.FillColor = Color3.fromRGB(0, 180, 230)
                             _hl.OutlineColor = Color3.fromRGB(255, 255, 255)
                             _hl.Parent = _ch
                         end
@@ -1722,7 +2204,7 @@ _ctg(_pVisual, "Player ESP (Smart Clean)", function(_st)
     end)
 end)
 
-_ctg(_pVisual, "👥 Clone Nearest Player Outfit", function(_st)
+_ctg(_pVisual, "cloneOutfit", function(_st)
     if _st then
         pcall(function()
             local myChar = _0p1.Character
@@ -1749,23 +2231,7 @@ _ctg(_pVisual, "👥 Clone Nearest Player Outfit", function(_st)
     end
 end)
 
-local _autoFarmState = false
-_ctg(_pVisual, "⚡ Fast Auto-Clicker / Farm Helper", function(_st)
-    _autoFarmState = _st
-    task.spawn(function()
-        local vim = game:GetService("VirtualInputManager")
-        while _autoFarmState and getgenv().AstroRunning do
-            pcall(function()
-                vim:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-                task.wait(0.05)
-                vim:SendMouseButtonEvent(0, 0, 0, false, game, 0)
-            end)
-            task.wait(0.15)
-        end
-    end)
-end)
-
-_ctg(_pPerf, "Potato Mode (Boost FPS)", function(_st)
+_ctg(_pPerf, "potatoMode", function(_st)
     if _st then
         for _, _v in pairs(_0g7:GetDescendants()) do
             if _v:IsA("BasePart") then
@@ -1783,3 +2249,25 @@ _ctg(_pPerf, "Potato Mode (Boost FPS)", function(_st)
         settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
     end
 end)
+
+_updateGuiTexts = function()
+    for _, btn in pairs(_sb:GetChildren()) do
+        if btn:IsA("TextButton") and btn:GetAttribute("LangKey") then
+            btn.Text = _L(btn:GetAttribute("LangKey"))
+        end
+    end
+    for _, des in pairs(_mf:GetDescendants()) do
+        if des:IsA("TextButton") or des:IsA("TextLabel") then
+            local key = des:GetAttribute("LangKey")
+            if key then
+                if des:IsA("TextLabel") and des:GetAttribute("CurrentVal") then
+                    local isDec = des:GetAttribute("IsDecimal")
+                    local val = des:GetAttribute("CurrentVal")
+                    des.Text = _L(key) .. ": " .. tostring(val) .. (isDec and "s" or "")
+                else
+                    des.Text = _L(key)
+                end
+            end
+        end
+    end
+end
